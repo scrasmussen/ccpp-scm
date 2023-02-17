@@ -2965,6 +2965,104 @@
   units = count
   dimensions = ()
   type = integer
+[dudt_pbl]
+  standard_name = instantaneous_tendency_of_x_wind_due_to_boundary_layer
+  long_name = tendency of x wind due to boundary layer
+  units = m s-2
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+[dvdt_pbl]
+  standard_name = instantaneous_tendency_of_y_wind_due_to_boundary_layer
+  long_name = tendency of y wind due to boundary layer
+  units = m s-2
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+[dtdt_pbl]
+  standard_name = instantaneous_tendency_of_potential_temperature_due_to_boundary_layer
+  long_name = tendency of potential temperature due to boundary layer
+  units =  K s-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+[dqvdt_pbl]
+  standard_name = instantaneous_tendency_of_water_vapor_mixing_ratio_due_to_boundary_layer
+  long_name = tendency of water vapor mixing ratio due to boundary layer
+  units = kg kg-1 s-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+[dqcdt_pbl]
+  standard_name = instantaneous_tendency_of_cloud_water_mixing_ratio_due_to_boundary_layer
+  long_name = tendency of cloud water mixing ratio due to boundary layer
+  units = kg kg-1 s-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+[dqidt_pbl]
+  standard_name = instantaneous_tendency_of_ice_water_mixing_ratio_due_to_boundary_layer
+  long_name = tendency of ice water mixing ratio due to boundary layer
+  units = kg kg-1 s-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+[dqtdt_pbl]
+  standard_name = instantaneous_tendency_of_scalars_due_to_boundary_layer
+  long_name = tendency of scalars due to boundary layer
+  units = kg kg-1 s-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension,number_of_tracers)
+  type = real
+  kind = kind_phys
+[wstar]
+  standard_name = surface_wind_enhancement_due_to_convection
+  long_name = surface wind enhancement due to convection
+  units = m s-1
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+[delta]
+  standard_name = entrainment_layer_depth
+  long_name = entrainment layer depth
+  units =  m
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+[uo_sfc]
+  standard_name = ocean_surface_current_speed_in_x_direction
+  long_name = x ocean surface current speed
+  units = m s-1
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+[vo_sfc]
+  standard_name = ocean_surface_current_speed_in_y_direction
+  long_name = y ocean surface current speed
+  units = m s-1
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+[ctopo]
+  standard_name = correction_for_topography_in_YSU_PBL_scheme
+  long_name = correction for topography
+  units = none
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+[ctopo2]
+  standard_name = correction_for_topography_2_in_YSU_PBL_scheme
+  long_name = correction for topography 2
+  units = none
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+[ysu_frcurb]
+  standard_name = surface_friction_from_BEP_canopy_model
+  long_name = surface friction from BEP	canopy model
+  units = m s-1
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
 
 ########################################################################
 [ccpp-table-properties]
