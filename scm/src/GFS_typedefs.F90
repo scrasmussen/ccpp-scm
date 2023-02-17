@@ -1151,6 +1151,10 @@ module GFS_typedefs
                                             !< vertical turbulent mixing scheme
     logical              :: shinhong        !< flag for scale-aware Shinhong vertical turbulent mixing scheme
     logical              :: do_ysu          !< flag for YSU turbulent mixing scheme
+    logical              :: do_ysu_cldliq      !< flag for YSU: use provided cloud-water mixing ratio
+    logical              :: do_ysu_cldice      !< flag for YSU: use provided cloud-ice mixing ratio
+    logical              :: ysu_add_bep        !< flag for YSU: Flag to include BEP forcing.
+    logical              :: ysu_topdown_pblmix !< flag for YSU: Option for YSU PBL mixing. 
     logical              :: acm             !< flag for ACM turbulent mixing scheme
     logical              :: dspheat         !< flag for tke dissipative heating
     logical              :: hurr_pbl        !< flag for hurricane-specific options in PBL scheme
@@ -3677,6 +3681,10 @@ module GFS_typedefs
                                                                       !< vertical turbulent mixing scheme
     logical              :: shinhong       = .false.                  !< flag for scale-aware Shinhong vertical turbulent mixing scheme
     logical              :: do_ysu         = .false.                  !< flag for YSU vertical turbulent mixing scheme
+    logical              :: do_ysu_cldliq       = .false.             !< flag for YSU: use provided cloud-water mixing ratio 
+    logical              :: do_ysu_cldice       = .false.             !< flag for YSU: use provided cloud-ice mixing ratio 
+    logical              :: ysu_add_bep         = .false.             !< flag for YSU: Flag to include BEP forcing.
+    logical              :: ysu_topdown_pblmix  = .false.             !< flag for YSU: Option for YSU PBL mixing.
     logical              :: acm            = .false.                  !< flag for ACM vertical turbulent mixing scheme
     logical              :: dspheat        = .false.                  !< flag for tke dissipative heating
     logical              :: hurr_pbl       = .false.                  !< flag for hurricane-specific options in PBL scheme
@@ -4963,6 +4971,10 @@ module GFS_typedefs
     Model%satmedmf          = satmedmf
     Model%shinhong          = shinhong
     Model%do_ysu            = do_ysu
+    Model%do_ysu_cldliq       = do_ysu_cldliq
+    Model%do_ysu_cldice       = do_ysu_cldice
+    Model%ysu_topdown_pblmix  = ysu_topdown_pblmix
+    Model%ysu_add_bep         = ysu_add_bep
     Model%acm               = acm
     Model%dspheat           = dspheat
     Model%hurr_pbl          = hurr_pbl

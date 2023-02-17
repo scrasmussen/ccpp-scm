@@ -5294,6 +5294,30 @@
   units = flag
   dimensions = ()
   type = logical
+[do_ysu_cldliq]
+  standard_name = flag_to_include_cloud_liquid_water_mixing_ratio_in_ysu_pbl
+  long_name = flag for cloud water mixing ratio
+  units = flag 
+  dimensions = ()
+  type = logical
+[do_ysu_cldice]
+  standard_name = flag_to_include_cloud_ice_water_mixing_ratio_in_ysu_pbl
+  long_name = flag for ice water mixing ratio
+  units = flag
+  dimensions = ()
+  type = logical
+[ysu_add_bep]
+  standard_name = flag_to_include_BEP_canopy_layer_forcing
+  long_name = flag to include BEP canopy layer forcing
+  units = flag
+  dimensions = ()
+  type = logical
+[ysu_topdown_pblmix]
+  standard_name = flag_for_ysu_mixing
+  long_name = flag for ysu topdown mixing option
+  units = flag
+  dimensions = ()
+  type = logical
 [cal_pre]
   standard_name = flag_for_dominant_precipitation_type_partition
   long_name = flag controls precip type algorithm

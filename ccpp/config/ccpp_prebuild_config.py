@@ -216,6 +216,10 @@ SCHEME_FILES = [
     'ccpp/physics/physics/smoke_dust/rrfs_smoke_postpbl.F90',
     'ccpp/physics/physics/tools/get_prs_fv3.F90',
     'ccpp/physics/physics/tools/get_phi_fv3.F90'
+    # NCAR MMM
+    'ccpp/physics/physics/mmm_ysu.F90'
+    #'ccpp/physics/physics/mmm_physics/bl_gwdo.F'            ,
+    #'ccpp/physics/physics/mmm_physics/sf_sfclayrev.F'
     ]
 
 # Default build dir, relative to current working directory,

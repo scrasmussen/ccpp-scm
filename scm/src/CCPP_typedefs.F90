@@ -413,6 +413,17 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: oa4ss(:,:)         => null()  !<
     real (kind=kind_phys), pointer      :: clxss(:,:)         => null()  !<
 
+    !-- NCAR MMM physics
+    real (kind=kind_phys), pointer      :: dudt_pbl(:,:)      => null() 
+    real (kind=kind_phys), pointer      :: dvdt_pbl(:,:)      => null() 
+    real (kind=kind_phys), pointer      :: dtdt_pbl(:,:)      => null() 
+    real (kind=kind_phys), pointer      :: dqvdt_pbl(:,:)     => null() 
+    real (kind=kind_phys), pointer      :: dqcdt_pbl(:,:)     => null() 
+    real (kind=kind_phys), pointer      :: dqidt_pbl(:,:)     => null() 
+    real (kind=kind_phys), pointer      :: dqtdt_pbl(:,:,:)   => null() 
+    real (kind=kind_phys), pointer      :: wstar(:)           => null()
+    real (kind=kind_phys), pointer      :: delta(:)           => null()
+
     !-- 3D diagnostics
     integer :: rtg_ozone_index, rtg_tke_index
 
@@ -798,6 +809,18 @@ contains
        allocate (Interstitial%t2mmp (IM))
        allocate (Interstitial%q2mp  (IM))
     end if
+
+    ! NCAR MMM physics
+    allocate (Interstitial%dudt_pbl(IM,Model%levs))
+    allocate (Interstitial%dvdt_pbl(IM,Model%levs))
+    allocate (Interstitial%dtdt_pbl(IM,Model%levs))
+    allocate (Interstitial%dqvdt_pbl(IM,Model%levs))
+    allocate (Interstitial%dqcdt_pbl(IM,Model%levs))
+    allocate (Interstitial%dqidt_pbl(IM,Model%levs))
+    allocate (Interstitial%dqtdt_pbl(IM,Model%levs,Model%ntrac))
+    allocate (Interstitial%wstar(IM))
+    allocate (Interstitial%delta(IM))
+
     !
     ! Set components that do not change
     Interstitial%frain            = Model%dtf/Model%dtp
@@ -1373,6 +1396,17 @@ contains
        Interstitial%oa4ss           = clear_val
        Interstitial%clxss           = clear_val
     end if
+
+    ! NCAR MMM physics
+    Interstitial%dudt_pbl  = clear_val
+    Interstitial%dvdt_pbl  = clear_val
+    Interstitial%dtdt_pbl  = clear_val
+    Interstitial%dqvdt_pbl = clear_val
+    Interstitial%dqcdt_pbl = clear_val
+    Interstitial%dqidt_pbl = clear_val
+    Interstitial%dqtdt_pbl = clear_val
+    Interstitial%wstar     = clear_val
+    Interstitial%delta     = clear_val
 !
     ! Reset fields that are conditional on physics choices
     if (Model%imp_physics == Model%imp_physics_gfdl .or. Model%imp_physics == Model%imp_physics_thompson  &
