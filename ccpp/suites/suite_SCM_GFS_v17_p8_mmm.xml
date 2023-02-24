@@ -54,9 +54,8 @@
       <scheme>sfc_diag_post</scheme>
       <scheme>GFS_surface_generic_post</scheme>
       <scheme>GFS_PBL_generic_pre</scheme>
-      <scheme>satmedmfvdifq</scheme>
-      <scheme>GFS_PBL_generic_post</scheme>
       <scheme>mmm_ysu</scheme>
+      <scheme>GFS_PBL_generic_post</scheme>
       <scheme>GFS_GWD_generic_pre</scheme>
       <scheme>unified_ugwp</scheme>
       <scheme>unified_ugwp_post</scheme>

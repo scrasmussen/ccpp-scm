@@ -4089,7 +4089,9 @@ module GFS_typedefs
                                do_myjsfc, do_myjpbl,                                        &
                                hwrf_samfdeep, hwrf_samfshal,progsigma,betascu,betamcu,      &
                                betadcu,h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,&
-                               shinhong, do_ysu, dspheat, lheatstrg, lseaspray, cnvcld,     &
+                               shinhong, do_ysu, do_ysu_cldliq, do_ysu_cldice, ysu_add_bep, &
+                               ysu_topdown_pblmix, acm,                                     &
+                               dspheat, lheatstrg, lseaspray, cnvcld,                       &
                                xr_cnvcld, random_clds, shal_cnv, imfshalcnv, imfdeepcnv,    &
                                isatmedmf, do_deep, jcap,                                    &
                                cs_parm, flgmin, cgwf, ccwf, cdmbgwd, alpha_fd,              &

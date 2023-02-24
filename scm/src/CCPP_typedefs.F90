@@ -423,6 +423,20 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: dqtdt_pbl(:,:,:)   => null() 
     real (kind=kind_phys), pointer      :: wstar(:)           => null()
     real (kind=kind_phys), pointer      :: delta(:)           => null()
+    real (kind=kind_phys), pointer      :: a_u(:,:)           => null()
+    real (kind=kind_phys), pointer      :: a_v(:,:)           => null()
+    real (kind=kind_phys), pointer      :: a_t(:,:)           => null()
+    real (kind=kind_phys), pointer      :: a_q(:,:)           => null()
+    real (kind=kind_phys), pointer      :: a_e(:,:)           => null()
+    real (kind=kind_phys), pointer      :: b_u(:,:)           => null()
+    real (kind=kind_phys), pointer      :: b_v(:,:)           => null()
+    real (kind=kind_phys), pointer      :: b_t(:,:)           => null()
+    real (kind=kind_phys), pointer      :: b_q(:,:)           => null()
+    real (kind=kind_phys), pointer      :: b_e(:,:)           => null()
+    real (kind=kind_phys), pointer      :: dlu(:,:)           => null()
+    real (kind=kind_phys), pointer      :: dlg(:,:)           => null()
+    real (kind=kind_phys), pointer      :: sfk(:,:)           => null()
+    real (kind=kind_phys), pointer      :: vlk(:,:)           => null()
 
     !-- 3D diagnostics
     integer :: rtg_ozone_index, rtg_tke_index
@@ -811,15 +825,33 @@ contains
     end if
 
     ! NCAR MMM physics
-    allocate (Interstitial%dudt_pbl(IM,Model%levs))
-    allocate (Interstitial%dvdt_pbl(IM,Model%levs))
-    allocate (Interstitial%dtdt_pbl(IM,Model%levs))
-    allocate (Interstitial%dqvdt_pbl(IM,Model%levs))
-    allocate (Interstitial%dqcdt_pbl(IM,Model%levs))
-    allocate (Interstitial%dqidt_pbl(IM,Model%levs))
-    allocate (Interstitial%dqtdt_pbl(IM,Model%levs,Model%ntrac))
-    allocate (Interstitial%wstar(IM))
-    allocate (Interstitial%delta(IM))
+    if (Model%do_ysu) then
+       allocate (Interstitial%dudt_pbl (IM,Model%levs))
+       allocate (Interstitial%dvdt_pbl (IM,Model%levs))
+       allocate (Interstitial%dtdt_pbl (IM,Model%levs))
+       allocate (Interstitial%dqvdt_pbl(IM,Model%levs))
+       allocate (Interstitial%dqcdt_pbl(IM,Model%levs))
+       allocate (Interstitial%dqidt_pbl(IM,Model%levs))
+       allocate (Interstitial%dqtdt_pbl(IM,Model%levs,Model%ntrac))
+       allocate (Interstitial%wstar(IM))
+       allocate (Interstitial%delta(IM))
+       if (Model%ysu_add_bep) then
+          allocate (Interstitial%a_u(IM,Model%levs))
+          allocate (Interstitial%a_v(IM,Model%levs))
+          allocate (Interstitial%a_t(IM,Model%levs))
+          allocate (Interstitial%a_q(IM,Model%levs))
+          allocate (Interstitial%a_e(IM,Model%levs))
+          allocate (Interstitial%b_u(IM,Model%levs))
+          allocate (Interstitial%b_v(IM,Model%levs))
+          allocate (Interstitial%b_t(IM,Model%levs))
+          allocate (Interstitial%b_q(IM,Model%levs))
+          allocate (Interstitial%b_e(IM,Model%levs))
+          allocate (Interstitial%dlu(IM,Model%levs))
+          allocate (Interstitial%dlg(IM,Model%levs))
+          allocate (Interstitial%sfk(IM,Model%levs))
+          allocate (Interstitial%vlk(IM,Model%levs))
+       endif
+    endif
 
     !
     ! Set components that do not change
@@ -1397,15 +1429,33 @@ contains
     end if
 
     ! NCAR MMM physics
-    Interstitial%dudt_pbl  = clear_val
-    Interstitial%dvdt_pbl  = clear_val
-    Interstitial%dtdt_pbl  = clear_val
-    Interstitial%dqvdt_pbl = clear_val
-    Interstitial%dqcdt_pbl = clear_val
-    Interstitial%dqidt_pbl = clear_val
-    Interstitial%dqtdt_pbl = clear_val
-    Interstitial%wstar     = clear_val
-    Interstitial%delta     = clear_val
+    if (Model%do_ysu) then
+       Interstitial%dudt_pbl  = clear_val
+       Interstitial%dvdt_pbl  = clear_val
+       Interstitial%dtdt_pbl  = clear_val
+       Interstitial%dqvdt_pbl = clear_val
+       Interstitial%dqcdt_pbl = clear_val
+       Interstitial%dqidt_pbl = clear_val
+       Interstitial%dqtdt_pbl = clear_val
+       Interstitial%wstar     = clear_val
+       Interstitial%delta     = clear_val
+       if (Model%ysu_add_bep) then
+          Interstitial%a_u = clear_val
+          Interstitial%a_v = clear_val
+          Interstitial%a_t = clear_val
+          Interstitial%a_q = clear_val
+          Interstitial%a_e = clear_val
+          Interstitial%b_u = clear_val
+          Interstitial%b_v = clear_val
+          Interstitial%b_t = clear_val
+          Interstitial%b_q = clear_val
+          Interstitial%b_e = clear_val
+          Interstitial%dlu = clear_val
+          Interstitial%dlg = clear_val
+          Interstitial%sfk = clear_val
+          Interstitial%vlk = clear_val
+       endif
+    endif
 !
     ! Reset fields that are conditional on physics choices
     if (Model%imp_physics == Model%imp_physics_gfdl .or. Model%imp_physics == Model%imp_physics_thompson  &

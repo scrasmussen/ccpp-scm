@@ -2860,6 +2860,7 @@
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [dvdt_pbl]
   standard_name = instantaneous_tendency_of_y_wind_due_to_boundary_layer
   long_name = tendency of y wind due to boundary layer
@@ -2867,6 +2868,7 @@
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [dtdt_pbl]
   standard_name = instantaneous_tendency_of_potential_temperature_due_to_boundary_layer
   long_name = tendency of potential temperature due to boundary layer
@@ -2874,6 +2876,7 @@
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [dqvdt_pbl]
   standard_name = instantaneous_tendency_of_water_vapor_mixing_ratio_due_to_boundary_layer
   long_name = tendency of water vapor mixing ratio due to boundary layer
@@ -2881,6 +2884,7 @@
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [dqcdt_pbl]
   standard_name = instantaneous_tendency_of_cloud_water_mixing_ratio_due_to_boundary_layer
   long_name = tendency of cloud water mixing ratio due to boundary layer
@@ -2888,6 +2892,7 @@
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [dqidt_pbl]
   standard_name = instantaneous_tendency_of_ice_water_mixing_ratio_due_to_boundary_layer
   long_name = tendency of ice water mixing ratio due to boundary layer
@@ -2895,6 +2900,7 @@
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [dqtdt_pbl]
   standard_name = instantaneous_tendency_of_scalars_due_to_boundary_layer
   long_name = tendency of scalars due to boundary layer
@@ -2902,6 +2908,7 @@
   dimensions = (horizontal_loop_extent,vertical_layer_dimension,number_of_tracers)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [wstar]
   standard_name = surface_wind_enhancement_due_to_convection
   long_name = surface wind enhancement due to convection
@@ -2909,6 +2916,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [delta]
   standard_name = entrainment_layer_depth
   long_name = entrainment layer depth
@@ -2916,6 +2924,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [uo_sfc]
   standard_name = ocean_surface_current_speed_in_x_direction
   long_name = x ocean surface current speed
@@ -2923,6 +2932,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [vo_sfc]
   standard_name = ocean_surface_current_speed_in_y_direction
   long_name = y ocean surface current speed
@@ -2930,6 +2940,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [ctopo]
   standard_name = correction_for_topography_in_YSU_PBL_scheme
   long_name = correction for topography
@@ -2937,6 +2948,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [ctopo2]
   standard_name = correction_for_topography_2_in_YSU_PBL_scheme
   long_name = correction for topography 2
@@ -2944,6 +2956,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 [ysu_frcurb]
   standard_name = surface_friction_from_BEP_canopy_model
   long_name = surface friction from BEP	canopy model
@@ -2951,6 +2964,119 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[a_u]
+  standard_name = u_momentum_forcing_term_a_from_BEP_urban_canopy_model
+  long_name = u-momentum forcing term-A from BEP urban canopy model
+  units = m s-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[a_v]
+  standard_name = v_momentum_forcing_term_a_from_BEP_urban_canopy_model
+  long_name = v-momentum forcing term-A from BEP urban canopy model
+  units = m s-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[a_t]
+  standard_name = temperature_forcing_from_term_a_BEP_urban_canopy_model
+  long_name = temperature forcing term-A from BEP urban canopy model
+  units = K
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[a_q]
+  standard_name = moisture_forcing_from_term_a_BEP_urban_canopy_model
+  long_name = moisture forcing term-A from BEP urban canopy model
+  units = g g-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[b_u]
+  standard_name = u_momentum_forcing_term_b_from_BEP_urban_canopy_model
+  long_name = u-momentum forcing term-B from BEP urban canopy model
+  units = m s-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[b_v]
+  standard_name = v_momentum_forcing_term_b_from_BEP_urban_canopy_model
+  long_name = v-momentum forcing term-B from BEP urban canopy model
+  units = m s-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[b_t]
+  standard_name = temperature_forcing_from_term_b_BEP_urban_canopy_model
+  long_name = temperture forcing term-B from BEP urban canopy model
+  units = K
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[b_q]
+  standard_name = moisture_forcing_from_term_B_BEP_urban_canopy_model
+  long_name = moisture forcing term-B from BEP urban canopy model
+  units = g g-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[sfk]
+  standard_name = tbd_name_interstitial_for_YSU_PBL_coupling_to_BEP_1
+  long_name = tbd name interstitial for YSU PBL coupling to BEP 1
+  units = none
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[vlk]
+  standard_name = tbd_name_interstitial_for_YSU_PBL_coupling_to_BEP_2
+  long_name = tbd name interstitial for YSU PBL coupling to BEP 2
+  units = none
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[b_e]
+  standard_name = tbd_name_interstitial_for_YSU_PBL_coupling_to_BEP_3
+  long_name = tbd name interstitial for YSU PBL coupling to BEP 3
+  units = none
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[a_e]
+  standard_name = tbd_name_interstitial_for_YSU_PBL_coupling_to_BEP_4
+  long_name = tbd name interstitial for YSU PBL coupling to BEP 4
+  units = none
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[dlu]
+  standard_name = tbd_name_interstitial_for_YSU_PBL_coupling_to_BEP_5
+  long_name = tbd name interstitial for YSU PBL coupling to BEP	5
+  units = none
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
+[dlg]
+  standard_name = tbd_name_interstitial_for_YSU_PBL_coupling_to_BEP_6
+  long_name = tbd name interstitial for YSU PBL coupling to BEP	6
+  units = none
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_ysu_pbl_scheme)
 
 ########################################################################
 [ccpp-table-properties]
