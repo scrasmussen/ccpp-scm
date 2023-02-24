@@ -3533,9 +3533,10 @@ module GFS_typedefs
                                do_myjsfc, do_myjpbl,                                        &
                                hwrf_samfdeep, hwrf_samfshal,progsigma,                      &
                                h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,        &
-                               shinhong, do_ysu, acm, dspheat, lheatstrg, lseaspray, cnvcld,&
-                               random_clds, shal_cnv, imfshalcnv, imfdeepcnv, isatmedmf,    &
-                               do_deep, jcap,                                               &
+                               shinhong, do_ysu, do_ysu_cldliq, do_ysu_cldice, ysu_add_bep, &
+                               ysu_topdown_pblmix, acm, dspheat, lheatstrg, lseaspray,      &
+                               cnvcld, random_clds, shal_cnv, imfshalcnv, imfdeepcnv,       &
+                               isatmedmf, do_deep, jcap,                                    &
                                cs_parm, flgmin, cgwf, ccwf, cdmbgwd, sup, ctei_rm, crtrh,   &
                                dlqf, rbcr, shoc_parm, psauras, prauras, wminras,            &
                                do_sppt, do_shum, do_skeb,                                   &
