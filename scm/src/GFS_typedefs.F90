@@ -1009,6 +1009,7 @@ module GFS_typedefs
     logical              :: do_ysu_cldice      !< flag for YSU: use provided cloud-ice mixing ratio
     logical              :: ysu_add_bep        !< flag for YSU: Flag to include BEP forcing.
     logical              :: ysu_topdown_pblmix !< flag for YSU: Option for YSU PBL mixing. 
+    logical              :: ysu_timesplit      !< flag for YSU: Update internal-state after calling scheme?
     logical              :: acm             !< flag for ACM turbulent mixing scheme
     logical              :: dspheat         !< flag for tke dissipative heating
     logical              :: hurr_pbl        !< flag for hurricane-specific options in PBL scheme
@@ -3193,6 +3194,7 @@ module GFS_typedefs
     logical              :: do_ysu_cldice       = .false.             !< flag for YSU: use provided cloud-ice mixing ratio 
     logical              :: ysu_add_bep         = .false.             !< flag for YSU: Flag to include BEP forcing.
     logical              :: ysu_topdown_pblmix  = .false.             !< flag for YSU: Option for YSU PBL mixing.
+    logical              :: ysu_timesplit       = .false.             !< flag for YSU: Update internal-state after calling scheme?  
     logical              :: acm            = .false.                  !< flag for ACM vertical turbulent mixing scheme
     logical              :: dspheat        = .false.                  !< flag for tke dissipative heating
     logical              :: hurr_pbl       = .false.                  !< flag for hurricane-specific options in PBL scheme
@@ -3534,9 +3536,9 @@ module GFS_typedefs
                                hwrf_samfdeep, hwrf_samfshal,progsigma,                      &
                                h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,        &
                                shinhong, do_ysu, do_ysu_cldliq, do_ysu_cldice, ysu_add_bep, &
-                               ysu_topdown_pblmix, acm, dspheat, lheatstrg, lseaspray,      &
-                               cnvcld, random_clds, shal_cnv, imfshalcnv, imfdeepcnv,       &
-                               isatmedmf, do_deep, jcap,                                    &
+                               ysu_topdown_pblmix, ysu_timesplit, acm, dspheat, lheatstrg,  &
+                               lseaspray, cnvcld, random_clds, shal_cnv, imfshalcnv,        &
+                               imfdeepcnv, isatmedmf, do_deep, jcap,                        &
                                cs_parm, flgmin, cgwf, ccwf, cdmbgwd, sup, ctei_rm, crtrh,   &
                                dlqf, rbcr, shoc_parm, psauras, prauras, wminras,            &
                                do_sppt, do_shum, do_skeb,                                   &
@@ -4254,11 +4256,12 @@ module GFS_typedefs
     Model%hybedmf           = hybedmf
     Model%satmedmf          = satmedmf
     Model%shinhong          = shinhong
-    Model%do_ysu            = do_ysu
-    Model%do_ysu_cldliq       = do_ysu_cldliq
-    Model%do_ysu_cldice       = do_ysu_cldice
-    Model%ysu_topdown_pblmix  = ysu_topdown_pblmix
-    Model%ysu_add_bep         = ysu_add_bep
+    Model%do_ysu             = do_ysu
+    Model%do_ysu_cldliq      = do_ysu_cldliq
+    Model%do_ysu_cldice      = do_ysu_cldice
+    Model%ysu_topdown_pblmix = ysu_topdown_pblmix
+    Model%ysu_add_bep        = ysu_add_bep
+    Model%ysu_timesplit      = ysu_timesplit
     Model%acm               = acm
     Model%dspheat           = dspheat
     Model%hurr_pbl          = hurr_pbl
@@ -5168,6 +5171,8 @@ module GFS_typedefs
         print *,' MYNN PBL scheme used'
       elseif (Model%do_myjpbl)then
         print *,' MYJ PBL scheme used'
+      elseif (Model%do_ysu)then
+        print *,' YSU PBL scheme used'
       endif
       if (.not. Model%shal_cnv) then
         Model%imfshalcnv = -1
@@ -5998,6 +6003,11 @@ module GFS_typedefs
       print *, ' isatmedmf         : ', Model%isatmedmf
       print *, ' shinhong          : ', Model%shinhong
       print *, ' do_ysu            : ', Model%do_ysu
+      print *, ' do_ysu_cldliq     : ', Model%do_ysu_cldliq
+      print *, ' do_ysu_cldice     : ', Model%do_ysu_cldice
+      print *, ' ysu_topdown_pblmix: ', Model%ysu_topdown_pblmix
+      print *, ' ysu_add_bep       : ', Model%ysu_add_bep
+      print *, ' ysu_timesplit     : ', Model%ysu_timesplit
       print *, ' acm               : ', Model%acm
       print *, ' dspheat           : ', Model%dspheat
       print *, ' lheatstrg         : ', Model%lheatstrg

@@ -27,6 +27,7 @@ VARIABLE_DEFINITION_FILES = [
     'ccpp/physics/physics/rte-rrtmgp/rte/mo_optical_props.F90',
     'ccpp/physics/physics/rte-rrtmgp/extensions/cloud_optics/mo_cloud_optics.F90',
     'ccpp/physics/physics/rte-rrtmgp/rte/mo_source_functions.F90',
+    'ccpp/physics/physics/ccpp_kinds.F90',
     'scm/src/CCPP_typedefs.F90',
     'scm/src/GFS_typedefs.F90',
     'scm/src/scm_kinds.F90',

@@ -4475,6 +4475,12 @@
   units = flag
   dimensions = ()
   type = logical
+[ysu_timesplit]
+  standard_name = flag_to_advance_internal_state_after_YSU_PBL_scheme
+  long_name = flag to advance internal physics state after calling YSU PBL scheme
+  units = flag
+  dimensions = ()
+  type = logical
 [cal_pre]
   standard_name = flag_for_dominant_precipitation_type_partition
   long_name = flag controls precip type algorithm
