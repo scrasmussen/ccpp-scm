@@ -35,7 +35,7 @@ public
   real(kind=dp),parameter:: con_fvirt  =con_rv/con_rd - 1
   real(kind=dp),parameter:: con_eps    =con_rd/con_rv
   real(kind=dp),parameter:: con_epsm1  =con_rd/con_rv-1.
-
+  real(kind=dp),parameter:: con_1ograv = 1./con_g
   real(kind=dp),parameter:: karman = 0.4_dp
   
   real(kind=dp),parameter:: cimin      =0.15

@@ -4578,6 +4578,18 @@
   units = flag
   dimensions = ()
   type = logical
+[do_mmm_ogwd]
+  standard_name = flag_for_MMM_OGWD_scheme
+  long_name = flag for MMM OGWD scheme
+  units = flag
+  dimensions = ()
+  type = logical
+[mmm_ogwd_timesplit]
+  standard_name = flag_to_advance_internal_state_after_MMM_OGWD_scheme
+  long_name = flag to advance internal physics state after calling MMM OGWD scheme
+  units = flag
+  dimensions = ()
+  type = logical
 [cal_pre]
   standard_name = flag_for_dominant_precipitation_type_partition
   long_name = flag controls precip type algorithm

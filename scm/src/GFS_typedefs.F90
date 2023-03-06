@@ -1036,6 +1036,8 @@ module GFS_typedefs
     logical              :: ysu_add_bep        !< flag for YSU: Flag to include BEP forcing.
     logical              :: ysu_topdown_pblmix !< flag for YSU: Option for YSU PBL mixing. 
     logical              :: ysu_timesplit      !< flag for YSU: Update internal-state after calling scheme?
+    logical              :: do_mmm_ogwd        !< flag for MMM OGWD: flag for NCAR MMMs OGWD scheme.
+    logical              :: mmm_ogwd_timesplit !< flag for MMM OGWD: Update internal-state after calling scheme?
     logical              :: acm             !< flag for ACM turbulent mixing scheme
     logical              :: dspheat         !< flag for tke dissipative heating
     logical              :: hurr_pbl        !< flag for hurricane-specific options in PBL scheme
@@ -3256,6 +3258,8 @@ module GFS_typedefs
     logical              :: ysu_add_bep         = .false.             !< flag for YSU: Flag to include BEP forcing.
     logical              :: ysu_topdown_pblmix  = .false.             !< flag for YSU: Option for YSU PBL mixing.
     logical              :: ysu_timesplit       = .false.             !< flag for YSU: Update internal-state after calling scheme?  
+    logical              :: do_mmm_ogwd         = .false.             !< flag for MMM OGWD: flag for NCAR MMMs OGWD scheme.
+    logical              :: mmm_ogwd_timesplit  = .false.             !< flag for MMM OGWD: Update internal-state after calling scheme?    
     logical              :: acm            = .false.                  !< flag for ACM vertical turbulent mixing scheme
     logical              :: dspheat        = .false.                  !< flag for tke dissipative heating
     logical              :: hurr_pbl       = .false.                  !< flag for hurricane-specific options in PBL scheme
@@ -3597,7 +3601,9 @@ module GFS_typedefs
                                hwrf_samfdeep, hwrf_samfshal,progsigma,                      &
                                h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,        &
                                shinhong, do_ysu, do_ysu_cldliq, do_ysu_cldice, ysu_add_bep, &
-                               ysu_topdown_pblmix, ysu_timesplit, acm, dspheat, lheatstrg,  &
+                               ysu_topdown_pblmix, ysu_timesplit,                           &
+                               do_mmm_ogwd, mmm_ogwd_timesplit,                             &
+                               acm, dspheat, lheatstrg,                                     &
                                lseaspray, cnvcld, random_clds, shal_cnv, imfshalcnv,        &
                                imfdeepcnv, isatmedmf, do_deep, jcap,                        &
                                cs_parm, flgmin, cgwf, ccwf, cdmbgwd, sup, ctei_rm, crtrh,   &
@@ -4364,6 +4370,8 @@ module GFS_typedefs
     Model%ysu_topdown_pblmix = ysu_topdown_pblmix
     Model%ysu_add_bep        = ysu_add_bep
     Model%ysu_timesplit      = ysu_timesplit
+    Model%do_mmm_ogwd        = do_mmm_ogwd
+    Model%mmm_ogwd_timesplit = mmm_ogwd_timesplit
     Model%acm               = acm
     Model%dspheat           = dspheat
     Model%hurr_pbl          = hurr_pbl
@@ -6132,6 +6140,8 @@ module GFS_typedefs
       print *, ' ysu_topdown_pblmix: ', Model%ysu_topdown_pblmix
       print *, ' ysu_add_bep       : ', Model%ysu_add_bep
       print *, ' ysu_timesplit     : ', Model%ysu_timesplit
+      print *, ' do_mmm_ogwd       : ', Model%do_mmm_ogwd
+      print *, ' mmm_ogwd_timesplit: ', Model%mmm_ogwd_timesplit
       print *, ' acm               : ', Model%acm
       print *, ' dspheat           : ', Model%dspheat
       print *, ' lheatstrg         : ', Model%lheatstrg
@@ -7097,17 +7107,19 @@ module GFS_typedefs
       allocate (Diag%ldt3dt_ngw (IM,Model%levs) )
     endif
 
+    if (Model%do_ugwp_v1 .or. Model%ldiag_ugwp .or. Model%do_mmm_ogwd) then
+       allocate (Diag%du_ogwcol (IM)           )
+       allocate (Diag%dv_ogwcol (IM)           )
+       allocate (Diag%dudt_ogw  (IM,Model%levs))
+       allocate (Diag%dvdt_ogw  (IM,Model%levs))
+    endif
     if (Model%do_ugwp_v1 .or. Model%ldiag_ugwp) then
-      allocate (Diag%dudt_ogw  (IM,Model%levs))
-      allocate (Diag%dvdt_ogw  (IM,Model%levs))
       allocate (Diag%dudt_obl  (IM,Model%levs))
       allocate (Diag%dvdt_obl  (IM,Model%levs))
       allocate (Diag%dudt_oss  (IM,Model%levs))
       allocate (Diag%dvdt_oss  (IM,Model%levs))
       allocate (Diag%dudt_ofd  (IM,Model%levs))
       allocate (Diag%dvdt_ofd  (IM,Model%levs))
-      allocate (Diag%du_ogwcol (IM)           )
-      allocate (Diag%dv_ogwcol (IM)           )
       allocate (Diag%du_oblcol (IM)           )
       allocate (Diag%dv_oblcol (IM)           )
       allocate (Diag%du_osscol (IM)           )
@@ -7399,17 +7411,19 @@ module GFS_typedefs
     Diag%dtdt_gw     = zero
     Diag%kdis_gw     = zero
 
+    if (Model%do_ugwp_v1 .or. Model%ldiag_ugwp .or. Model%do_mmm_ogwd) then
+       Diag%du_ogwcol   = zero
+       Diag%dv_ogwcol   = zero
+       Diag%dudt_ogw    = zero
+       Diag%dvdt_ogw    = zero
+    endif
     if (Model%do_ugwp_v1 .or. Model%ldiag_ugwp) then
-      Diag%dudt_ogw    = zero
-      Diag%dvdt_ogw    = zero
       Diag%dudt_obl    = zero
       Diag%dvdt_obl    = zero
       Diag%dudt_oss    = zero
       Diag%dvdt_oss    = zero
       Diag%dudt_ofd    = zero
       Diag%dvdt_ofd    = zero
-      Diag%du_ogwcol   = zero
-      Diag%dv_ogwcol   = zero
       Diag%du_oblcol   = zero
       Diag%dv_oblcol   = zero
       Diag%du_osscol   = zero

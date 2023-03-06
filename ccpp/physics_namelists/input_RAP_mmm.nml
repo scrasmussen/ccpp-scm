@@ -50,6 +50,7 @@
   do_ysu_cldice      = .true.
   ysu_add_bep        = .false.
   ysu_topdown_pblmix = .true.
+  do_mmm_ogwd  = .true.
   lheatstrg    = .false.
   lseaspray    = .false.
   random_clds  = .false.

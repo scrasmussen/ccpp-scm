@@ -240,8 +240,8 @@ SCHEME_FILES = [
     'ccpp/physics/physics/GFS_rrtmgp_cloud_overlap.F90'     ,
     'ccpp/physics/physics/GFS_rrtmgp_sw_post.F90'           ,
     # NCAR MMM
-    'ccpp/physics/physics/mmm_ysu.F90'
-    #'ccpp/physics/physics/mmm_physics/bl_gwdo.F'            ,
+    'ccpp/physics/physics/mmm_ysu.F90'                      ,
+    'ccpp/physics/physics/mmm_gwdo.F90'#                     ,
     #'ccpp/physics/physics/mmm_physics/sf_sfclayrev.F'
     ]
 

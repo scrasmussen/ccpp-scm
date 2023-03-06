@@ -83,6 +83,13 @@
   dimensions = ()
   type = real
   kind = kind_phys
+[con_1ograv]
+  standard_name = one_divided_by_gravitational_acceleration
+  long_name = one divided by gravitational acceleration
+  units = s2 m-1
+  dimensions = ()
+  type = real
+  kind = kind_phys
 [con_hfus]
   standard_name = latent_heat_of_fusion_of_water_at_0C
   long_name = latent heat of fusion
