@@ -5336,6 +5336,24 @@
   units = flag
   dimensions = ()
   type = logical
+[mmm_ogwd_sfcflx]
+  standard_name = flag_for_MMM_OGWD_scheme_to_use_provided_surface_fluxes
+  long_name = flag for MMM OGWD scheme to use provided surface flxues
+  units = flag
+  dimensions = ()
+  type = integer
+[mmm_ogwd_isftcflx]
+  standard_name = control_for_thermal_roughness_lengths_over_water_in_MMM_OGWD_scheme
+  long_name = flag for thermal roughness lengths over water in MMM OGWD scheme
+  units = 1
+  dimensions = ()
+  type = integer
+[mmm_ogwd_iz0tlnd]
+  standard_name = control_for_thermal_roughness_lengths_over_land_in_MMM_OGWD_scheme
+  long_name = flag for thermal roughness lengths over land in MMM OGWD	scheme
+  units = 1
+  dimensions = ()
+  type = integer
 [cal_pre]
   standard_name = flag_for_dominant_precipitation_type_partition
   long_name = flag controls precip type algorithm
