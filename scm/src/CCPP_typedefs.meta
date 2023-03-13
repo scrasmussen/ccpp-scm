@@ -3077,6 +3077,13 @@
   type = real
   kind = kind_phys
   active = (flag_for_ysu_pbl_scheme)
+[zol]
+  standard_name = surface_stability_parameter
+  long_name = monin-obukhov surface stability parameter
+  units = none
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
 
 ########################################################################
 [ccpp-table-properties]
