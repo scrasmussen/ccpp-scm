@@ -457,6 +457,8 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: dlg(:,:)           => null()
     real (kind=kind_phys), pointer      :: sfk(:,:)           => null()
     real (kind=kind_phys), pointer      :: vlk(:,:)           => null()
+    !
+    real (kind=kind_phys), pointer      :: zol(:)             => null()
 
     !-- 3D diagnostics
     integer :: rtg_ozone_index, rtg_tke_index
@@ -960,6 +962,7 @@ contains
           allocate (Interstitial%vlk(IM,Model%levs))
        endif
     endif
+    allocate (Interstitial%zol(IM))
 
     !
     ! Set components that do not change
@@ -1578,6 +1581,7 @@ contains
           Interstitial%vlk = clear_val
        endif
     endif
+    Interstitial%zol = clear_val
 !
     ! Reset fields that are conditional on physics choices
     if (Model%imp_physics == Model%imp_physics_gfdl .or. Model%imp_physics == Model%imp_physics_thompson  &

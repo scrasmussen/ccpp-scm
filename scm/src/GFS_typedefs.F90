@@ -1038,6 +1038,9 @@ module GFS_typedefs
     logical              :: ysu_timesplit      !< flag for YSU: Update internal-state after calling scheme?
     logical              :: do_mmm_ogwd        !< flag for MMM OGWD: flag for NCAR MMMs OGWD scheme.
     logical              :: mmm_ogwd_timesplit !< flag for MMM OGWD: Update internal-state after calling scheme?
+    integer              :: mmm_ogwd_sfcflx    !< flag for MMM OGWD: Use provided surface heat/moisture surface fluxes?
+    integer              :: mmm_ogwd_isftcflx  !< flag for MMM OGWD: Control for thermal roughness length over ocean.
+    integer              :: mmm_ogwd_iz0tlnd   !< flag for MMM OGWD: Control for thermal roughness length over land.
     logical              :: acm             !< flag for ACM turbulent mixing scheme
     logical              :: dspheat         !< flag for tke dissipative heating
     logical              :: hurr_pbl        !< flag for hurricane-specific options in PBL scheme
@@ -3259,7 +3262,10 @@ module GFS_typedefs
     logical              :: ysu_topdown_pblmix  = .false.             !< flag for YSU: Option for YSU PBL mixing.
     logical              :: ysu_timesplit       = .false.             !< flag for YSU: Update internal-state after calling scheme?  
     logical              :: do_mmm_ogwd         = .false.             !< flag for MMM OGWD: flag for NCAR MMMs OGWD scheme.
-    logical              :: mmm_ogwd_timesplit  = .false.             !< flag for MMM OGWD: Update internal-state after calling scheme?    
+    logical              :: mmm_ogwd_timesplit  = .false.             !< flag for MMM OGWD: Update internal-state after calling scheme?
+    integer              :: mmm_ogwd_sfcflx     = 0                   !< flag for MMM OGWD: Use provided surface heat/moisture surface fluxes?
+    integer              :: mmm_ogwd_isftcflx   = 0                   !< flag for MMM OGWD: Control for thermal roughness length over ocean.
+    integer              :: mmm_ogwd_iz0tlnd    = 0                   !< flag for MMM OGWD: Control for thermal roughness length over land.
     logical              :: acm            = .false.                  !< flag for ACM vertical turbulent mixing scheme
     logical              :: dspheat        = .false.                  !< flag for tke dissipative heating
     logical              :: hurr_pbl       = .false.                  !< flag for hurricane-specific options in PBL scheme
@@ -3602,7 +3608,8 @@ module GFS_typedefs
                                h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,        &
                                shinhong, do_ysu, do_ysu_cldliq, do_ysu_cldice, ysu_add_bep, &
                                ysu_topdown_pblmix, ysu_timesplit,                           &
-                               do_mmm_ogwd, mmm_ogwd_timesplit,                             &
+                               do_mmm_ogwd, mmm_ogwd_timesplit, mmm_ogwd_sfcflx,            &
+                               mmm_ogwd_isftcflx, mmm_ogwd_iz0tlnd ,                        &
                                acm, dspheat, lheatstrg,                                     &
                                lseaspray, cnvcld, random_clds, shal_cnv, imfshalcnv,        &
                                imfdeepcnv, isatmedmf, do_deep, jcap,                        &
@@ -4372,6 +4379,9 @@ module GFS_typedefs
     Model%ysu_timesplit      = ysu_timesplit
     Model%do_mmm_ogwd        = do_mmm_ogwd
     Model%mmm_ogwd_timesplit = mmm_ogwd_timesplit
+    Model%mmm_ogwd_sfcflx    = mmm_ogwd_sfcflx
+    Model%mmm_ogwd_isftcflx  = mmm_ogwd_isftcflx
+    Model%mmm_ogwd_iz0tlnd   = mmm_ogwd_iz0tlnd 
     Model%acm               = acm
     Model%dspheat           = dspheat
     Model%hurr_pbl          = hurr_pbl
@@ -6142,6 +6152,9 @@ module GFS_typedefs
       print *, ' ysu_timesplit     : ', Model%ysu_timesplit
       print *, ' do_mmm_ogwd       : ', Model%do_mmm_ogwd
       print *, ' mmm_ogwd_timesplit: ', Model%mmm_ogwd_timesplit
+      print *, ' mmm_ogwd_sfcflx:    ', Model%mmm_ogwd_sfcflx
+      print *, ' mmm_ogwd_isftcflx:  ', Model%mmm_ogwd_isftcflx
+      print *, ' mmm_ogwd_iz0tlnd:   ', Model%mmm_ogwd_iz0tlnd
       print *, ' acm               : ', Model%acm
       print *, ' dspheat           : ', Model%dspheat
       print *, ' lheatstrg         : ', Model%lheatstrg
