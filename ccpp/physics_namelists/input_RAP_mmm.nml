@@ -1,8 +1,8 @@
 &gfs_physics_nml
   fhzero       = 6
   h2o_phys     = .true.
-  ldiag3d      = .false.
-  qdiag3d      = .false.
+  ldiag3d      = .true.
+  qdiag3d      = .true.
   print_diff_pgr = .false.
   fhcyc        = 24
   use_ufo      = .true.
@@ -44,13 +44,12 @@
   hybedmf      = .false.
   satmedmf     = .false.
   isatmedmf    = 0
-  do_mynnedmf  = .false.
+  do_mynnedmf  = .true.
   do_ysu             = .true.
   do_ysu_cldliq      = .true.
   do_ysu_cldice      = .true.
   ysu_add_bep        = .false.
   ysu_topdown_pblmix = .true.
-  do_mmm_ogwd  = .true.
   lheatstrg    = .false.
   lseaspray    = .false.
   random_clds  = .false.
