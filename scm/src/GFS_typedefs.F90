@@ -114,6 +114,7 @@ module GFS_typedefs
 !--- blocking data
     integer, pointer :: blksz(:)                 !< for explicit data blocking
                                                  !< default blksz(1)=[nx*ny]
+    integer :: blk_start                         !< default block starting index
 !--- ak/bk for pressure level calculations
     real(kind=kind_phys), pointer :: ak(:)       !< from surface (k=1) to TOA (k=levs)
     real(kind=kind_phys), pointer :: bk(:)       !< from surface (k=1) to TOA (k=levs)
@@ -406,11 +407,13 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: zol(:)           => null()  !surface stability parameter
     real (kind=kind_phys), pointer :: mol(:)           => null()  !theta star
     real (kind=kind_phys), pointer :: rmol(:)          => null()  !reciprocal of obukhov length
-    real (kind=kind_phys), pointer :: flhc(:)          => null()  !drag coeff for heat
-    real (kind=kind_phys), pointer :: flqc(:)          => null()  !drag coeff for moisture
     real (kind=kind_phys), pointer :: chs2(:)          => null()  !exch coeff for heat at 2m
     real (kind=kind_phys), pointer :: cqs2(:)          => null()  !exch coeff for moisture at 2m
     real (kind=kind_phys), pointer :: lh(:)            => null()  !latent heating at the surface
+
+    ! MYNN surface layer AND MMM YSU PBL
+    real (kind=kind_phys), pointer :: flhc(:)          => null()  !drag coeff for heat
+    real (kind=kind_phys), pointer :: flqc(:)          => null()  !drag coeff for moisture
 
     !---- precipitation amounts from previous time step for RUC LSM/NoahMP LSM
     real (kind=kind_phys), pointer :: raincprv  (:)    => null()  !< explicit rainfall from previous timestep
@@ -741,6 +744,7 @@ module GFS_typedefs
     integer              :: tile_num
     integer              :: nblks           !< for explicit data blocking: number of blocks
     integer,     pointer :: blksz(:)        !< for explicit data blocking: block sizes of all blocks
+    integer              :: blk_start       !< for explicit data blocking: block starting index
     integer              :: ncols           !< total number of columns for all blocks
 
     integer              :: fire_aux_data_levels !< vertical levels of fire auxiliary data
@@ -2751,12 +2755,11 @@ module GFS_typedefs
     end if
 
     allocate (Sfcprop%rmol   (IM ))
-    allocate (Sfcprop%flhc   (IM ))
-    allocate (Sfcprop%flqc   (IM ))
+    allocate (Sfcprop%flhc   (IM )) ! DJS2023: Should be conditional on do_mynnsfclay AND do_ysu
+    allocate (Sfcprop%flqc   (IM )) ! DJS2023: Should be conditional on do_mynnsfclay AND do_ysu
     Sfcprop%rmol        = clear_val
-    Sfcprop%flhc        = clear_val
-    Sfcprop%flqc        = clear_val
-
+    Sfcprop%flhc        = clear_val ! DJS2023: Should be conditional on do_mynnsfclay AND do_ysu
+    Sfcprop%flqc        = clear_val ! DJS2023: Should be conditional on do_mynnsfclay AND do_ysu
     if (Model%do_mynnsfclay) then
     ! For MYNN surface layer scheme
        !print*,"Allocating all MYNN-sfclay variables"
@@ -4412,6 +4415,7 @@ module GFS_typedefs
     allocate(Model%blksz(1:Model%nblks))
     Model%blksz            = blksz
     Model%ncols            = sum(Model%blksz)
+    Model%blk_start        = 1
 
 !--- coupling parameters
     Model%cplflx           = cplflx
