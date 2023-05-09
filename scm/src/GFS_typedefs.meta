@@ -1963,6 +1963,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_ysu_pbl_scheme)
 [flqc]
   standard_name = surface_exchange_coefficient_for_moisture
   long_name = surface exchange coefficient for moisture
@@ -1970,6 +1971,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_ysu_pbl_scheme)
 [chs2]
   standard_name = surface_exchange_coefficient_for_heat_at_2m
   long_name = exchange coefficient for heat at 2 meters
@@ -2880,7 +2882,7 @@
   active = (flag_for_surface_flux_coupling .and. do_mediator_atmosphere_ocean_fluxes)
 [sncovr1_lnd]
   standard_name = surface_snow_area_fraction_over_land_from_land
-  long_name = surface snow area fraction over land for coupling 
+  long_name = surface snow area fraction over land for coupling
   units = frac
   dimensions = (horizontal_loop_extent)
   type = real
@@ -3543,6 +3545,12 @@
   standard_name = horizontal_loop_extent
   long_name = horizontal loop extent
   units = count
+  dimensions = ()
+  type = integer
+[blk_start]
+  standard_name = horizontal_loop_begin
+  long_name = horizontal loop begin
+  units = none
   dimensions = ()
   type = integer
 [ncols]
@@ -5297,7 +5305,7 @@
 [do_ysu_cldliq]
   standard_name = flag_to_include_cloud_liquid_water_mixing_ratio_in_ysu_pbl
   long_name = flag for cloud water mixing ratio
-  units = flag 
+  units = flag
   dimensions = ()
   type = logical
 [do_ysu_cldice]

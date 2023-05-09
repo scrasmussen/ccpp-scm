@@ -37,7 +37,9 @@
       <scheme>dcyc2t3</scheme>
       <scheme>GFS_suite_interstitial_2</scheme>
       <scheme>GFS_PBL_generic_pre</scheme>
-      <scheme>mmm_ysu</scheme>
+      <scheme>gfs_mmm_ysu_pre</scheme>
+      <scheme>bl_ysu</scheme>
+      <scheme>gfs_mmm_ysu_post</scheme>
       <scheme>GFS_PBL_generic_post</scheme>
       <scheme>GFS_GWD_generic_pre</scheme>
       <scheme>drag_suite</scheme>

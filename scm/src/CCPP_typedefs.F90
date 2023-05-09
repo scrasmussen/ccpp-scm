@@ -353,8 +353,6 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: relhum(:,:)               => null()  !<
     real (kind=kind_phys), pointer      :: tv_lay(:,:)               => null()  !<
     real (kind=kind_phys), pointer      :: qs_lay(:,:)               => null()  !<
-    real (kind=kind_phys), pointer      :: q_lay(:,:)                => null()  !<
-    real (kind=kind_phys), pointer      :: deltaZ(:,:)               => null()  !<
     real (kind=kind_phys), pointer      :: deltaZc(:,:)              => null()  !< 
     real (kind=kind_phys), pointer      :: deltaP(:,:)               => null()  !< 
     real (kind=kind_phys), pointer      :: cloud_overlap_param(:,:)  => null()  !< Cloud overlap parameter
@@ -413,7 +411,19 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: oa4ss(:,:)         => null()  !<
     real (kind=kind_phys), pointer      :: clxss(:,:)         => null()  !<
 
+    !-- RRTMGP and MMM YSU PBL
+    real (kind=kind_phys), pointer      :: q_lay(:,:)         => null()  !<
+    real (kind=kind_phys), pointer      :: deltaZ(:,:)        => null()  !<  
+
     !-- NCAR MMM physics
+    real (kind=kind_phys), pointer      :: xland(:)           => null()
+    real (kind=kind_phys), pointer      :: qcx(:,:)           => null()
+    real (kind=kind_phys), pointer      :: qix(:,:)           => null()
+    real (kind=kind_phys), pointer      :: hfx(:)             => null()
+    real (kind=kind_phys), pointer      :: qfx(:)             => null()
+    real (kind=kind_phys), pointer      :: exch_hx(:,:)       => null()
+    real (kind=kind_phys), pointer      :: exch_mx(:,:)       => null()
+    real (kind=kind_phys), pointer      :: rthraten(:,:)      => null()
     real (kind=kind_phys), pointer      :: dudt_pbl(:,:)      => null() 
     real (kind=kind_phys), pointer      :: dvdt_pbl(:,:)      => null() 
     real (kind=kind_phys), pointer      :: dtdt_pbl(:,:)      => null() 
@@ -696,8 +706,6 @@ contains
        allocate (Interstitial%tv_lay               (IM, Model%levs))
        allocate (Interstitial%relhum               (IM, Model%levs))
        allocate (Interstitial%qs_lay               (IM, Model%levs))
-       allocate (Interstitial%q_lay                (IM, Model%levs))
-       allocate (Interstitial%deltaZ               (IM, Model%levs))
        allocate (Interstitial%deltaZc              (IM, Model%levs))
        allocate (Interstitial%deltaP               (IM, Model%levs))
        allocate (Interstitial%p_lev                (IM, Model%levs+1))
@@ -826,32 +834,46 @@ contains
        allocate (Interstitial%q2mp  (IM))
     end if
 
+    ! RRTMGP and NCAR MMM physics
+    if (Model%do_ysu .or. Model%do_RRTMGP) then
+       allocate (Interstitial%q_lay  (IM, Model%levs))
+       allocate (Interstitial%deltaZ (IM, Model%levs))
+    end if
+
     ! NCAR MMM physics
     if (Model%do_ysu) then
-       allocate (Interstitial%dudt_pbl (IM,Model%levs))
-       allocate (Interstitial%dvdt_pbl (IM,Model%levs))
-       allocate (Interstitial%dtdt_pbl (IM,Model%levs))
-       allocate (Interstitial%dqvdt_pbl(IM,Model%levs))
-       allocate (Interstitial%dqcdt_pbl(IM,Model%levs))
-       allocate (Interstitial%dqidt_pbl(IM,Model%levs))
-       allocate (Interstitial%dqtdt_pbl(IM,Model%levs,Model%ntrac))
-       allocate (Interstitial%wstar(IM))
-       allocate (Interstitial%delta(IM))
+       allocate (Interstitial%xland     (IM))
+       allocate (Interstitial%hfx       (IM))
+       allocate (Interstitial%qfx       (IM))
+       allocate (Interstitial%wstar     (IM))
+       allocate (Interstitial%delta     (IM))
+       allocate (Interstitial%qcx       (IM,Model%levs))
+       allocate (Interstitial%qix       (IM,Model%levs))
+       allocate (Interstitial%exch_hx   (IM,Model%levs))
+       allocate (Interstitial%exch_mx   (IM,Model%levs))
+       allocate (Interstitial%rthraten  (IM,Model%levs))
+       allocate (Interstitial%dudt_pbl  (IM,Model%levs))
+       allocate (Interstitial%dvdt_pbl  (IM,Model%levs))
+       allocate (Interstitial%dtdt_pbl  (IM,Model%levs))
+       allocate (Interstitial%dqvdt_pbl (IM,Model%levs))
+       allocate (Interstitial%dqcdt_pbl (IM,Model%levs))
+       allocate (Interstitial%dqidt_pbl (IM,Model%levs))
+       allocate (Interstitial%dqtdt_pbl (IM,Model%levs,Model%ntrac))
        if (Model%ysu_add_bep) then
-          allocate (Interstitial%a_u(IM,Model%levs))
-          allocate (Interstitial%a_v(IM,Model%levs))
-          allocate (Interstitial%a_t(IM,Model%levs))
-          allocate (Interstitial%a_q(IM,Model%levs))
-          allocate (Interstitial%a_e(IM,Model%levs))
-          allocate (Interstitial%b_u(IM,Model%levs))
-          allocate (Interstitial%b_v(IM,Model%levs))
-          allocate (Interstitial%b_t(IM,Model%levs))
-          allocate (Interstitial%b_q(IM,Model%levs))
-          allocate (Interstitial%b_e(IM,Model%levs))
-          allocate (Interstitial%dlu(IM,Model%levs))
-          allocate (Interstitial%dlg(IM,Model%levs))
-          allocate (Interstitial%sfk(IM,Model%levs))
-          allocate (Interstitial%vlk(IM,Model%levs))
+          allocate (Interstitial%a_u (IM,Model%levs))
+          allocate (Interstitial%a_v (IM,Model%levs))
+          allocate (Interstitial%a_t (IM,Model%levs))
+          allocate (Interstitial%a_q (IM,Model%levs))
+          allocate (Interstitial%a_e (IM,Model%levs))
+          allocate (Interstitial%b_u (IM,Model%levs))
+          allocate (Interstitial%b_v (IM,Model%levs))
+          allocate (Interstitial%b_t (IM,Model%levs))
+          allocate (Interstitial%b_q (IM,Model%levs))
+          allocate (Interstitial%b_e (IM,Model%levs))
+          allocate (Interstitial%dlu (IM,Model%levs))
+          allocate (Interstitial%dlg (IM,Model%levs))
+          allocate (Interstitial%sfk (IM,Model%levs))
+          allocate (Interstitial%vlk (IM,Model%levs))
        endif
     endif
     allocate (Interstitial%zol(IM))
@@ -1144,8 +1166,6 @@ contains
       Interstitial%tv_lay               = clear_val
       Interstitial%relhum               = clear_val
       Interstitial%qs_lay               = clear_val
-      Interstitial%q_lay                = clear_val
-      Interstitial%deltaZ               = clear_val
       Interstitial%deltaZc              = clear_val
       Interstitial%deltaP               = clear_val
       Interstitial%p_lev                = clear_val
@@ -1431,18 +1451,32 @@ contains
        Interstitial%oa4ss           = clear_val
        Interstitial%clxss           = clear_val
     end if
+    
+    ! RRTMGP and NCAR MMM physics
+    if (Model%do_ysu .or. Model%do_RRTMGP) then
+       Interstitial%q_lay  = clear_val
+       Interstitial%deltaZ = clear_val
+    endif
 
     ! NCAR MMM physics
     if (Model%do_ysu) then
-       Interstitial%dudt_pbl  = clear_val
-       Interstitial%dvdt_pbl  = clear_val
-       Interstitial%dtdt_pbl  = clear_val
-       Interstitial%dqvdt_pbl = clear_val
-       Interstitial%dqcdt_pbl = clear_val
-       Interstitial%dqidt_pbl = clear_val
-       Interstitial%dqtdt_pbl = clear_val
-       Interstitial%wstar     = clear_val
-       Interstitial%delta     = clear_val
+       Interstitial%xland       = 0
+       Interstitial%qcx         = clear_val
+       Interstitial%qix         = clear_val
+       Interstitial%hfx         = clear_val
+       Interstitial%qfx         = clear_val
+       Interstitial%exch_hx     = clear_val
+       Interstitial%exch_mx     = clear_val
+       Interstitial%rthraten    = clear_val
+       Interstitial%dudt_pbl    = clear_val
+       Interstitial%dvdt_pbl    = clear_val
+       Interstitial%dtdt_pbl    = clear_val
+       Interstitial%dqvdt_pbl   = clear_val
+       Interstitial%dqcdt_pbl   = clear_val
+       Interstitial%dqidt_pbl   = clear_val
+       Interstitial%dqtdt_pbl   = clear_val
+       Interstitial%wstar       = clear_val
+       Interstitial%delta       = clear_val
        if (Model%ysu_add_bep) then
           Interstitial%a_u = clear_val
           Interstitial%a_v = clear_val
