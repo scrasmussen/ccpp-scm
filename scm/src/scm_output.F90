@@ -294,7 +294,13 @@ subroutine output_init_interstitial(ncid, time_inst_id, time_rad_id, hor_dim_id,
   call NetCDF_def_var(ncid, 'rad_eff_rad_qr',     NF90_FLOAT, "instantaneous effective radius for raindrop used in radiation (radiation timesteps only)",     "um",      dummy_id, (/ hor_dim_id, vert_dim_rad_id, time_rad_id /))
   call NetCDF_def_var(ncid, 'rad_cloud_swp',      NF90_FLOAT, "instantaneous snow water path used in radiation (radiation timesteps only)",                   "g m-2",   dummy_id, (/ hor_dim_id, vert_dim_rad_id, time_rad_id /))
   call NetCDF_def_var(ncid, 'rad_eff_rad_qs',     NF90_FLOAT, "instantaneous effective radius for snowflake in radiation (radiation timesteps only)",         "um",      dummy_id, (/ hor_dim_id, vert_dim_rad_id, time_rad_id /))
-  
+ !WL - MMM Phys
+if ( physics%model%do_ysu ) then
+    call NetCDF_def_var(ncid, 'dqv_dt_pbl',     NF90_FLOAT, "instantaneous tendency of water vapor mixing ratio due to boundary layer",         "kg kg-1 s-1",      dummy_id, (/ hor_dim_id, vert_dim_rad_id, time_inst_id /))
+    call NetCDF_def_var(ncid, 'dqc_dt_pbl',     NF90_FLOAT, "instantaneous tendency of cloud water mixing ratio due to boundary layer",         "kg kg-1 s-1",      dummy_id, (/ hor_dim_id, vert_dim_rad_id, time_inst_id /))
+    call NetCDF_def_var(ncid, 'dqi_dt_pbl',     NF90_FLOAT, "instantaneous tendency of ice water mixing ratio due to boundary layer",         "kg kg-1 s-1",      dummy_id, (/ hor_dim_id, vert_dim_rad_id, time_inst_id /))
+end if
+!WL - MMM Phys 
 end subroutine output_init_interstitial
 
 subroutine output_init_radtend(ncid, time_swrad_id, time_lwrad_id, hor_dim_id, vert_dim_id)
@@ -623,7 +629,13 @@ subroutine output_append_interstitial_inst(ncid, scm_state, physics)
     call NetCDF_put_var(ncid, "mp_prcp_inst",    physics%Interstitial%prcpmp(:), scm_state%itt_out)
     call NetCDF_put_var(ncid, "dcnv_prcp_inst",  physics%Interstitial%raincd(:), scm_state%itt_out)
     call NetCDF_put_var(ncid, "scnv_prcp_inst",  physics%Interstitial%raincs(:), scm_state%itt_out)
-
+!WL - MMM Phys
+if ( physics%model%do_ysu ) then
+    call NetCDF_put_var(ncid, "dqv_dt_pbl",  physics%Interstitial%dqvdt_pbl(:,:), scm_state%itt_out)
+    call NetCDF_put_var(ncid, "dqc_dt_pbl",  physics%Interstitial%dqcdt_pbl(:,:), scm_state%itt_out)
+    call NetCDF_put_var(ncid, "dqi_dt_pbl",  physics%Interstitial%dqidt_pbl(:,:), scm_state%itt_out)
+end if
+!WL - MMM Phys
 end subroutine output_append_interstitial_inst
 
 subroutine output_append_interstitial_rad(ncid, scm_state, physics)
