@@ -1410,7 +1410,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (control_for_nsstm > 0)
+  active = (control_for_nsstm > 0 .or. flag_for_mmm_sfclayrev_scheme)
 [xtts]
   standard_name = derivative_of_heat_content_in_diurnal_thermocline_wrt_surface_skin_temperature
   long_name = d(xt)/d(ts)
@@ -1932,7 +1932,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme)
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_mmm_sfclayrev_scheme)
 [zol]
   standard_name = ratio_of_height_to_monin_obukhov_length
   long_name = monin obukhov surface stability parameter
@@ -1940,7 +1940,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme)
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_mmm_sfclayrev_scheme)
 [mol]
   standard_name = surface_temperature_scale
   long_name = temperature flux divided by ustar (temperature scale)
@@ -1948,7 +1948,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme)
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_mmm_sfclayrev_scheme)
 [rmol]
   standard_name = reciprocal_of_obukhov_length
   long_name = one over obukhov length
@@ -1956,6 +1956,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_mmm_sfclayrev_scheme)
 [flhc]
   standard_name = surface_exchange_coefficient_for_heat
   long_name = surface exchange coefficient for heat
@@ -1963,7 +1964,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_ysu_pbl_scheme)
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_ysu_pbl_scheme .or. flag_for_mmm_sfclayrev_scheme)
 [flqc]
   standard_name = surface_exchange_coefficient_for_moisture
   long_name = surface exchange coefficient for moisture
@@ -1971,7 +1972,15 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_ysu_pbl_scheme)
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_ysu_pbl_scheme .or. flag_for_mmm_sfclayrev_scheme)
+[chs]
+  standard_name = surface_exchange_coefficient_for_heat_at_0m
+  long_name = exchange coefficient for heat at 0 meter
+  units = m s-1
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+  active = (flag_for_mmm_sfclayrev_scheme)
 [chs2]
   standard_name = surface_exchange_coefficient_for_heat_at_2m
   long_name = exchange coefficient for heat at 2 meters
@@ -1979,7 +1988,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme)
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_mmm_sfclayrev_scheme)
 [cqs2]
   standard_name = surface_exchange_coefficient_for_moisture_at_2m
   long_name = exchange coefficient for moisture at 2 meters
@@ -1987,7 +1996,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme)
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_mmm_sfclayrev_scheme)
 [lh]
   standard_name = surface_upward_latent_heat_flux
   long_name = latent heating at the surface (pos = up)
@@ -1995,7 +2004,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme)
+  active = (flag_for_mellor_yamada_nakanishi_niino_surface_layer_scheme .or. flag_for_mmm_sfclayrev_scheme)
 [evap]
   standard_name = surface_upward_specific_humidity_flux
   long_name = kinematic surface upward latent heat flux
@@ -5329,6 +5338,24 @@
 [ysu_timesplit]
   standard_name = flag_to_advance_internal_state_after_YSU_PBL_scheme
   long_name = flag to advance internal physics state after calling YSU PBL scheme
+  units = flag
+  dimensions = ()
+  type = logical
+[do_mmm_sfclayrev]
+  standard_name = flag_for_mmm_sfclayrev_scheme
+  long_name = flag for MMM SFCLAYREV scheme
+  units = flag
+  dimensions = ()
+  type = logical
+[isfflx]
+  standard_name = flag_to_compute_surface_heat_and_moisture_fluxes
+  long_name = flag to compute surface heat and moisture fluxes
+  units = flag
+  dimensions = ()
+  type = logical
+[shalwater_z0]
+  standard_name = flag_for_shallow_water_roughness_scheme
+  long_name = shallow water roughness scheme option
   units = flag
   dimensions = ()
   type = logical
