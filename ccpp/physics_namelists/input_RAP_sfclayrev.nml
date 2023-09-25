@@ -44,12 +44,7 @@
   hybedmf      = .false.
   satmedmf     = .false.
   isatmedmf    = 0
-  do_mynnedmf  = .false.
-  do_ysu             = .true.
-  do_ysu_cldliq      = .true.
-  do_ysu_cldice      = .true.
-  ysu_add_bep        = .false.
-  ysu_topdown_pblmix = .true.
+  do_mynnedmf  = .true.
   lheatstrg    = .false.
   lseaspray    = .false.
   random_clds  = .false.
