@@ -207,11 +207,12 @@ SCHEME_FILES = [
     'ccpp/physics/physics/GFS_rrtmgp_cloud_overlap.F90'     ,
     'ccpp/physics/physics/GFS_rrtmgp_post.F90'           ,
     # NCAR MMM
+    'ccpp/physics/physics/gfs_mmm_sfclayrev_pre.F90'        ,
+    'ccpp/physics/physics/gfs_mmm_sfclayrev_post.F90'       ,
     'ccpp/physics/physics/gfs_mmm_ysu_pre.F90'              ,
     'ccpp/physics/physics/gfs_mmm_ysu_post.F90'             ,
-    'ccpp/physics/physics/mmm_physics/bl_ysu.F90'           ,
-    'ccpp/physics/physics/mmm_gwdo.F90'                     ,
-    'ccpp/physics/physics/mmm_sfclay.F90'
+    'ccpp/physics/physics/mmm_physics/sf_sfclayrev.F90'     ,
+    'ccpp/physics/physics/mmm_physics/bl_ysu.F90'
     ]
 
 # Default build dir, relative to current working directory,

@@ -376,16 +376,17 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: acsnow_land(:)     => null()  !< ruc lsm diagnostics over land
     real (kind=kind_phys), pointer :: acsnow_ice(:)      => null()  !< ruc lsm diagnostics over ice
 
-    !  MYNN surface layer
+    !  MYNN surface layer and MMM SFCLAYREV
     real (kind=kind_phys), pointer :: ustm (:)         => null()  !u* including drag
     real (kind=kind_phys), pointer :: zol(:)           => null()  !surface stability parameter
     real (kind=kind_phys), pointer :: mol(:)           => null()  !theta star
     real (kind=kind_phys), pointer :: rmol(:)          => null()  !reciprocal of obukhov length
+    real (kind=kind_phys), pointer :: chs(:)           => null()  !exch coeff for heat at 0m
     real (kind=kind_phys), pointer :: chs2(:)          => null()  !exch coeff for heat at 2m
     real (kind=kind_phys), pointer :: cqs2(:)          => null()  !exch coeff for moisture at 2m
     real (kind=kind_phys), pointer :: lh(:)            => null()  !latent heating at the surface
 
-    ! MYNN surface layer AND MMM YSU PBL
+    ! MYNN surface layer AND MMM YSU PBL and MMM SFCLAYREV
     real (kind=kind_phys), pointer :: flhc(:)          => null()  !drag coeff for heat
     real (kind=kind_phys), pointer :: flqc(:)          => null()  !drag coeff for moisture
 
@@ -1062,6 +1063,9 @@ module GFS_typedefs
     logical              :: ysu_add_bep        !< flag for YSU: Flag to include BEP forcing.
     logical              :: ysu_topdown_pblmix !< flag for YSU: Option for YSU PBL mixing. 
     logical              :: ysu_timesplit      !< flag for YSU: Update internal-state after calling scheme?
+    logical              :: do_mmm_sfclayrev   !< flag for MMM SFCLAY_REV
+    logical              :: isfflx             !< flag for MMM SFCLAY_REV: calculate surface fluxes
+    logical              :: shalwater_z0       !< flag for MMM SFCLAY_REV: shallow water roughness scheme
     logical              :: do_mmm_ogwd        !< flag for MMM OGWD: flag for NCAR MMMs OGWD scheme.
     logical              :: mmm_ogwd_timesplit !< flag for MMM OGWD: Update internal-state after calling scheme?
     integer              :: mmm_ogwd_sfcflx    !< flag for MMM OGWD: Use provided surface heat/moisture surface fluxes?
@@ -1153,8 +1157,8 @@ module GFS_typedefs
     real(kind=kind_phys) :: bl_mynn_closure    !< flag to determine closure level of MYNN
     logical              :: sfclay_compute_flux!< flag for thermal roughness lengths over water in mynnsfclay
     logical              :: sfclay_compute_diag!< flag for computing surface diagnostics in mynnsfclay
-    integer              :: isftcflx           !< flag for thermal roughness lengths over water in mynnsfclay 
-    integer              :: iz0tlnd            !< flag for thermal roughness lengths over land in mynnsfclay
+    integer              :: isftcflx           !< flag for thermal roughness lengths over water in mynnsfclay and mmm sfclayrev
+    integer              :: iz0tlnd            !< flag for thermal roughness lengths over land in mynnsfclay and mmm sfclayrev
     real(kind=kind_phys) :: var_ric
     real(kind=kind_phys) :: coef_ric_l
     real(kind=kind_phys) :: coef_ric_s
@@ -2549,12 +2553,13 @@ module GFS_typedefs
        Sfcprop%rmol        = clear_val
        Sfcprop%flhc        = clear_val ! DJS2023: Should be conditional on do_mynnsfclay AND do_ysu
        Sfcprop%flqc        = clear_val ! DJS2023: Should be conditional on do_mynnsfclay AND do_ysu
-    if (Model%do_mynnsfclay) then
+    if (Model%do_mynnsfclay .or. Model%do_mmm_sfclayrev) then
     ! For MYNN surface layer scheme
        !print*,"Allocating all MYNN-sfclay variables"
        allocate (Sfcprop%ustm   (IM ))
        allocate (Sfcprop%zol    (IM ))
        allocate (Sfcprop%mol    (IM ))
+       allocate (Sfcprop%chs    (IM ))
        allocate (Sfcprop%chs2   (IM ))
        allocate (Sfcprop%cqs2   (IM ))
        allocate (Sfcprop%lh     (IM ))
@@ -2563,6 +2568,7 @@ module GFS_typedefs
        Sfcprop%ustm        = clear_val
        Sfcprop%zol         = clear_val
        Sfcprop%mol         = clear_val
+       Sfcprop%chs         = clear_val
        Sfcprop%chs2        = clear_val
        Sfcprop%cqs2        = clear_val
        Sfcprop%lh          = clear_val
@@ -3362,6 +3368,9 @@ module GFS_typedefs
     logical              :: ysu_add_bep         = .false.             !< flag for YSU: Flag to include BEP forcing.
     logical              :: ysu_topdown_pblmix  = .false.             !< flag for YSU: Option for YSU PBL mixing.
     logical              :: ysu_timesplit       = .false.             !< flag for YSU: Update internal-state after calling scheme?  
+    logical              :: do_mmm_sfclayrev    = .false.             !< flag for MMM SFCLAY_REV
+    logical              :: isfflx              = .false.             !< flag for MMM SFCLAY_REV: computer surface fluxes
+    logical              :: shalwater_z0        = .false.             !< flag for MMM SFCLAY_REV: shallow water roughness scheme
     logical              :: do_mmm_ogwd         = .false.             !< flag for MMM OGWD: flag for NCAR MMMs OGWD scheme.
     logical              :: mmm_ogwd_timesplit  = .false.             !< flag for MMM OGWD: Update internal-state after calling scheme?
     integer              :: mmm_ogwd_sfcflx     = 0                   !< flag for MMM OGWD: Use provided surface heat/moisture surface fluxes?
@@ -3725,6 +3734,7 @@ module GFS_typedefs
                                h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,        &
                                shinhong, do_ysu, do_ysu_cldliq, do_ysu_cldice, ysu_add_bep, &
                                ysu_topdown_pblmix, ysu_timesplit,                           &
+                               do_mmm_sfclayrev, isfflx, shalwater_z0,                      &
                                do_mmm_ogwd, mmm_ogwd_timesplit, mmm_ogwd_sfcflx,            &
                                mmm_ogwd_isftcflx, mmm_ogwd_iz0tlnd ,                        &
                                acm, dspheat, lheatstrg,                                     &
@@ -4531,6 +4541,9 @@ module GFS_typedefs
     Model%ysu_topdown_pblmix = ysu_topdown_pblmix
     Model%ysu_add_bep        = ysu_add_bep
     Model%ysu_timesplit      = ysu_timesplit
+    Model%do_mmm_sfclayrev   = do_mmm_sfclayrev
+    Model%isfflx             = isfflx
+    Model%shalwater_z0       = shalwater_z0
     Model%do_mmm_ogwd        = do_mmm_ogwd
     Model%mmm_ogwd_timesplit = mmm_ogwd_timesplit
     Model%mmm_ogwd_sfcflx    = mmm_ogwd_sfcflx
@@ -6347,6 +6360,9 @@ module GFS_typedefs
       print *, ' ysu_topdown_pblmix: ', Model%ysu_topdown_pblmix
       print *, ' ysu_add_bep       : ', Model%ysu_add_bep
       print *, ' ysu_timesplit     : ', Model%ysu_timesplit
+      print *, ' do_mmm_sfclayrev  : ', Model%do_mmm_sfclayrev
+      print *, ' isfflx            : ', Model%isfflx    
+      print *, ' shalwater_z0      : ', Model%shalwater_z0
       print *, ' do_mmm_ogwd       : ', Model%do_mmm_ogwd
       print *, ' mmm_ogwd_timesplit: ', Model%mmm_ogwd_timesplit
       print *, ' mmm_ogwd_sfcflx:    ', Model%mmm_ogwd_sfcflx
