@@ -2921,7 +2921,7 @@
   kind = kind_phys
   active = (do_stochastically_perturbed_parameterizations)
 [spp_wts_sfc]
-  standard_name = spp_weights_for_surface_layer_scheme 
+  standard_name = spp_weights_for_surface_layer_scheme
   long_name = spp weights for surface layer scheme
   units = 1
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
@@ -2930,7 +2930,7 @@
   active = (do_stochastically_perturbed_parameterizations)
 [spp_wts_mp]
   standard_name = spp_weights_for_microphysics_scheme
-  long_name = spp weights for microphysics scheme 
+  long_name = spp weights for microphysics scheme
   units = 1
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
@@ -2938,7 +2938,7 @@
   active = (do_stochastically_perturbed_parameterizations)
 [spp_wts_gwd]
   standard_name = spp_weights_for_gravity_wave_drag_scheme
-  long_name = spp weights for gravity wave drag scheme 
+  long_name = spp weights for gravity wave drag scheme
   units = 1
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
@@ -2946,7 +2946,7 @@
   active = (do_stochastically_perturbed_parameterizations)
 [spp_wts_rad]
   standard_name = spp_weights_for_radiation_scheme
-  long_name = spp weights for radiation scheme 
+  long_name = spp weights for radiation scheme
   units = 1
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
@@ -3740,7 +3740,7 @@
   type = integer
 [inc_minor_gas]
   standard_name = flag_to_include_minor_gases_in_rrtmg
-  long_name = flag to include minor trace gases in rrtmg 
+  long_name = flag to include minor trace gases in rrtmg
   units = flag
   dimensions = ()
   type = logical
@@ -6339,7 +6339,7 @@
   type = integer
 [ntbcl]
   standard_name = index_for_bcphilic
-  long_name = index for bcphilic 
+  long_name = index for bcphilic
   units = index
   dimensions = ()
   type = integer
@@ -6351,7 +6351,7 @@
   type = integer
 [ntocl]
   standard_name = index_for_ocphilic
-  long_name = index for ocphilic 
+  long_name = index for ocphilic
   units = index
   dimensions = ()
   type = integer
@@ -9659,6 +9659,7 @@
   relative_path = ../../ccpp/physics/physics
   dependencies = machine.F,physcons.F90,radlw_param.f,radsw_param.f
   dependencies = GFDL_parse_tracers.F90,h2o_def.f,ozne_def.f,GFS_ccpp_suite_sim_pre.F90
+  dependencies = w3emc_wrapper.F90
 
 [ccpp-arg-table]
   name = GFS_typedefs
