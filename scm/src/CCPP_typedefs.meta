@@ -690,6 +690,14 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+[ep1]
+  standard_name = ratio_of_water_vapor_to_dry_air_gas_constants_minus_one
+  long_name = (Rwv / Rdair) - 1.0
+  units = 1
+  dimensions = ()
+  type = real
+  kind = kind_phys
+  intent = in
 [ep1d]
   standard_name = surface_upward_potential_latent_heat_flux
   long_name = surface upward potential latent heat flux
@@ -1604,6 +1612,20 @@
   type = real
   kind = kind_phys
   active = (control_for_land_surface_scheme == identifier_for_noahmp_land_surface_scheme)
+[rho_air]
+  standard_name = air_density
+  long_name = air density
+  units = kg m-3
+  dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+[qc]
+  standard_name = cloud_condensed_water_mixing_ratio
+  long_name = cloud condensed water mixing ratio
+  units = kg kg-1 
+  dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
 [qgl]
   standard_name = local_graupel_mixing_ratio
   long_name = ratio of mass of graupel to mass of dry air plus vapor (without condensates) local to physics
@@ -2847,6 +2869,32 @@
   type = real
   kind = kind_phys
   active = (flag_for_CCPP_suite_simulator)
+[hail_opt]
+  standard_name = flag_for_hail_instead_of_graupel_parameters
+  long_name = flag for hail instead of graupel parameters (graupel if false)
+  units = flag
+  dimensions = ()
+  type = integer
+[evapprod2d]
+  standard_name = grid_scale_production_of_evaporation
+  long_name = grid-scale production of evaporation
+  units = kg kg-1 s-1
+  dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+[rainprod2d]
+  standard_name = grid_scale_production_of_rain
+  long_name = grid-scale production of rain
+  units = kg kg-1 s-1
+  dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+[vertical_dimension_start]
+  standard_name = vertical_dimension_start
+  long_name = vertical dimension start
+  units = none
+  dimensions = ()
+  type = integer
 
 ########################################################################
 [ccpp-table-properties]
