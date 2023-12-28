@@ -286,3 +286,44 @@
   dimensions = ()
   type = real
   kind = kind_phys
+[con_qmin]
+  standard_name = minimum_value_of_water_vapor_mixing_ratio
+  long_name = minimum value of water vapor mixing ratio
+  units = kg kg-1
+  dimensions = ()
+  type = real
+  kind = kind_phys
+[con_cv]
+  standard_name = specific_heat_of_dry_air_at_constant_volume
+  long_name = specific heat of dry air at constant volume
+  units = J kg-1 K-1
+  dimensions = ()
+  type = real
+  kind = kind_phys
+[con_xls]
+  standard_name = latent_heat_of_sublimation_of_water_at_0C
+  long_name = latent heat of sublimation of water at 0C
+  units = J kg-1
+  dimensions = ()
+  type = real | kind = kind_phys
+[con_rhodryair]
+  standard_name = density_of_dry_air
+  long_name = density of dry air
+  units = kg m-3
+  dimensions = ()
+  type = real
+  kind = kind_phys
+[con_rhosnow]
+  standard_name = density_of_snow
+  long_name = density of snow
+  units = kg m-3
+  dimensions = ()
+  type = real
+  kind = kind_phys
+[con_4rv]
+  standard_name = four_times_gas_constant_water_vapor
+  long_name = four times the gas constant water vapor
+  units = J kg-1 K-1
+  dimensions = ()
+  type = real
+  kind = kind_phys
