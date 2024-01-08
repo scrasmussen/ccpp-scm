@@ -2901,6 +2901,25 @@
   units = none
   dimensions = ()
   type = integer
+[vertical_dimension_end]
+  standard_name = vertical_dimension_end
+  long_name = vertical dimension end
+  units = count
+  dimensions = ()
+  type = integer
+[horizontal_begin]
+  standard_name = horizontal_begin
+  long_name = horizontal dimension start
+  units = count
+  dimensions = ()
+  type = integer
+[horizontal_end]
+  standard_name = horizontal_end
+  long_name = horizontal dimension end
+  units = count
+  dimensions = ()
+  type = integer
+
 
 ########################################################################
 [ccpp-table-properties]
