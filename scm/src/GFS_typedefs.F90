@@ -113,6 +113,7 @@ module GFS_typedefs
 !--- blocking data
     integer, pointer :: blksz(:)                 !< for explicit data blocking
                                                  !< default blksz(1)=[nx*ny]
+    integer :: blk_start                         !< default block starting index
 !--- ak/bk for pressure level calculations
     real(kind=kind_phys), pointer :: ak(:)       !< from surface (k=1) to TOA (k=levs)
     real(kind=kind_phys), pointer :: bk(:)       !< from surface (k=1) to TOA (k=levs)
@@ -397,16 +398,19 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: acsnow_land(:)     => null()  !< ruc lsm diagnostics over land
     real (kind=kind_phys), pointer :: acsnow_ice(:)      => null()  !< ruc lsm diagnostics over ice
 
-    !  MYNN surface layer
+    !  MYNN surface layer and MMM SFCLAYREV
     real (kind=kind_phys), pointer :: ustm (:)         => null()  !u* including drag
     real (kind=kind_phys), pointer :: zol(:)           => null()  !surface stability parameter
     real (kind=kind_phys), pointer :: mol(:)           => null()  !theta star
     real (kind=kind_phys), pointer :: rmol(:)          => null()  !reciprocal of obukhov length
-    real (kind=kind_phys), pointer :: flhc(:)          => null()  !drag coeff for heat
-    real (kind=kind_phys), pointer :: flqc(:)          => null()  !drag coeff for moisture
+    real (kind=kind_phys), pointer :: chs(:)           => null()  !exch coeff for heat at 0m
     real (kind=kind_phys), pointer :: chs2(:)          => null()  !exch coeff for heat at 2m
     real (kind=kind_phys), pointer :: cqs2(:)          => null()  !exch coeff for moisture at 2m
     real (kind=kind_phys), pointer :: lh(:)            => null()  !latent heating at the surface
+
+    ! MYNN surface layer AND MMM YSU PBL and MMM SFCLAYREV
+    real (kind=kind_phys), pointer :: flhc(:)          => null()  !drag coeff for heat
+    real (kind=kind_phys), pointer :: flqc(:)          => null()  !drag coeff for moisture
 
     !---- precipitation amounts from previous time step for RUC LSM/NoahMP LSM
     real (kind=kind_phys), pointer :: raincprv  (:)    => null()  !< explicit rainfall from previous timestep
@@ -714,6 +718,7 @@ module GFS_typedefs
     integer              :: tile_num
     integer              :: nblks           !< for explicit data blocking: number of blocks
     integer,     pointer :: blksz(:)        !< for explicit data blocking: block sizes of all blocks
+    integer              :: blk_start       !< for explicit data blocking: block starting index
     integer              :: ncols           !< total number of columns for all blocks
 
     integer              :: fire_aux_data_levels !< vertical levels of fire auxiliary data
@@ -1122,6 +1127,19 @@ module GFS_typedefs
                                             !< vertical turbulent mixing scheme
     logical              :: shinhong        !< flag for scale-aware Shinhong vertical turbulent mixing scheme
     logical              :: do_ysu          !< flag for YSU turbulent mixing scheme
+    logical              :: do_ysu_cldliq      !< flag for YSU: use provided cloud-water mixing ratio
+    logical              :: do_ysu_cldice      !< flag for YSU: use provided cloud-ice mixing ratio
+    logical              :: ysu_add_bep        !< flag for YSU: Flag to include BEP forcing.
+    logical              :: ysu_topdown_pblmix !< flag for YSU: Option for YSU PBL mixing. 
+    logical              :: ysu_timesplit      !< flag for YSU: Update internal-state after calling scheme?
+    logical              :: do_mmm_sfclayrev   !< flag for MMM SFCLAY_REV
+    logical              :: isfflx             !< flag for MMM SFCLAY_REV: calculate surface fluxes
+    logical              :: shalwater_z0       !< flag for MMM SFCLAY_REV: shallow water roughness scheme
+    logical              :: do_mmm_ogwd        !< flag for MMM OGWD: flag for NCAR MMMs OGWD scheme.
+    logical              :: mmm_ogwd_timesplit !< flag for MMM OGWD: Update internal-state after calling scheme?
+    integer              :: mmm_ogwd_sfcflx    !< flag for MMM OGWD: Use provided surface heat/moisture surface fluxes?
+    integer              :: mmm_ogwd_isftcflx  !< flag for MMM OGWD: Control for thermal roughness length over ocean.
+    integer              :: mmm_ogwd_iz0tlnd   !< flag for MMM OGWD: Control for thermal roughness length over land.
     logical              :: acm             !< flag for ACM turbulent mixing scheme
     logical              :: dspheat         !< flag for tke dissipative heating
     logical              :: hurr_pbl        !< flag for hurricane-specific options in PBL scheme
@@ -1214,8 +1232,13 @@ module GFS_typedefs
     real(kind=kind_phys) :: bl_mynn_closure    !< flag to determine closure level of MYNN
     logical              :: sfclay_compute_flux!< flag for thermal roughness lengths over water in mynnsfclay
     logical              :: sfclay_compute_diag!< flag for computing surface diagnostics in mynnsfclay
+<<<<<<< HEAD
     integer              :: isftcflx           !< flag for thermal roughness lengths over water in mynnsfclay
     integer              :: iz0tlnd            !< flag for thermal roughness lengths over land in mynnsfclay
+=======
+    integer              :: isftcflx           !< flag for thermal roughness lengths over water in mynnsfclay and mmm sfclayrev
+    integer              :: iz0tlnd            !< flag for thermal roughness lengths over land in mynnsfclay and mmm sfclayrev
+>>>>>>> weiwei/mmm_phy
     real(kind=kind_phys) :: var_ric
     real(kind=kind_phys) :: coef_ric_l
     real(kind=kind_phys) :: coef_ric_s
@@ -2692,17 +2715,18 @@ module GFS_typedefs
     end if
 
        allocate (Sfcprop%rmol   (IM ))
-       allocate (Sfcprop%flhc   (IM ))
-       allocate (Sfcprop%flqc   (IM ))
+       allocate (Sfcprop%flhc   (IM )) ! DJS2023: Should be conditional on do_mynnsfclay AND do_ysu
+       allocate (Sfcprop%flqc   (IM )) ! DJS2023: Should be conditional on do_mynnsfclay AND do_ysu
        Sfcprop%rmol        = clear_val
-       Sfcprop%flhc        = clear_val
-       Sfcprop%flqc        = clear_val
-    if (Model%do_mynnsfclay) then
+       Sfcprop%flhc        = clear_val ! DJS2023: Should be conditional on do_mynnsfclay AND do_ysu
+       Sfcprop%flqc        = clear_val ! DJS2023: Should be conditional on do_mynnsfclay AND do_ysu
+    if (Model%do_mynnsfclay .or. Model%do_mmm_sfclayrev) then
     ! For MYNN surface layer scheme
        !print*,"Allocating all MYNN-sfclay variables"
        allocate (Sfcprop%ustm   (IM ))
        allocate (Sfcprop%zol    (IM ))
        allocate (Sfcprop%mol    (IM ))
+       allocate (Sfcprop%chs    (IM ))
        allocate (Sfcprop%chs2   (IM ))
        allocate (Sfcprop%cqs2   (IM ))
        allocate (Sfcprop%lh     (IM ))
@@ -2711,6 +2735,7 @@ module GFS_typedefs
        Sfcprop%ustm        = clear_val
        Sfcprop%zol         = clear_val
        Sfcprop%mol         = clear_val
+       Sfcprop%chs         = clear_val
        Sfcprop%chs2        = clear_val
        Sfcprop%cqs2        = clear_val
        Sfcprop%lh          = clear_val
@@ -3580,6 +3605,19 @@ module GFS_typedefs
                                                                       !< vertical turbulent mixing scheme
     logical              :: shinhong       = .false.                  !< flag for scale-aware Shinhong vertical turbulent mixing scheme
     logical              :: do_ysu         = .false.                  !< flag for YSU vertical turbulent mixing scheme
+    logical              :: do_ysu_cldliq       = .false.             !< flag for YSU: use provided cloud-water mixing ratio 
+    logical              :: do_ysu_cldice       = .false.             !< flag for YSU: use provided cloud-ice mixing ratio 
+    logical              :: ysu_add_bep         = .false.             !< flag for YSU: Flag to include BEP forcing.
+    logical              :: ysu_topdown_pblmix  = .false.             !< flag for YSU: Option for YSU PBL mixing.
+    logical              :: ysu_timesplit       = .false.             !< flag for YSU: Update internal-state after calling scheme?  
+    logical              :: do_mmm_sfclayrev    = .false.             !< flag for MMM SFCLAY_REV
+    logical              :: isfflx              = .false.             !< flag for MMM SFCLAY_REV: computer surface fluxes
+    logical              :: shalwater_z0        = .false.             !< flag for MMM SFCLAY_REV: shallow water roughness scheme
+    logical              :: do_mmm_ogwd         = .false.             !< flag for MMM OGWD: flag for NCAR MMMs OGWD scheme.
+    logical              :: mmm_ogwd_timesplit  = .false.             !< flag for MMM OGWD: Update internal-state after calling scheme?
+    integer              :: mmm_ogwd_sfcflx     = 0                   !< flag for MMM OGWD: Use provided surface heat/moisture surface fluxes?
+    integer              :: mmm_ogwd_isftcflx   = 0                   !< flag for MMM OGWD: Control for thermal roughness length over ocean.
+    integer              :: mmm_ogwd_iz0tlnd    = 0                   !< flag for MMM OGWD: Control for thermal roughness length over land.
     logical              :: acm            = .false.                  !< flag for ACM vertical turbulent mixing scheme
     logical              :: dspheat        = .false.                  !< flag for tke dissipative heating
     logical              :: hurr_pbl       = .false.                  !< flag for hurricane-specific options in PBL scheme
@@ -3970,11 +4008,24 @@ module GFS_typedefs
                                do_ugwp_v1, do_ugwp_v1_orog_only,  do_ugwp_v1_w_gsldrag,     &
                                ugwp_seq_update, var_ric, coef_ric_l, coef_ric_s, hurr_pbl,  &
                                do_myjsfc, do_myjpbl,                                        &
+<<<<<<< HEAD
                                hwrf_samfdeep, hwrf_samfshal,progsigma,betascu,betamcu,      &
                                betadcu,h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,&
                                shinhong, do_ysu, dspheat, lheatstrg, lseaspray, cnvcld,     &
                                random_clds, shal_cnv, imfshalcnv, imfdeepcnv, isatmedmf,    &
                                do_deep, jcap,                                               &
+=======
+                               hwrf_samfdeep, hwrf_samfshal,progsigma,                      &
+                               h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,        &
+                               shinhong, do_ysu, do_ysu_cldliq, do_ysu_cldice, ysu_add_bep, &
+                               ysu_topdown_pblmix, ysu_timesplit,                           &
+                               do_mmm_sfclayrev, isfflx, shalwater_z0,                      &
+                               do_mmm_ogwd, mmm_ogwd_timesplit, mmm_ogwd_sfcflx,            &
+                               mmm_ogwd_isftcflx, mmm_ogwd_iz0tlnd ,                        &
+                               acm, dspheat, lheatstrg,                                     &
+                               lseaspray, cnvcld, random_clds, shal_cnv, imfshalcnv,        &
+                               imfdeepcnv, isatmedmf, do_deep, jcap,                        &
+>>>>>>> weiwei/mmm_phy
                                cs_parm, flgmin, cgwf, ccwf, cdmbgwd, sup, ctei_rm, crtrh,   &
                                dlqf, rbcr, shoc_parm, psauras, prauras, wminras,            &
                                do_sppt, do_shum, do_skeb,                                   &
@@ -4269,6 +4320,7 @@ module GFS_typedefs
     allocate(Model%blksz(1:Model%nblks))
     Model%blksz            = blksz
     Model%ncols            = sum(Model%blksz)
+    Model%blk_start        = 1
 
 !--- coupling parameters
     Model%cplflx           = cplflx
@@ -4837,7 +4889,20 @@ module GFS_typedefs
     Model%hybedmf           = hybedmf
     Model%satmedmf          = satmedmf
     Model%shinhong          = shinhong
-    Model%do_ysu            = do_ysu
+    Model%do_ysu             = do_ysu
+    Model%do_ysu_cldliq      = do_ysu_cldliq
+    Model%do_ysu_cldice      = do_ysu_cldice
+    Model%ysu_topdown_pblmix = ysu_topdown_pblmix
+    Model%ysu_add_bep        = ysu_add_bep
+    Model%ysu_timesplit      = ysu_timesplit
+    Model%do_mmm_sfclayrev   = do_mmm_sfclayrev
+    Model%isfflx             = isfflx
+    Model%shalwater_z0       = shalwater_z0
+    Model%do_mmm_ogwd        = do_mmm_ogwd
+    Model%mmm_ogwd_timesplit = mmm_ogwd_timesplit
+    Model%mmm_ogwd_sfcflx    = mmm_ogwd_sfcflx
+    Model%mmm_ogwd_isftcflx  = mmm_ogwd_isftcflx
+    Model%mmm_ogwd_iz0tlnd   = mmm_ogwd_iz0tlnd 
     Model%acm               = acm
     Model%dspheat           = dspheat
     Model%hurr_pbl          = hurr_pbl
@@ -5832,6 +5897,8 @@ module GFS_typedefs
         print *,' MYNN PBL scheme used'
       elseif (Model%do_myjpbl)then
         print *,' MYJ PBL scheme used'
+      elseif (Model%do_ysu)then
+        print *,' YSU PBL scheme used'
       endif
       if (.not. Model%shal_cnv) then
         Model%imfshalcnv = -1
@@ -6703,6 +6770,19 @@ module GFS_typedefs
       print *, ' isatmedmf         : ', Model%isatmedmf
       print *, ' shinhong          : ', Model%shinhong
       print *, ' do_ysu            : ', Model%do_ysu
+      print *, ' do_ysu_cldliq     : ', Model%do_ysu_cldliq
+      print *, ' do_ysu_cldice     : ', Model%do_ysu_cldice
+      print *, ' ysu_topdown_pblmix: ', Model%ysu_topdown_pblmix
+      print *, ' ysu_add_bep       : ', Model%ysu_add_bep
+      print *, ' ysu_timesplit     : ', Model%ysu_timesplit
+      print *, ' do_mmm_sfclayrev  : ', Model%do_mmm_sfclayrev
+      print *, ' isfflx            : ', Model%isfflx    
+      print *, ' shalwater_z0      : ', Model%shalwater_z0
+      print *, ' do_mmm_ogwd       : ', Model%do_mmm_ogwd
+      print *, ' mmm_ogwd_timesplit: ', Model%mmm_ogwd_timesplit
+      print *, ' mmm_ogwd_sfcflx:    ', Model%mmm_ogwd_sfcflx
+      print *, ' mmm_ogwd_isftcflx:  ', Model%mmm_ogwd_isftcflx
+      print *, ' mmm_ogwd_iz0tlnd:   ', Model%mmm_ogwd_iz0tlnd
       print *, ' acm               : ', Model%acm
       print *, ' dspheat           : ', Model%dspheat
       print *, ' lheatstrg         : ', Model%lheatstrg
@@ -7741,17 +7821,19 @@ module GFS_typedefs
       allocate (Diag%ldt3dt_ngw (IM,Model%levs) )
     endif
 
+    if (Model%do_ugwp_v1 .or. Model%ldiag_ugwp .or. Model%do_mmm_ogwd) then
+       allocate (Diag%du_ogwcol (IM)           )
+       allocate (Diag%dv_ogwcol (IM)           )
+       allocate (Diag%dudt_ogw  (IM,Model%levs))
+       allocate (Diag%dvdt_ogw  (IM,Model%levs))
+    endif
     if (Model%do_ugwp_v1 .or. Model%ldiag_ugwp) then
-      allocate (Diag%dudt_ogw  (IM,Model%levs))
-      allocate (Diag%dvdt_ogw  (IM,Model%levs))
       allocate (Diag%dudt_obl  (IM,Model%levs))
       allocate (Diag%dvdt_obl  (IM,Model%levs))
       allocate (Diag%dudt_oss  (IM,Model%levs))
       allocate (Diag%dvdt_oss  (IM,Model%levs))
       allocate (Diag%dudt_ofd  (IM,Model%levs))
       allocate (Diag%dvdt_ofd  (IM,Model%levs))
-      allocate (Diag%du_ogwcol (IM)           )
-      allocate (Diag%dv_ogwcol (IM)           )
       allocate (Diag%du_oblcol (IM)           )
       allocate (Diag%dv_oblcol (IM)           )
       allocate (Diag%du_osscol (IM)           )
@@ -8062,17 +8144,19 @@ module GFS_typedefs
     Diag%dtdt_gw     = zero
     Diag%kdis_gw     = zero
 
+    if (Model%do_ugwp_v1 .or. Model%ldiag_ugwp .or. Model%do_mmm_ogwd) then
+       Diag%du_ogwcol   = zero
+       Diag%dv_ogwcol   = zero
+       Diag%dudt_ogw    = zero
+       Diag%dvdt_ogw    = zero
+    endif
     if (Model%do_ugwp_v1 .or. Model%ldiag_ugwp) then
-      Diag%dudt_ogw    = zero
-      Diag%dvdt_ogw    = zero
       Diag%dudt_obl    = zero
       Diag%dvdt_obl    = zero
       Diag%dudt_oss    = zero
       Diag%dvdt_oss    = zero
       Diag%dudt_ofd    = zero
       Diag%dvdt_ofd    = zero
-      Diag%du_ogwcol   = zero
-      Diag%dv_ogwcol   = zero
       Diag%du_oblcol   = zero
       Diag%dv_oblcol   = zero
       Diag%du_osscol   = zero

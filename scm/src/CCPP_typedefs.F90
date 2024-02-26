@@ -57,10 +57,12 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: alpha(:,:)         => null()  !<
     real (kind=kind_phys), pointer      :: bexp1d(:)          => null()  !<
     real (kind=kind_phys), pointer      :: cd(:)              => null()  !<
+    real (kind=kind_phys), pointer      :: cd10(:)            => null()  !<
     real (kind=kind_phys), pointer      :: cd_ice(:)          => null()  !<
     real (kind=kind_phys), pointer      :: cd_land(:)         => null()  !<
     real (kind=kind_phys), pointer      :: cd_water(:)        => null()  !<
     real (kind=kind_phys), pointer      :: cdq(:)             => null()  !<
+    real (kind=kind_phys), pointer      :: cdq10(:)           => null()  !<
     real (kind=kind_phys), pointer      :: cdq_ice(:)         => null()  !<
     real (kind=kind_phys), pointer      :: cdq_land(:)        => null()  !<
     real (kind=kind_phys), pointer      :: cdq_water(:)       => null()  !<
@@ -352,8 +354,6 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: relhum(:,:)               => null()  !<
     real (kind=kind_phys), pointer      :: tv_lay(:,:)               => null()  !<
     real (kind=kind_phys), pointer      :: qs_lay(:,:)               => null()  !<
-    real (kind=kind_phys), pointer      :: q_lay(:,:)                => null()  !<
-    real (kind=kind_phys), pointer      :: deltaZ(:,:)               => null()  !<
     real (kind=kind_phys), pointer      :: deltaZc(:,:)              => null()  !< 
     real (kind=kind_phys), pointer      :: deltaP(:,:)               => null()  !< 
     real (kind=kind_phys), pointer      :: cloud_overlap_param(:,:)  => null()  !< Cloud overlap parameter
@@ -412,6 +412,64 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: oa4ss(:,:)         => null()  !<
     real (kind=kind_phys), pointer      :: clxss(:,:)         => null()  !<
 
+    !-- RRTMGP and MMM YSU PBL and MMM SFCLAYREV
+    real (kind=kind_phys), pointer      :: q_lay(:,:)         => null()  !<
+    real (kind=kind_phys), pointer      :: deltaZ(:,:)        => null()  !<  
+
+    !-- NCAR MMM physics
+    logical                             :: scm_force_flux                !< prescribe surface fluxes (not compute)  
+    real (kind=kind_phys), pointer      :: xland(:)           => null()
+    real (kind=kind_phys), pointer      :: qcx(:,:)           => null()
+    real (kind=kind_phys), pointer      :: qix(:,:)           => null()
+    real (kind=kind_phys), pointer      :: hfx(:)             => null()
+    real (kind=kind_phys), pointer      :: qfx(:)             => null()
+    real (kind=kind_phys), pointer      :: qgh(:)             => null()
+    real (kind=kind_phys), pointer      :: qsfc(:)            => null()
+    real (kind=kind_phys), pointer      :: gz1oz0(:)          => null()
+    real (kind=kind_phys), pointer      :: water_depth(:)     => null()
+    real (kind=kind_phys)               :: shalwater_depth
+    real (kind=kind_phys)               :: svp1
+    real (kind=kind_phys)               :: svp2
+    real (kind=kind_phys)               :: svp3
+    real (kind=kind_phys)               :: svpt0
+    real (kind=kind_phys)               :: p1000mb 
+    integer                             :: its
+    integer                             :: ite
+    real (kind=kind_phys), pointer      :: exch_hx(:,:)       => null()
+    real (kind=kind_phys), pointer      :: exch_mx(:,:)       => null()
+    real (kind=kind_phys), pointer      :: rthraten(:,:)      => null()
+    real (kind=kind_phys), pointer      :: dudt_pbl(:,:)      => null() 
+    real (kind=kind_phys), pointer      :: dvdt_pbl(:,:)      => null() 
+    real (kind=kind_phys), pointer      :: dtdt_pbl(:,:)      => null() 
+    real (kind=kind_phys), pointer      :: dqvdt_pbl(:,:)     => null() 
+    real (kind=kind_phys), pointer      :: dqcdt_pbl(:,:)     => null() 
+    real (kind=kind_phys), pointer      :: dqidt_pbl(:,:)     => null() 
+    real (kind=kind_phys), pointer      :: dqtdt_pbl(:,:,:)   => null() 
+    real (kind=kind_phys), pointer      :: wstar(:)           => null()
+    real (kind=kind_phys), pointer      :: znt(:)             => null()
+    real (kind=kind_phys), pointer      :: mavail(:)          => null()
+    real (kind=kind_phys), pointer      :: pbl_regime(:)      => null()
+    real (kind=kind_phys), pointer      :: fm(:)              => null()
+    real (kind=kind_phys), pointer      :: fh(:)              => null()
+    real (kind=kind_phys), pointer      :: cpm(:)             => null()
+    real (kind=kind_phys), pointer      :: delta(:)           => null()
+    real (kind=kind_phys), pointer      :: a_u(:,:)           => null()
+    real (kind=kind_phys), pointer      :: a_v(:,:)           => null()
+    real (kind=kind_phys), pointer      :: a_t(:,:)           => null()
+    real (kind=kind_phys), pointer      :: a_q(:,:)           => null()
+    real (kind=kind_phys), pointer      :: a_e(:,:)           => null()
+    real (kind=kind_phys), pointer      :: b_u(:,:)           => null()
+    real (kind=kind_phys), pointer      :: b_v(:,:)           => null()
+    real (kind=kind_phys), pointer      :: b_t(:,:)           => null()
+    real (kind=kind_phys), pointer      :: b_q(:,:)           => null()
+    real (kind=kind_phys), pointer      :: b_e(:,:)           => null()
+    real (kind=kind_phys), pointer      :: dlu(:,:)           => null()
+    real (kind=kind_phys), pointer      :: dlg(:,:)           => null()
+    real (kind=kind_phys), pointer      :: sfk(:,:)           => null()
+    real (kind=kind_phys), pointer      :: vlk(:,:)           => null()
+    !
+    real (kind=kind_phys), pointer      :: zol(:)             => null()
+
     !-- 3D diagnostics
     integer :: rtg_ozone_index, rtg_tke_index
 
@@ -466,10 +524,12 @@ contains
     end if
     allocate (Interstitial%bexp1d          (IM))
     allocate (Interstitial%cd              (IM))
+    allocate (Interstitial%cd10            (IM))
     allocate (Interstitial%cd_ice          (IM))
     allocate (Interstitial%cd_land         (IM))
     allocate (Interstitial%cd_water        (IM))
     allocate (Interstitial%cdq             (IM))
+    allocate (Interstitial%cdq10           (IM))
     allocate (Interstitial%cdq_ice         (IM))
     allocate (Interstitial%cdq_land        (IM))
     allocate (Interstitial%cdq_water       (IM))
@@ -667,8 +727,6 @@ contains
        allocate (Interstitial%tv_lay               (IM, Model%levs))
        allocate (Interstitial%relhum               (IM, Model%levs))
        allocate (Interstitial%qs_lay               (IM, Model%levs))
-       allocate (Interstitial%q_lay                (IM, Model%levs))
-       allocate (Interstitial%deltaZ               (IM, Model%levs))
        allocate (Interstitial%deltaZc              (IM, Model%levs))
        allocate (Interstitial%deltaP               (IM, Model%levs))
        allocate (Interstitial%p_lev                (IM, Model%levs+1))
@@ -796,6 +854,67 @@ contains
        allocate (Interstitial%t2mmp (IM))
        allocate (Interstitial%q2mp  (IM))
     end if
+
+    ! RRTMGP and NCAR MMM physics
+    if (Model%do_ysu .or. Model%do_RRTMGP .or. Model%do_mmm_sfclayrev) then
+       allocate (Interstitial%q_lay  (IM, Model%levs))
+       allocate (Interstitial%deltaZ (IM, Model%levs))
+    end if
+
+    ! NCAR MMM physics
+    if (Model%do_mmm_sfclayrev) then
+        allocate (Interstitial%znt          (IM))
+        allocate (Interstitial%mavail       (IM))
+        allocate (Interstitial%pbl_regime   (IM))
+        allocate (Interstitial%fm           (IM))
+        allocate (Interstitial%fh           (IM))
+        allocate (Interstitial%cpm          (IM))
+        allocate (Interstitial%qgh          (IM))
+        allocate (Interstitial%qsfc         (IM))
+        allocate (Interstitial%gz1oz0       (IM))
+        allocate (Interstitial%water_depth  (IM))
+
+        Interstitial%scm_force_flux = .false. ! If MMM surface scheme used, fluxes are not prescribed 
+    endif
+    if (Model%do_ysu .or. Model%do_mmm_sfclayrev) then
+       allocate (Interstitial%xland     (IM))
+       allocate (Interstitial%hfx       (IM))
+       allocate (Interstitial%qfx       (IM))
+    endif
+    if (Model%do_ysu) then
+       allocate (Interstitial%wstar     (IM))
+       allocate (Interstitial%delta     (IM))
+       allocate (Interstitial%qcx       (IM,Model%levs))
+       allocate (Interstitial%qix       (IM,Model%levs))
+       allocate (Interstitial%exch_hx   (IM,Model%levs))
+       allocate (Interstitial%exch_mx   (IM,Model%levs))
+       allocate (Interstitial%rthraten  (IM,Model%levs))
+       allocate (Interstitial%dudt_pbl  (IM,Model%levs))
+       allocate (Interstitial%dvdt_pbl  (IM,Model%levs))
+       allocate (Interstitial%dtdt_pbl  (IM,Model%levs))
+       allocate (Interstitial%dqvdt_pbl (IM,Model%levs))
+       allocate (Interstitial%dqcdt_pbl (IM,Model%levs))
+       allocate (Interstitial%dqidt_pbl (IM,Model%levs))
+       allocate (Interstitial%dqtdt_pbl (IM,Model%levs,Model%ntrac))
+       if (Model%ysu_add_bep) then
+          allocate (Interstitial%a_u (IM,Model%levs))
+          allocate (Interstitial%a_v (IM,Model%levs))
+          allocate (Interstitial%a_t (IM,Model%levs))
+          allocate (Interstitial%a_q (IM,Model%levs))
+          allocate (Interstitial%a_e (IM,Model%levs))
+          allocate (Interstitial%b_u (IM,Model%levs))
+          allocate (Interstitial%b_v (IM,Model%levs))
+          allocate (Interstitial%b_t (IM,Model%levs))
+          allocate (Interstitial%b_q (IM,Model%levs))
+          allocate (Interstitial%b_e (IM,Model%levs))
+          allocate (Interstitial%dlu (IM,Model%levs))
+          allocate (Interstitial%dlg (IM,Model%levs))
+          allocate (Interstitial%sfk (IM,Model%levs))
+          allocate (Interstitial%vlk (IM,Model%levs))
+       endif
+    endif
+    allocate (Interstitial%zol(IM))
+
     !
     ! Set components that do not change
     Interstitial%frain            = Model%dtf/Model%dtp
@@ -1084,8 +1203,6 @@ contains
       Interstitial%tv_lay               = clear_val
       Interstitial%relhum               = clear_val
       Interstitial%qs_lay               = clear_val
-      Interstitial%q_lay                = clear_val
-      Interstitial%deltaZ               = clear_val
       Interstitial%deltaZc              = clear_val
       Interstitial%deltaP               = clear_val
       Interstitial%p_lev                = clear_val
@@ -1170,10 +1287,12 @@ contains
     Interstitial%adjvisdfd       = clear_val
     Interstitial%bexp1d          = clear_val
     Interstitial%cd              = clear_val
+    Interstitial%cd10            = clear_val
     Interstitial%cd_ice          = Model%huge
     Interstitial%cd_land         = Model%huge
     Interstitial%cd_water        = Model%huge
     Interstitial%cdq             = clear_val
+    Interstitial%cdq10           = clear_val
     Interstitial%cdq_ice         = Model%huge
     Interstitial%cdq_land        = Model%huge
     Interstitial%cdq_water       = Model%huge
@@ -1370,6 +1489,72 @@ contains
        Interstitial%oa4ss           = clear_val
        Interstitial%clxss           = clear_val
     end if
+    
+    ! RRTMGP and NCAR MMM physics
+    if (Model%do_ysu .or. Model%do_RRTMGP .or. Model%do_mmm_sfclayrev) then
+       Interstitial%q_lay  = clear_val
+       Interstitial%deltaZ = clear_val
+    endif
+
+    ! NCAR MMM physics
+    if (Model%do_mmm_sfclayrev) then
+       Interstitial%znt             = clear_val
+       Interstitial%mavail          = clear_val
+       Interstitial%pbl_regime      = clear_val
+       Interstitial%fm              = clear_val
+       Interstitial%fh              = clear_val
+       Interstitial%cpm             = clear_val
+       Interstitial%qgh             = clear_val
+       Interstitial%qsfc            = clear_val
+       Interstitial%gz1oz0          = clear_val
+       Interstitial%water_depth     = clear_val
+       Interstitial%shalwater_depth = clear_val
+       Interstitial%svp1            = clear_val
+       Interstitial%svp2            = clear_val
+       Interstitial%svp3            = clear_val
+       Interstitial%svpt0           = clear_val
+       Interstitial%p1000mb         = clear_val
+       Interstitial%its             = 0
+       Interstitial%ite             = 0
+    endif
+    if (Model%do_ysu .or. Model%do_mmm_sfclayrev) then
+       Interstitial%xland       = 0
+       Interstitial%hfx         = clear_val
+       Interstitial%qfx         = clear_val
+    endif
+    if (Model%do_ysu) then
+       Interstitial%qcx         = clear_val
+       Interstitial%qix         = clear_val
+       Interstitial%exch_hx     = clear_val
+       Interstitial%exch_mx     = clear_val
+       Interstitial%rthraten    = clear_val
+       Interstitial%dudt_pbl    = clear_val
+       Interstitial%dvdt_pbl    = clear_val
+       Interstitial%dtdt_pbl    = clear_val
+       Interstitial%dqvdt_pbl   = clear_val
+       Interstitial%dqcdt_pbl   = clear_val
+       Interstitial%dqidt_pbl   = clear_val
+       Interstitial%dqtdt_pbl   = clear_val
+       Interstitial%wstar       = clear_val
+       Interstitial%delta       = clear_val
+       if (Model%ysu_add_bep) then
+          Interstitial%a_u = clear_val
+          Interstitial%a_v = clear_val
+          Interstitial%a_t = clear_val
+          Interstitial%a_q = clear_val
+          Interstitial%a_e = clear_val
+          Interstitial%b_u = clear_val
+          Interstitial%b_v = clear_val
+          Interstitial%b_t = clear_val
+          Interstitial%b_q = clear_val
+          Interstitial%b_e = clear_val
+          Interstitial%dlu = clear_val
+          Interstitial%dlg = clear_val
+          Interstitial%sfk = clear_val
+          Interstitial%vlk = clear_val
+       endif
+    endif
+    Interstitial%zol = clear_val
 !
     ! Reset fields that are conditional on physics choices
     if (Model%imp_physics == Model%imp_physics_gfdl .or. Model%imp_physics == Model%imp_physics_thompson  &

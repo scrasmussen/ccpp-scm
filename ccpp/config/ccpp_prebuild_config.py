@@ -216,7 +216,14 @@ SCHEME_FILES = [
     'ccpp/physics/physics/GFS_rrtmgp_post.F90'              ,
     # CCPP-SCM
     'ccpp/physics/physics/GFS_ccpp_suite_sim_pre.F90'       ,
-    'ccpp/physics/physics/ccpp_suite_simulator.F90'
+    'ccpp/physics/physics/ccpp_suite_simulator.F90'         ,
+    # NCAR MMM
+    'ccpp/physics/physics/gfs_mmm_sfclayrev_pre.F90'        ,
+    'ccpp/physics/physics/gfs_mmm_sfclayrev_post.F90'       ,
+    'ccpp/physics/physics/gfs_mmm_ysu_pre.F90'              ,
+    'ccpp/physics/physics/gfs_mmm_ysu_post.F90'             ,
+    'ccpp/physics/physics/mmm_physics/sf_sfclayrev.F90'     ,
+    'ccpp/physics/physics/mmm_physics/bl_ysu.F90'
     ]
 
 # Default build dir, relative to current working directory,
