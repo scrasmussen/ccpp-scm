@@ -36,6 +36,7 @@ public
   real(kind=dp),parameter:: con_eps    =con_rd/con_rv
   real(kind=dp),parameter:: con_epsm1  =con_rd/con_rv - 1._dp
   real(kind=dp),parameter:: con_1ovg   =1._dp/con_g
+  real(kind=dp),parameter:: con_1ograv =con_1ovg
 
   real(kind=dp),parameter:: karman = 0.4_dp
   

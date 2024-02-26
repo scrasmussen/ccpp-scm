@@ -1232,13 +1232,8 @@ module GFS_typedefs
     real(kind=kind_phys) :: bl_mynn_closure    !< flag to determine closure level of MYNN
     logical              :: sfclay_compute_flux!< flag for thermal roughness lengths over water in mynnsfclay
     logical              :: sfclay_compute_diag!< flag for computing surface diagnostics in mynnsfclay
-<<<<<<< HEAD
-    integer              :: isftcflx           !< flag for thermal roughness lengths over water in mynnsfclay
-    integer              :: iz0tlnd            !< flag for thermal roughness lengths over land in mynnsfclay
-=======
     integer              :: isftcflx           !< flag for thermal roughness lengths over water in mynnsfclay and mmm sfclayrev
     integer              :: iz0tlnd            !< flag for thermal roughness lengths over land in mynnsfclay and mmm sfclayrev
->>>>>>> weiwei/mmm_phy
     real(kind=kind_phys) :: var_ric
     real(kind=kind_phys) :: coef_ric_l
     real(kind=kind_phys) :: coef_ric_s
@@ -4008,14 +4003,8 @@ module GFS_typedefs
                                do_ugwp_v1, do_ugwp_v1_orog_only,  do_ugwp_v1_w_gsldrag,     &
                                ugwp_seq_update, var_ric, coef_ric_l, coef_ric_s, hurr_pbl,  &
                                do_myjsfc, do_myjpbl,                                        &
-<<<<<<< HEAD
-                               hwrf_samfdeep, hwrf_samfshal,progsigma,betascu,betamcu,      &
-                               betadcu,h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,&
-                               shinhong, do_ysu, dspheat, lheatstrg, lseaspray, cnvcld,     &
-                               random_clds, shal_cnv, imfshalcnv, imfdeepcnv, isatmedmf,    &
-                               do_deep, jcap,                                               &
-=======
                                hwrf_samfdeep, hwrf_samfshal,progsigma,                      &
+                               betascu, betamcu, betadcu,                                   &
                                h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,        &
                                shinhong, do_ysu, do_ysu_cldliq, do_ysu_cldice, ysu_add_bep, &
                                ysu_topdown_pblmix, ysu_timesplit,                           &
@@ -4025,7 +4014,6 @@ module GFS_typedefs
                                acm, dspheat, lheatstrg,                                     &
                                lseaspray, cnvcld, random_clds, shal_cnv, imfshalcnv,        &
                                imfdeepcnv, isatmedmf, do_deep, jcap,                        &
->>>>>>> weiwei/mmm_phy
                                cs_parm, flgmin, cgwf, ccwf, cdmbgwd, sup, ctei_rm, crtrh,   &
                                dlqf, rbcr, shoc_parm, psauras, prauras, wminras,            &
                                do_sppt, do_shum, do_skeb,                                   &
