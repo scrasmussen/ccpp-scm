@@ -4111,8 +4111,9 @@ module GFS_typedefs
                                do_ugwp_v1, do_ugwp_v1_orog_only,  do_ugwp_v1_w_gsldrag,     &
                                ugwp_seq_update, var_ric, coef_ric_l, coef_ric_s, hurr_pbl,  &
                                do_myjsfc, do_myjpbl,                                        &
-                               hwrf_samfdeep, hwrf_samfshal,progsigma,betascu,betamcu,      &
-                               betadcu,h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,&
+                               hwrf_samfdeep, hwrf_samfshal,progsigma,                      &
+                               betascu, betamcu, betadcu,                                   &
+                               h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,        &
                                shinhong, do_ysu, do_ysu_cldliq, do_ysu_cldice, ysu_add_bep, &
                                ysu_topdown_pblmix, ysu_timesplit,                           &
                                do_mmm_sfclayrev, isfflx, shalwater_z0,                      &
