@@ -17,6 +17,7 @@ VARIABLE_DEFINITION_FILES = [
     # actual variable definition files
     'ccpp/framework/src/ccpp_types.F90',
     'ccpp/physics/physics/machine.F',
+    'ccpp/physics/physics/mmm_kinds.F90',
     'ccpp/physics/physics/radsw_param.f',
     'ccpp/physics/physics/radlw_param.f',
     'ccpp/physics/physics/h2o_def.f',
@@ -38,6 +39,9 @@ TYPEDEFS_NEW_METADATA = {
         },
     'machine' : {
         'machine' : '',
+        },
+    'mmm_kinds' : {
+        'mmm_kinds' : '',
         },
     'module_radsw_parameters' : {
         'module_radsw_parameters' : '',
