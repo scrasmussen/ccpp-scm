@@ -1133,7 +1133,6 @@ module GFS_typedefs
     logical              :: ysu_topdown_pblmix !< flag for YSU: Option for YSU PBL mixing. 
     logical              :: ysu_timesplit      !< flag for YSU: Update internal-state after calling scheme?
     logical              :: do_mmm_sfclayrev   !< flag for MMM SFCLAY_REV
-    logical              :: isfflx             !< flag for MMM SFCLAY_REV: calculate surface fluxes
     logical              :: shalwater_z0       !< flag for MMM SFCLAY_REV: shallow water roughness scheme
     logical              :: do_mmm_ogwd        !< flag for MMM OGWD: flag for NCAR MMMs OGWD scheme.
     logical              :: mmm_ogwd_timesplit !< flag for MMM OGWD: Update internal-state after calling scheme?
@@ -3606,7 +3605,6 @@ module GFS_typedefs
     logical              :: ysu_topdown_pblmix  = .false.             !< flag for YSU: Option for YSU PBL mixing.
     logical              :: ysu_timesplit       = .false.             !< flag for YSU: Update internal-state after calling scheme?  
     logical              :: do_mmm_sfclayrev    = .false.             !< flag for MMM SFCLAY_REV
-    logical              :: isfflx              = .false.             !< flag for MMM SFCLAY_REV: computer surface fluxes
     logical              :: shalwater_z0        = .false.             !< flag for MMM SFCLAY_REV: shallow water roughness scheme
     logical              :: do_mmm_ogwd         = .false.             !< flag for MMM OGWD: flag for NCAR MMMs OGWD scheme.
     logical              :: mmm_ogwd_timesplit  = .false.             !< flag for MMM OGWD: Update internal-state after calling scheme?
@@ -4008,7 +4006,7 @@ module GFS_typedefs
                                h2o_phys, pdfcld, shcnvcw, redrag, hybedmf, satmedmf,        &
                                shinhong, do_ysu, do_ysu_cldliq, do_ysu_cldice, ysu_add_bep, &
                                ysu_topdown_pblmix, ysu_timesplit,                           &
-                               do_mmm_sfclayrev, isfflx, shalwater_z0,                      &
+                               do_mmm_sfclayrev, shalwater_z0,                              &
                                do_mmm_ogwd, mmm_ogwd_timesplit, mmm_ogwd_sfcflx,            &
                                mmm_ogwd_isftcflx, mmm_ogwd_iz0tlnd ,                        &
                                acm, dspheat, lheatstrg,                                     &
@@ -4884,7 +4882,6 @@ module GFS_typedefs
     Model%ysu_add_bep        = ysu_add_bep
     Model%ysu_timesplit      = ysu_timesplit
     Model%do_mmm_sfclayrev   = do_mmm_sfclayrev
-    Model%isfflx             = isfflx
     Model%shalwater_z0       = shalwater_z0
     Model%do_mmm_ogwd        = do_mmm_ogwd
     Model%mmm_ogwd_timesplit = mmm_ogwd_timesplit
@@ -6764,7 +6761,6 @@ module GFS_typedefs
       print *, ' ysu_add_bep       : ', Model%ysu_add_bep
       print *, ' ysu_timesplit     : ', Model%ysu_timesplit
       print *, ' do_mmm_sfclayrev  : ', Model%do_mmm_sfclayrev
-      print *, ' isfflx            : ', Model%isfflx    
       print *, ' shalwater_z0      : ', Model%shalwater_z0
       print *, ' do_mmm_ogwd       : ', Model%do_mmm_ogwd
       print *, ' mmm_ogwd_timesplit: ', Model%mmm_ogwd_timesplit

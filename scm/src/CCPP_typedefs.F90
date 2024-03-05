@@ -418,6 +418,7 @@ module CCPP_typedefs
 
     !-- NCAR MMM physics
     logical                             :: scm_force_flux                !< prescribe surface fluxes (not compute)  
+    logical                             :: isfflx                        !< compute surface fluxes in surface layer scheme
     real (kind=kind_phys), pointer      :: xland(:)           => null()
     real (kind=kind_phys), pointer      :: qcx(:,:)           => null()
     real (kind=kind_phys), pointer      :: qix(:,:)           => null()
@@ -426,12 +427,12 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: qgh(:)             => null()
     real (kind=kind_phys), pointer      :: qsfc(:)            => null()
     real (kind=kind_phys), pointer      :: gz1oz0(:)          => null()
+    real (kind=kind_phys), pointer      :: rv1d(:)            => null()
     real (kind=kind_phys), pointer      :: water_depth(:)     => null()
     real (kind=kind_phys)               :: shalwater_depth
     real (kind=kind_phys)               :: svp1
     real (kind=kind_phys)               :: svp2
     real (kind=kind_phys)               :: svp3
-    real (kind=kind_phys)               :: svpt0
     real (kind=kind_phys)               :: p1000mb 
     integer                             :: its
     integer                             :: ite
@@ -875,11 +876,13 @@ contains
         allocate (Interstitial%water_depth  (IM))
 
         Interstitial%scm_force_flux = .false. ! If MMM surface scheme used, fluxes are not prescribed 
+        Interstitial%isfflx         = .true. ! If MMM surface scheme used, fluxes are calculated 
     endif
     if (Model%do_ysu .or. Model%do_mmm_sfclayrev) then
        allocate (Interstitial%xland     (IM))
        allocate (Interstitial%hfx       (IM))
        allocate (Interstitial%qfx       (IM))
+       allocate (Interstitial%rv1d      (IM))
     endif
     if (Model%do_ysu) then
        allocate (Interstitial%wstar     (IM))
@@ -940,7 +943,7 @@ contains
     ! hardcoded value for calling GFDL MP in GFS_physics_driver.F90,
     ! which is set to .true.
     Interstitial%phys_hydrostatic = .true.
-
+    
     !
     ! CCPP suite simulator
     if (Model%do_ccpp_suite_sim) then
@@ -1512,7 +1515,6 @@ contains
        Interstitial%svp1            = clear_val
        Interstitial%svp2            = clear_val
        Interstitial%svp3            = clear_val
-       Interstitial%svpt0           = clear_val
        Interstitial%p1000mb         = clear_val
        Interstitial%its             = 0
        Interstitial%ite             = 0
@@ -1521,6 +1523,7 @@ contains
        Interstitial%xland       = 0
        Interstitial%hfx         = clear_val
        Interstitial%qfx         = clear_val
+       Interstitial%rv1d        = clear_val
     endif
     if (Model%do_ysu) then
        Interstitial%qcx         = clear_val
@@ -1609,12 +1612,10 @@ contains
     end if
     !
 
-    !
     ! CCPP suite simulator
     if (Model%do_ccpp_suite_sim) then
        Interstitial%active_phys_tend = clear_val
     endif
-
   end subroutine gfs_interstitial_phys_reset
 
 end module CCPP_typedefs
