@@ -5145,12 +5145,6 @@
   units = flag
   dimensions = ()
   type = logical
-[isfflx]
-  standard_name = flag_to_compute_surface_heat_and_moisture_fluxes
-  long_name = flag to compute surface heat and moisture fluxes
-  units = flag
-  dimensions = ()
-  type = logical
 [shalwater_z0]
   standard_name = flag_for_shallow_water_roughness_scheme
   long_name = shallow water roughness scheme option
