@@ -134,9 +134,9 @@ SCHEME_FILES = [
     'ccpp/physics/physics/cs_conv.F90'                      ,
     'ccpp/physics/physics/cs_conv_post.F90'                 ,
     'ccpp/physics/physics/cs_conv_aw_adj.F90'               ,
-    'ccpp/physics/physics/cu_ntiedtke_pre.F90'              ,
-    'ccpp/physics/physics/cu_ntiedtke.F90'                  ,
-    'ccpp/physics/physics/cu_ntiedtke_post.F90'             ,
+    # 'ccpp/physics/physics/cu_ntiedtke_pre.F90'              ,
+    # 'ccpp/physics/physics/cu_ntiedtke.F90'                  ,
+    # 'ccpp/physics/physics/cu_ntiedtke_post.F90'             ,
     'ccpp/physics/physics/dcyc2t3.f'                        ,
     'ccpp/physics/physics/drag_suite.F90'                   ,
     'ccpp/physics/physics/shoc.F90'                         ,
@@ -218,6 +218,11 @@ SCHEME_FILES = [
     'ccpp/physics/physics/GFS_rrtmgp_cloud_mp.F90'          ,
     'ccpp/physics/physics/GFS_rrtmgp_cloud_overlap.F90'     ,
     'ccpp/physics/physics/GFS_rrtmgp_post.F90'              ,
+    # CNU_NTIEDTKE
+    'ccpp/physics/physics/scm_cu_ntiedtke_pre.F90'          ,
+    'ccpp/physics/physics/SCM-physics/cu_ntiedtke.F90'      ,
+    'ccpp/physics/physics/scm_cu_ntiedtke_post.F90'         ,
+
     # CCPP-SCM
     'ccpp/physics/physics/GFS_ccpp_suite_sim_pre.F90'       ,
     'ccpp/physics/physics/ccpp_suite_simulator.F90'         ,
