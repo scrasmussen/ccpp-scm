@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 PROJECT(scm)
 set(PROJECT "CCPP-SCM")
 
@@ -57,6 +57,13 @@ include(CMakeForceCompiler)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 
+
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/../../CMakeModules/Modules)
+
+find_package(NetCDF REQUIRED COMPONENTS C Fortran)
+find_package(bacio REQUIRED)
+find_package(sp    REQUIRED)
+find_package(w3emc REQUIRED)
 IF(DEFINED ENV{NETCDF})
   MESSAGE(STATUS "The NETCDF environment variable is $ENV{NETCDF}")
   SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{NETCDF})
@@ -105,8 +112,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
 
     # Set the possible values of build type for cmake-gui
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
-                 "MinSizeRel" "RelWithDebInfo")
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/ccpp/framework/src)
@@ -211,9 +217,20 @@ endif (${CMAKE_BUILD_TYPE} MATCHES "Debug")
 # Set netCDF flags for preprocessor, compiler and linker (if defined)
 set(NETCDF_DIR $ENV{NETCDF})
 if(NETCDF_DIR)
-  set (NETCDF_INC "-I${NETCDF_DIR}/include")
-  set (NETCDF_LIB "-L${NETCDF_DIR}/lib -lnetcdff -lnetcdf")
+  execute_process(COMMAND nf-config --includedir OUTPUT_VARIABLE netcdf_fortran_include_dir)
+  execute_process(COMMAND nc-config --includedir OUTPUT_VARIABLE netcdf_c_include_dir)
+  execute_process(COMMAND nf-config --flibs OUTPUT_VARIABLE netcdf_fortran_libs)
+  execute_process(COMMAND nc-config --libs OUTPUT_VARIABLE netcdf_c_libs)
+  string(REGEX REPLACE "\n" " " netcdf_fortran_include_dir "${netcdf_fortran_include_dir}")
+  string(REGEX REPLACE "\n" " " netcdf_c_include_dir "${netcdf_c_include_dir}")
+  string(REGEX REPLACE "\n" " " netcdf_fortran_libs "${netcdf_fortran_libs}")
+  string(REGEX REPLACE "\n" " " netcdf_c_libs "${netcdf_c_libs}")
+
+  set( NETCDF_LIB "${netcdf_fortran_libs} ${netcdf_c_libs}")
+  set (NETCDF_INC "-I${netcdf_fortran_include_dir} -I${netcdf_c_include_dir}")
   set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${NETCDF_INC} ${NETCDF_LIB}")
+
+  set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${NETCDF_INC}")
   ADD_DEFINITIONS(-DNETCDF)
   message (STATUS "Enable netCDF support")
 else(NETCDF_DIR)
