@@ -1,11 +1,11 @@
 [submodule "ccpp-framework"]
 	path = ccpp/framework
-	url = https://github.com/NCAR/ccpp-framework
-	branch = dtc/develop
+	url = https://github.com/scrasmussen/ccpp-framework
+	branch = v4.0.0_Derecho
 [submodule "ccpp-physics"]
 	path = ccpp/physics
-	url = https://github.com/NCAR/ccpp-physics
-	branch = dtc/develop
+	url = https://github.com/scrasmussen/ccpp-physics
+	branch = v4.0.0_Derecho
 [submodule "CMakeModules"]
 	path = CMakeModules
 	url = git@github.com:NOAA-EMC/CMakeModules.git
