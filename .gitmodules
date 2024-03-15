@@ -6,3 +6,7 @@
 	path = ccpp/physics
 	url = https://github.com/NCAR/ccpp-physics
 	branch = dtc/develop
+[submodule "CMakeModules"]
+	path = CMakeModules
+	url = git@github.com:NOAA-EMC/CMakeModules.git
+        branch = develop
