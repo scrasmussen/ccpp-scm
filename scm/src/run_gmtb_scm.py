@@ -83,15 +83,15 @@ def execute(cmd):
     status = p.returncode
     if status == 0:
         message = 'Execution of "{0}" returned with exit code {1}\n'.format(cmd, status)
-        message += '    stdout: "{0}"\n'.format(stdout.rstrip('\n'))
-        message += '    stderr: "{0}"'.format(stderr.rstrip('\n'))
+        message += '    stdout: "{0}"\n'.format(stdout.decode().rstrip('\n'))
+        message += '    stderr: "{0}"'.format(stderr.decode().rstrip('\n'))
         logging.debug(message)
     else:
         message = 'Execution of command "{0}" failed, exit code {1}\n'.format(cmd, status)
-        message += '    stdout: "{0}"\n'.format(stdout.rstrip('\n'))
-        message += '    stderr: "{0}"'.format(stderr.rstrip('\n'))
+        message += '    stdout: "{0}"\n'.format(stdout.decode().rstrip('\n'))
+        message += '    stderr: "{0}"'.format(stderr.decode().rstrip('\n'))
         logging.debug(message)
-    return (status, stdout.rstrip('\n'), stderr.rstrip('\n'))
+    return (status, stdout.decode().rstrip('\n'), stderr.decode().rstrip('\n'))
 
 def parse_arguments():
     """Parse command line arguments"""
@@ -122,12 +122,12 @@ class Experiment(object):
         """Initialize experiment. This routine does most of the work,
         including setting and checking the experiment configuration
         (namelist)."""
-        
+
         self._case = case
         self._suite = suite
         self._name = case + '_' + suite
-        
-        #if a physics namelist is specified (entire filename), it will be used; 
+
+        #if a physics namelist is specified (entire filename), it will be used;
         #otherwise, a default physics namelist for the given suite is used from default_namelists.py
         if physics_namelist:
             self._physics_namelist = physics_namelist
@@ -138,20 +138,20 @@ class Experiment(object):
                 message = 'A default physics namelist for suite {0} is not found in default_namelists.py'.format(self._suite)
                 logging.critical(message)
                 raise Exception(message)
-        
+
         #check to see that the physics namelists exists in the right dir
         if not os.path.isfile(os.path.join(PHYSICS_NAMELIST_DIR, self._physics_namelist)):
             message = 'The physics namelist {0} was not found'.format(os.path.join(PHYSICS_NAMELIST_DIR, self._physics_namelist))
             logging.critical(message)
             raise Exception(message)
-                        
+
         #check to see if the case namelists exists in the right dir
         self._namelist = os.path.join(CASE_NAMELIST_DIR, self._case + '.nml')
         if not os.path.isfile(self._namelist):
             message = 'Experiment {0} with namelist {1} not found'.format(self._name, self._namelist)
             logging.critical(message)
             raise Exception(message)
-            
+
     @property
     def name(self):
         """Get the name of the experiment."""
@@ -171,27 +171,27 @@ class Experiment(object):
     def namelist(self, value):
         """Set the case namelist of the experiment."""
         self._namelist = value
-    
+
     @property
     def case(self):
         """Get the case of the experiment."""
         return self._case
-    
+
     @name.setter
     def case(self, value):
         """Set the case of the experiment."""
         self._case = value
-    
+
     @property
     def suite(self):
         """Get the suite of the experiment."""
         return self._suite
-    
+
     @suite.setter
     def suite(self, value):
         """Set the suite of the experiment."""
         self._suite = value
-    
+
     @property
     def physics_namelist(self):
         """Get the physics namelist of the experiment."""
@@ -204,13 +204,13 @@ class Experiment(object):
 
     def setup_rundir(self):
         """Set up run directory for this experiment."""
-        
+
         # Parse case configuration namelist and extract
         # - output directory
         # - surface_flux_spec
         logging.info('Parsing case configuration namelist {0}'.format(self._namelist))
         case_nml = f90nml.read(self._namelist)
-        # look for the output_dir variable in the case configuration namelist and use it if it does; 
+        # look for the output_dir variable in the case configuration namelist and use it if it does;
         # if it doesn't exist, create a default output directory name (from the case and suite names) and create a namelist patch
         try:
             output_dir = case_nml['case_config']['output_dir']
@@ -228,34 +228,34 @@ class Experiment(object):
             surface_flux_spec = case_nml['case_config']['sfc_flux_spec']
         except KeyError:
             surface_flux_spec = False
-            
+
         # If surface fluxes are specified for this case, use the SDF modified to use them
         if surface_flux_spec:
             logging.info('Specified surface fluxes are used for case {0}. Switching to SDF {1} from {2}'.format(self._case,'suite_' + self._suite + '_ps' + '.xml','suite_' + self._suite + '.xml'))
             self._suite = self._suite + '_ps'
-                
+
         # Create physics_config namelist for experiment configuration file
         physics_config = {"physics_suite":self._suite,
                           "physics_nml":self._physics_namelist,}
         physics_config_dict = {"physics_config":physics_config}
         physics_config_nml = f90nml.namelist.Namelist(physics_config_dict)
-        
+
         # Create STANDARD_EXPERIMENT_NAMELIST in the run directory with the case configuration and physics configuration namelists
         logging.info('Creating experiment configuration namelist {0} in the run directory from {1} using {2} and {3} '.format(STANDARD_EXPERIMENT_NAMELIST,self._namelist,self._suite,self._physics_namelist))
-        
+
         with open(STANDARD_EXPERIMENT_NAMELIST, "w+") as nml_file:
             case_nml.write(nml_file)
-        
+
         with open(STANDARD_EXPERIMENT_NAMELIST, "a") as nml_file:
             physics_config_nml.write(nml_file)
-        
+
         # if using the default output dir name created in this script, patch the experiment namelist with the new output_dir variable
         if(not custom_output_dir):
             # GJF TODO: this implementation is clunky; newer versions of f90nml can handle this better, but this works with v0.19 so no need to require newer version
             f90nml.patch(STANDARD_EXPERIMENT_NAMELIST, output_dir_patch_nml, 'temp.nml')
             cmd = "mv {0} {1}".format('temp.nml', STANDARD_EXPERIMENT_NAMELIST)
             execute(cmd)
-        
+
         # Link physics namelist to run directory with its original name
         logging.info('Linking physics namelist {0} to run directory'.format(self._physics_namelist))
         if os.path.isfile(self._physics_namelist):
@@ -266,7 +266,7 @@ class Experiment(object):
             raise Exception(message)
         cmd = "ln -sf {0} {1}".format(os.path.join(PHYSICS_NAMELIST_DIR, self._physics_namelist), self._physics_namelist)
         execute(cmd)
-        
+
         # Link physics SDF to run directory
         physics_suite = 'suite_' + self._suite + '.xml'
         logging.info('Linking physics suite {0} to run directory'.format(physics_suite))
@@ -278,7 +278,7 @@ class Experiment(object):
             raise Exception(message)
         cmd = "ln -sf {0} {1}".format(os.path.join(PHYSICS_SUITE_DIR, physics_suite), physics_suite)
         execute(cmd)
-        
+
         # Link physics data needed for schemes to run directory
         logging.info('Linking physics input data from {0} into run directory'.format(PHYSICS_DATA_DIR))
         for entry in os.listdir(PHYSICS_DATA_DIR):
@@ -287,7 +287,7 @@ class Experiment(object):
                     logging.debug('Linking file {0}'.format(entry))
                     cmd = 'ln -sf {0} {1}'.format(os.path.join(PHYSICS_DATA_DIR, entry), entry)
                     execute(cmd)
-        
+
         # Parse physics namelist and extract
         # - oz_phys
         # - oz_phys_2015
@@ -308,7 +308,7 @@ class Experiment(object):
             message = 'Logic error, both oz_phys and oz_phys_2015 are set to true in the physics namelist'
             logging.critical(message)
             raise Exception(message)
-        
+
         # Link input data for oz_phys or oz_phys_2015
         if os.path.exists(OZ_PHYS_LINK):
             os.remove(OZ_PHYS_LINK)
@@ -320,7 +320,7 @@ class Experiment(object):
             logging.info('Linking input data for oz_phys_2015')
             cmd = 'ln -sf {0} {1}'.format(OZ_PHYS_2015_TARGET, OZ_PHYS_LINK)
             execute(cmd)
-        
+
         # Link scripts needed to run SCM analysis
         logging.info('Linking analysis scripts from {0} into run directory'.format(SCM_ANALYSIS_SCRIPT_DIR))
         analysis_script_files = ['gmtb_scm_analysis.py','configspec.ini']
@@ -330,7 +330,7 @@ class Experiment(object):
                     logging.debug('Linking file {0}'.format(entry))
                     cmd = 'ln -sf {0} {1}'.format(os.path.join(SCM_ANALYSIS_SCRIPT_DIR, entry), entry)
                     execute(cmd)
-        
+
         # Link plot configuration files needed to run SCM analysis
         logging.info('Linking plot configuration files from {0} into run directory'.format(SCM_ANALYSIS_CONFIG_DIR))
         for entry in os.listdir(SCM_ANALYSIS_CONFIG_DIR):
@@ -339,18 +339,18 @@ class Experiment(object):
                     logging.debug('Linking file {0}'.format(entry))
                     cmd = 'ln -sf {0} {1}'.format(os.path.join(SCM_ANALYSIS_CONFIG_DIR, entry), entry)
                     execute(cmd)
-        
+
         # Create output directory (delete existing directory)
         logging.info('Creating output directory {0} in run directory'.format(output_dir))
         if os.path.isdir(output_dir):
             shutil.rmtree(output_dir)
         os.makedirs(output_dir)
-        
+
         # Write experiment configuration file to output directory
         logging.info('Writing experiment configuration {0}.nml to output directory'.format(self._name))
         cmd = 'cp {0} {1}'.format(STANDARD_EXPERIMENT_NAMELIST, os.path.join(output_dir,self._name + '.nml'))
         execute(cmd)
-        
+
         return output_dir
 
 def launch_executable(use_gdb, gdb):
@@ -362,7 +362,7 @@ def launch_executable(use_gdb, gdb):
     logging.info('Passing control to "{0}"'.format(cmd))
     time.sleep(2)
     sys.exit(os.system(cmd))
-    
+
 def copy_outdir(exp_dir):
     """Copy output directory to /home for this experiment."""
     home_output_dir = '/home/'+exp_dir
@@ -372,9 +372,9 @@ def copy_outdir(exp_dir):
 
 def main():
     (case, use_gdb, suite, namelist, docker) = parse_arguments()
-    
+
     setup_logging()
-    
+
     #Experiment
     if namelist:
         logging.info('Setting up experiment {0} with suite {1} using namelist {2}'.format(case,suite,namelist))
@@ -392,7 +392,7 @@ def main():
         #registering this function first should mean that it executes last, which is what we want
         atexit.register(copy_outdir, exp_dir)
     atexit.register(launch_executable, use_gdb, gdb)
-    
-    
+
+
 if __name__ == '__main__':
     main()

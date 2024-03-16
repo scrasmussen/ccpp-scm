@@ -54,11 +54,11 @@ def plot_profile(z, values, x_label, y_label, filename, xticks=[], yticks=[], y_
 def plot_profile_multi(z, values, labels, x_label, y_label, filename, obs_z=None, obs_values=None, xticks=[], yticks=[], y_inverted = False, y_log = False, y_lim = [], conversion_factor=1.0, freeze_axis=None, line_type=None, color_index=None, skill_scores=False, zero_line=False):
     #xticks = [x_start, x_end, x_num]
     plt.rc('text', usetex=latex_labels)
-    
+
     if np.count_nonzero(values) == 0:
-        print 'The plot for {} will not be created due to all zero values'.format(x_label)
+        print('The plot for {} will not be created due to all zero values'.format(x_label))
         return
-    
+
     fig = plt.figure()
     colors = ['#e41a1c','#4daf4a','#377eb8','#984ea3','#ff7f00','#a65628','#f781bf','#ffff33']
     linestyles = ['-','--','-.',':']
@@ -293,13 +293,13 @@ def plot_time_series_compare(time, values, LES_time, LES_values, x_label, y_labe
 
 def plot_time_series_multi(time, values, labels, x_label, y_label, filename, obs_time=None, obs_values=None, obs_label=None, line_type=None, color_index=None, skill_scores=False, conversion_factor=1.0):
     plt.rc('text', usetex=latex_labels)
-    
+
     if np.count_nonzero(values) == 0:
-        print 'The plot for {} will not be created due to all zero values'.format(y_label)
+        print('The plot for {} will not be created due to all zero values'.format(y_label))
         return
-    
+
     fig = plt.figure()
-    
+
     lines = []
     colors = ['#e41a1c','#4daf4a','#377eb8','#984ea3','#ff7f00','#a65628','#f781bf','#ffff33']
     linestyles = ['-','--','-.',':']
@@ -407,11 +407,11 @@ def contour_plot_firl(x_dim, y_dim, values, min_val, max_val, title, x_label, y_
     #os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
     #plt.rc('ps', usedistiller='xpdf')
     plt.rc('text', usetex=latex_labels)
-    
+
     if np.count_nonzero(values) == 0:
-        print 'The plot for {} will not be created due to all zero values'.format(title)
+        print('The plot for {} will not be created due to all zero values'.format(title))
         return
-    
+
     if(min_val != -999 and max_val != -999):
         min_val = conversion_factor*min_val
         max_val = conversion_factor*max_val
