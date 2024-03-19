@@ -1221,6 +1221,14 @@ module GFS_typedefs
     real(kind=kind_phys) :: betamcu         !< Tuning parameter for prog. closure midlevel clouds 
     real(kind=kind_phys) :: betadcu         !< Tuning parameter for prog. closure deep clouds 
 
+    !--- wsm6 parameters
+    integer              :: hail_opt
+    real(kind=kind_phys) :: den0
+    real(kind=kind_phys) :: denr
+    real(kind=kind_phys) :: dens
+    real(kind=kind_phys) :: cl
+    real(kind=kind_phys) :: cpv
+
     !--- MYNN parameters/switches
     logical              :: do_mynnedmf
     logical              :: do_mynnsfclay
@@ -3875,6 +3883,14 @@ module GFS_typedefs
     logical              :: ca_entr        = .false.
     logical              :: ca_trigger     = .false.
 
+!--- wsm6 parameters
+    integer              :: hail_opt       = 0 ! .false.        !< hail option flag
+    real(kind=kind_phys) :: den0           = 1.28           !< density of dry air
+    real(kind=kind_phys) :: denr           = 1000           !< density of liquid water
+    real(kind=kind_phys) :: dens           = 100            !< density of snow
+    real(kind=kind_phys) :: cl             = 4190           !< specific heat of liquid water at constant pressure
+    real(kind=kind_phys) :: cpv            = 1870           !< specific heat of water vapor at constant pressure
+
 !--- IAU options
     real(kind=kind_phys)  :: iau_delthrs      = 0           !< iau time interval (to scale increments)
     character(len=240)    :: iau_inc_files(7) = ''          !< list of increment files
@@ -4133,6 +4149,8 @@ module GFS_typedefs
                                fh_dfi_radar, radar_tten_limits, do_cap_suppress,            &
                           !--- GSL lightning threat indices
                                lightning_threat,                                            &
+                          !--- wsm6 parameters
+                               hail_opt, den0, denr, dens, cl, cpv,                         &
                           !--- CCPP suite simulator
                                do_ccpp_suite_sim
 
@@ -4182,7 +4200,9 @@ module GFS_typedefs
       open (unit=nlunit, file=fn_nml, action='READ', status='OLD', iostat=ios)
     endif
     rewind(nlunit)
-    read (nlunit, nml=gfs_physics_nml)
+    read (nlunit, nml=gfs_physics_nml, iostat=ios, iomsg=errmsg)
+
+    if (ios /= 0) error stop errmsg
     close (nlunit)
     ! Set length (number of lines) in namelist for internal reads
     Model%input_nml_file_length = 0
@@ -5166,6 +5186,14 @@ module GFS_typedefs
     Model%iau_filter_increments = iau_filter_increments
     Model%iau_drymassfixer = iau_drymassfixer
     if(Model%me==0) print *,' model init,iaufhrs=',Model%iaufhrs
+
+!--- wsm6 parameters
+    Model%hail_opt        = hail_opt
+    Model%den0            = den0
+    Model%denr            = denr
+    Model%dens            = dens
+    Model%cl              = cl
+    Model%cpv             = cpv
 
 !--- debug flags
     Model%debug            = debug
@@ -7043,6 +7071,13 @@ module GFS_typedefs
       print *, ' '
       print *, 'lightning threat indexes'
       print *, ' lightning_threat  : ', Model%lightning_threat
+      print *, 'wsm6 parameters'
+      print *, ' hail_opt          : ', Model%hail_opt
+      print *, ' den0              : ', Model%den0
+      print *, ' denr              : ', Model%denr
+      print *, ' dens              : ', Model%dens
+      print *, ' cl                : ', Model%cl
+      print *, ' cpv               : ', Model%cpv
     endif
 
   end subroutine control_print

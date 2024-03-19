@@ -413,6 +413,17 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: oa4ss(:,:)         => null()  !<
     real (kind=kind_phys), pointer      :: clxss(:,:)         => null()  !<
 
+    !-- WSM6
+    integer                             :: hail_opt                      !<
+    real (kind=kind_phys), pointer      :: qc(:,:)            => null()  !<
+    real (kind=kind_phys), pointer      :: rho_air(:,:)       => null()  !<
+    real (kind=kind_phys), pointer      :: evapprod2d(:,:)    => null()  !<
+    real (kind=kind_phys), pointer      :: rainprod2d(:,:)    => null()  !<
+    integer                             :: vertical_dimension_start      !<
+    integer                             :: vertical_dimension_end        !<
+    integer                             :: horizontal_begin              !<
+    integer                             :: horizontal_end                !<
+
     !-- 3D diagnostics
     integer :: rtg_ozone_index, rtg_tke_index
 

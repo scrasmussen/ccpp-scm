@@ -4845,6 +4845,12 @@
   units = flag
   dimensions = ()
   type = logical
+[lrefres]
+  standard_name = flag_for_radar_reflectivity_in_restart_file
+  long_name = flag for radar reflectivity in restart file
+  units = flag
+  dimensions = ()
+  type = logical
 [lsm]
   standard_name = control_for_land_surface_scheme
   long_name = flag for land surface model
