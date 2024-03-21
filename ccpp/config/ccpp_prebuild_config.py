@@ -219,8 +219,9 @@ SCHEME_FILES = [
     'ccpp/physics/physics/GFS_rrtmgp_cloud_overlap.F90'     ,
     'ccpp/physics/physics/GFS_rrtmgp_post.F90'              ,
     # CNU_NTIEDTKE
+
+    'ccpp/physics/physics/mmm_physics/cu_ntiedtke.F90'      ,
     'ccpp/physics/physics/scm_cu_ntiedtke_pre.F90'          ,
-    'ccpp/physics/physics/SCM-physics/cu_ntiedtke.F90'      ,
     'ccpp/physics/physics/scm_cu_ntiedtke_post.F90'         ,
 
     # CCPP-SCM
