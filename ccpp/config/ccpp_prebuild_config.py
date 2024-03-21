@@ -228,8 +228,9 @@ SCHEME_FILES = [
     'ccpp/physics/physics/tools/get_phi_fv3.F90'
 
     # CNU_NTIEDTKE
+
+    'ccpp/physics/physics/mmm_physics/cu_ntiedtke.F90'      ,
     'ccpp/physics/physics/scm_cu_ntiedtke_pre.F90'          ,
-    'ccpp/physics/physics/SCM-physics/cu_ntiedtke.F90'      ,
     'ccpp/physics/physics/scm_cu_ntiedtke_post.F90'         ,
 
     # NCAR MMM
