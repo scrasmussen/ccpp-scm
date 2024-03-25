@@ -17,6 +17,7 @@ VARIABLE_DEFINITION_FILES = [
     # actual variable definition files
     'ccpp/framework/src/ccpp_types.F90',
     'ccpp/physics/physics/machine.F',
+    'ccpp/physics/physics/mmm_kinds.F90',
     'ccpp/physics/physics/radsw_param.f',
     'ccpp/physics/physics/radlw_param.f',
     'ccpp/physics/physics/h2o_def.f',
@@ -171,6 +172,9 @@ SCHEME_FILES = [
     'ccpp/physics/physics/mp_thompson.F90'                  ,
     'ccpp/physics/physics/mp_thompson_post.F90'             ,
     'ccpp/physics/physics/mp_nssl.F90'                      ,
+    'ccpp/physics/physics/scm_mp_wsm6_pre.F90'              ,
+    'ccpp/physics/physics/mmm_physics/mp_wsm6.F90'          ,
+    'ccpp/physics/physics/scm_mp_wsm6_post.F90'             ,
     'ccpp/physics/physics/ozphys.f'                         ,
     'ccpp/physics/physics/ozphys_2015.f'                    ,
     'ccpp/physics/physics/zhaocarr_precpd.f'                ,
