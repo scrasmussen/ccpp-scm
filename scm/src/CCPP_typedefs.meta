@@ -1625,10 +1625,17 @@
   dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
   type = real
   kind = kind_phys
+[qi]
+  standard_name = ice_water_mixing_ratio
+  long_name = ice water mixing ratio
+  units = kg kg-1
+  dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
 [qc]
   standard_name = cloud_condensed_water_mixing_ratio
   long_name = cloud condensed water mixing ratio
-  units = kg kg-1 
+  units = kg kg-1
   dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
   type = real
   kind = kind_phys

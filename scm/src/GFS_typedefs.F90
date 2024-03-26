@@ -914,6 +914,7 @@ module GFS_typedefs
     integer              :: imp_physics_gfdl          = 11 !< choice of GFDL     microphysics scheme
     integer              :: imp_physics_thompson      = 8  !< choice of Thompson microphysics scheme
     integer              :: imp_physics_wsm6          = 6  !< choice of WSMG     microphysics scheme
+    integer              :: imp_physics_wsm6_mmm      = 7  !< choice of WSMG     microphysics scheme
     integer              :: imp_physics_zhao_carr     = 99 !< choice of Zhao-Carr microphysics scheme
     integer              :: imp_physics_zhao_carr_pdf = 98 !< choice of Zhao-Carr microphysics scheme with PDF clouds
     integer              :: imp_physics_mg            = 10 !< choice of Morrison-Gettelman microphysics scheme
@@ -6097,6 +6098,9 @@ module GFS_typedefs
       !Model%nieffr  = 2
       !Model%nseffr  = 3
       !if (Model%me == Model%master) print *,' Using wsm6 microphysics'
+
+    elseif (Model%imp_physics == Model%imp_physics_wsm6_mmm) then !WSM6 MMM microphysics
+      if (Model%me == Model%master) print *,' Using WSM6 MMM microphysics'
 
     elseif (Model%imp_physics == Model%imp_physics_nssl) then !NSSL microphysics
       Model%npdf3d  = 0

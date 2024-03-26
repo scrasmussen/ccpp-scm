@@ -415,10 +415,12 @@ module CCPP_typedefs
 
     !-- WSM6
     integer                             :: hail_opt                      !<
+    real (kind=kind_phys), pointer      :: qi(:,:)            => null()  !<
     real (kind=kind_phys), pointer      :: qc(:,:)            => null()  !<
     real (kind=kind_phys), pointer      :: rho_air(:,:)       => null()  !<
     real (kind=kind_phys), pointer      :: evapprod2d(:,:)    => null()  !<
     real (kind=kind_phys), pointer      :: rainprod2d(:,:)    => null()  !<
+    real (kind=kind_phys)               :: q_over_R_minus_one            !<
     integer                             :: vertical_dimension_start      !<
     integer                             :: vertical_dimension_end        !<
     integer                             :: horizontal_begin              !<
@@ -808,6 +810,19 @@ contains
     if (Model%lsm == Model%lsm_noahmp) then
        allocate (Interstitial%t2mmp (IM))
        allocate (Interstitial%q2mp  (IM))
+    end if
+
+    ! Setup WSM6
+    if (Model%imp_physics == Model%imp_physics_wsm6_mmm) then
+       Interstitial%vertical_dimension_start = 1
+       Interstitial%vertical_dimension_end = Model%levs
+       allocate (Interstitial%q_lay(IM,Model%levs))
+       allocate (Interstitial%qi(IM,Model%levs))
+       allocate (Interstitial%qc(IM,Model%levs))
+       allocate (Interstitial%deltaZ(IM, Model%levs))
+       allocate (Interstitial%rho_air(IM,Model%levs))
+       allocate (Interstitial%evapprod2d(IM,Model%levs))
+       allocate (Interstitial%rainprod2d(IM,Model%levs))
     end if
     !
     ! Set components that do not change
