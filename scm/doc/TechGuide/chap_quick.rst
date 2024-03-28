@@ -25,7 +25,7 @@ Obtaining Code
 The source code for the SCM, CCPP, and their required components are provided through GitHub.
 The latest release branch contains the tested and supported version for
 general use, while the development branch (``main``) contains the latest
-developer code, but may not be as stable or consistent with existing documentation. 
+developer code, but may not be as stable or consistent with existing documentation.
 Instructions for using either option are discussed here.
 
 Release Code
@@ -127,7 +127,7 @@ System Requirements, Libraries, and Tools
 -----------------------------------------
 
 The source code for the SCM and CCPP components is in the form of
-programs written in FORTRAN 90 (with some required features from the 
+programs written in FORTRAN 90 (with some required features from the
 FORTRAN 2008 standard), and C. In addition, the model I/O
 relies on the NetCDF libraries. Beyond the standard scripts, the build
 system relies on use of the Python scripting language, along with cmake,
@@ -301,7 +301,7 @@ If the download step fails, make sure that your system’s firewall does
 not block access to GitHub. If it does, download the files ``comparison_data.tar.gz``,
 ``physics_input_data.tar.gz``, ``processed_case_input.tar.gz``, and ``raw_case_input.tar.gz``
 from the GitHub release website using your browser and manually extract its
-contents in the directory ``scm/data``. Similarly, do the same for 
+contents in the directory ``scm/data``. Similarly, do the same for
 ``thompson_tables.tar.gz`` and ``MG_INCCN_data.tar.gz`` and extract
 to ``scm/data/physics_input_data/``.
 
@@ -372,6 +372,13 @@ components.
          .. code:: bash
 
             -DCMAKE_BUILD_TYPE=Debug
+
+      -  Single Precision
+
+         .. code:: bash
+
+            -D32BIT=1
+
 
    -  One can also save the output of this step to a log file:
 
