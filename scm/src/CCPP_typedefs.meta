@@ -693,7 +693,7 @@
 [q_over_R_minus_one]
   standard_name = ratio_of_water_vapor_to_dry_air_gas_constants_minus_one
   long_name = (Rwv / Rdair) - 1.0
-  units = 1
+  units = none
   dimensions = ()
   type = real
   kind = kind_phys
