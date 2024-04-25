@@ -7,7 +7,7 @@
   fhcyc        = 24
   use_ufo      = .true.
   pre_rad      = .false.
-  imp_physics  = 6
+  imp_physics  = 7
   ltaerosol    = .true.
   lradar       = .true.
   sedi_semi    = .true.
