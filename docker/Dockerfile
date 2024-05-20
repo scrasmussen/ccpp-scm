@@ -21,7 +21,7 @@ RUN cd /comsoftware/ccpp-scm/ \
 # Obtain the pre-computed look-up tables for running with Thompson microphysics
 RUN cd /comsoftware/ccpp-scm/ \
   && . contrib/get_thompson_tables.sh
-  
+
 # Run the machine setup script to set environment variables
 ENV CC=/opt/rh/devtoolset-9/root/usr/bin/gcc
 ENV CXX=/opt/rh/devtoolset-9/root/usr/bin/g++
@@ -37,11 +37,10 @@ RUN cd /comsoftware/ccpp-scm/contrib \
   && cd .. \
   && ./contrib/build_nceplibs.sh $PWD/nceplibs
 
-ENV bacio_ROOT /comsoftware/ccpp-scm/nceplibs
 ENV sp_ROOT /comsoftware/ccpp-scm/nceplibs
 ENV w3nco_ROOT /comsoftware/ccpp-scm/nceplibs
 
-# Create your own link from python -> python3 
+# Create your own link from python -> python3
 # This works without setting the system PATH env var
 # since /usr/local/bin is before /usr/bin in the search path.
 USER root
@@ -56,7 +55,7 @@ RUN cd /comsoftware/ccpp-scm/scm \
   && make -j4
 
 # The analysis scripts have options for using LaTeX when making figure labels.
-# If you would like to install LaTeK, uncomment the section below. 
+# If you would like to install LaTeK, uncomment the section below.
 # Note: This will increase the image size by 1 GB.
 #USER root
 #RUN yum -y update \

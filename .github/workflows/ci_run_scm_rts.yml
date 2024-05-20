@@ -17,7 +17,6 @@ jobs:
     env:
       NFHOME:     /home/runner/netcdf-fortran
       NFVERSION:  v4.5.3
-      bacio_ROOT: /home/runner/bacio
       sp_ROOT:    /home/runner/NCEPLIBS-sp
       w3emc_ROOT: /home/runner/myw3emc
       SCM_ROOT:   /home/runner/work/ccpp-scm/ccpp-scm
@@ -70,23 +69,6 @@ jobs:
       run: |
         echo "CC=icx"         >> $GITHUB_ENV
         echo "FC=ifort"       >> $GITHUB_ENV
-
-    - name: Cache bacio library v2.4.1
-      id: cache-bacio-fortran
-      uses: actions/cache@v3
-      with:
-        path: /home/runner/bacio
-        key: cache-bacio-fortran-${{matrix.fortran-compiler}}-key
-
-    - name: Install bacio library v2.4.1
-      if: steps.cache-bacio-fortran.outputs.cache-hit != 'true'
-      run: |
-        git clone --branch v2.4.1 https://github.com/NOAA-EMC/NCEPLIBS-bacio.git bacio
-        cd bacio && mkdir build && cd build
-        cmake -DCMAKE_INSTALL_PREFIX=${bacio_ROOT} ../
-        make -j2
-        make install
-        echo "bacio_DIR=/home/runner/bacio/lib/cmake/bacio" >> $GITHUB_ENV
 
     - name: Cache SP-library v2.3.3
       id: cache-sp-fortran

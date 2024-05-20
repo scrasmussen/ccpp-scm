@@ -25,7 +25,7 @@ Obtaining Code
 The source code for the SCM, CCPP, and their required components are provided through GitHub.
 The latest release branch contains the tested and supported version for
 general use, while the development branch (``main``) contains the latest
-developer code, but may not be as stable or consistent with existing documentation. 
+developer code, but may not be as stable or consistent with existing documentation.
 Instructions for using either option are discussed here.
 
 Release Code
@@ -127,7 +127,7 @@ System Requirements, Libraries, and Tools
 -----------------------------------------
 
 The source code for the SCM and CCPP components is in the form of
-programs written in FORTRAN 90 (with some required features from the 
+programs written in FORTRAN 90 (with some required features from the
 FORTRAN 2008 standard), and C. In addition, the model I/O
 relies on the NetCDF libraries. Beyond the standard scripts, the build
 system relies on use of the Python scripting language, along with cmake,
@@ -158,14 +158,12 @@ Further, there are several utility libraries as part of the hpc-stack
 package that must be installed with environment variables pointing to
 their locations prior to building the SCM.
 
--  bacio - Binary I/O Library
-
 -  sp - Spectral Transformation Library
 
 -  w3emc - GRIB decoder and encoder library
 
 The following environment variables are used by the build system to
-properly link these libraries: ``bacio_ROOT``, ``sp_ROOT``, and ``w3emc_ROOT`` Computational platforms on
+properly link these libraries: ``sp_ROOT``, and ``w3emc_ROOT`` Computational platforms on
 which these libraries are prebuilt and installed in a central location
 are referred to as *preconfigured* platforms. Examples of preconfigured
 platforms are most NOAA high-performance computing machines (using the
@@ -231,8 +229,8 @@ installing prerequisite libraries. Visit
 https://github.com/NOAA-EMC/hpc-stack for instructions for installing
 prerequisite libraries via *hpc-stack* in their docs directory. UFS users who
 already installed libraries via the *hpc-stack* package only need to set the
-compiler (``CC``, ``CXX``, ``FC``), NetCDF (``NetCDF_ROOT``), and ``bacio``,
-``sp`` and ``w3emc`` (``bacio_ROOT``, ``sp_ROOT``, ``w3emc_ROOT``) environment variables to point
+compiler (``CC``, ``CXX``, ``FC``), NetCDF (``NetCDF_ROOT``),
+``sp`` and ``w3emc`` (``sp_ROOT``, ``w3emc_ROOT``) environment variables to point
 to their installation paths in order to compile the SCM.
 
 The SCM uses only a small part of the UFS *hpc-stack* package and has fewer
@@ -301,7 +299,7 @@ If the download step fails, make sure that your system’s firewall does
 not block access to GitHub. If it does, download the files ``comparison_data.tar.gz``,
 ``physics_input_data.tar.gz``, ``processed_case_input.tar.gz``, and ``raw_case_input.tar.gz``
 from the GitHub release website using your browser and manually extract its
-contents in the directory ``scm/data``. Similarly, do the same for 
+contents in the directory ``scm/data``. Similarly, do the same for
 ``thompson_tables.tar.gz`` and ``MG_INCCN_data.tar.gz`` and extract
 to ``scm/data/physics_input_data/``.
 
@@ -756,7 +754,7 @@ GNU-based Docker image:
 
 -  Python - 3
 
--  NCEPLIBS subset: bacio v2.4.1_4, sp v2.3.3_d, w3emc v2.9.2_d
+-  NCEPLIBS subset: sp v2.3.3_d, w3emc v2.9.2_d
 
 A Docker image containing the SCM, CCPP, and its software prerequisites
 can be generated from the code in the software repository obtained by
