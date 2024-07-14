@@ -497,16 +497,29 @@ subroutine output_append_state(ncid, scm_state, physics)
   call NetCDF_put_var(ncid, "v",       scm_state%state_v(:,:,1), scm_state%itt_out)
   call NetCDF_put_var(ncid, "ql",      scm_state%state_tracer(:,:,scm_state%cloud_water_index,1), scm_state%itt_out)
   call NetCDF_put_var(ncid, "qi",      scm_state%state_tracer(:,:,scm_state%cloud_ice_index,1), scm_state%itt_out)
+
+  ! print*, "DO MYNNEDMF", physics%model%do_mynnedmf
+  ! ! IT IS TRUE
+  ! print*, "TRACER", scm_state%state_tracer(:,:,scm_state%cloud_water_index,1)
+  ! print*, "WATER INDEX", scm_state%cloud_water_index
+  ! error stop "HIHI"
   if (physics%model%do_mynnedmf) then
-    call NetCDF_put_var(ncid, "qc",    scm_state%state_tracer(:,:,scm_state%cloud_water_index,1) + &
+     print*, "CLOUD WATER INDEX =", scm_state%state_tracer(1:4,1:4,scm_state%cloud_water_index,1)
+     print*, "CLOUD ICE INDEX =", scm_state%state_tracer(1:4,1:4,scm_state%cloud_ice_index,1)
+     print *, "--- FOOBAR RUNNING THIS OVER THERE -----------" ! THIS IS BEING RUN
+     print *, "cloud water index =", scm_state%cloud_water_index
+     print *, "cloud ice index =", scm_state%cloud_ice_index
+
+     call NetCDF_put_var(ncid, "qc",    scm_state%state_tracer(:,:,scm_state%cloud_water_index,1) + &
                                        scm_state%state_tracer(:,:,scm_state%cloud_ice_index,1)   + &
                                        physics%Tbd%QC_BL(:,:), scm_state%itt_out)
   else
+    print *, "--- RUNNING THIS HERE -----------"
     call NetCDF_put_var(ncid, "qc",    scm_state%state_tracer(:,:,scm_state%cloud_water_index,1) + &
                                        scm_state%state_tracer(:,:,scm_state%cloud_ice_index,1),    &
                                        scm_state%itt_out)
   endif
-  
+  ! error stop "STOP AFTERT QC WRITE"
 end subroutine output_append_state
 
 subroutine output_append_forcing(ncid, scm_state)

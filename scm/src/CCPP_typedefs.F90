@@ -773,8 +773,10 @@ contains
     end if
 !
     ! Allocate arrays that are conditional on physics choices
-    if (Model%imp_physics == Model%imp_physics_gfdl .or. Model%imp_physics == Model%imp_physics_thompson &
+    if (Model%imp_physics == Model%imp_physics_gfdl &
+        .or. Model%imp_physics == Model%imp_physics_thompson &
         .or. Model%imp_physics == Model%imp_physics_nssl &
+        .or. Model%imp_physics == Model%imp_physics_wsm6_mmm &
         ) then
        allocate (Interstitial%graupelmp  (IM))
        allocate (Interstitial%icemp      (IM))
@@ -918,6 +920,12 @@ contains
     elseif (Model%imp_physics == Model%imp_physics_wsm6) then
       Interstitial%nvdiff = Model%ntrac -3
       if (Model%satmedmf) Interstitial%nvdiff = Interstitial%nvdiff + 1
+
+    elseif (Model%imp_physics == Model%imp_physics_wsm6_mmm) then
+      Interstitial%nvdiff = 7 ! tracers.txt num - 1 ?? TODO: Double check this
+      ! Interstitial%nvdiff = Model%ntrac -3
+      ! if (Model%satmedmf) Interstitial%nvdiff = Interstitial%nvdiff + 1
+
     elseif (Model%ntclamt > 0) then             ! for GFDL MP don't diffuse cloud amount
       Interstitial%nvdiff = Model%ntrac - 1
     endif
@@ -944,6 +952,48 @@ contains
       if (Model%imp_physics == Model%imp_physics_wsm6) then
         Interstitial%ntcwx = 2
         Interstitial%ntiwx = 3
+      elseif (Model%imp_physics == Model%imp_physics_wsm6_mmm) then
+! --- TRACER FILE ---
+! "sphum","water_vapor_specific_humidity","kg kg-1"
+! "liq_wat","cloud_condensed_water_mixing_ratio","kg kg-1"
+! "ice_wat","ice_water_mixing_ratio","kg kg-1"
+! "rainwat","rain_water_mixing_ratio","kg kg-1"
+! "snowwat","snow_water_mixing_ratio","kg kg-1"
+! "graupel","graupel_mixing_ratio","kg kg-1"
+! "o3mr","ozone_mixing_ratio","kg kg-1"
+! "sgs_tke","turbulent_kinetic_energy","m2 s-2"
+
+         ! TODO: remove after debugging
+         ! "Tracer file variabel","name","units"
+         ! save variable?
+         ! save index name?
+
+        ! "liq_wat","cloud_condensed_water_mixing_ratio","kg kg-1"
+        ! [save_q(:,:,index_of_cloud_liquid_water_mixing_ratio_in_tracer_concentration_array)]
+        ! index_for_liquid_cloud_condensate_vertical_diffusion_tracer
+        Interstitial%ntcwx = 2
+
+        ! "ice_wat","ice_water_mixing_ratio","kg kg-1"
+        ! index_for_ice_cloud_condensate_vertical_diffusion_tracer
+        Interstitial%ntiwx = 3
+
+        ! "rainwat","rain_water_mixing_ratio","kg kg-1"
+        ! index_for_rain_water_vertical_diffusion_tracer
+        Interstitial%ntrwx = 4
+
+        ! "snowwat","snow_water_mixing_ratio","kg kg-1"
+        ! [save_q(:,:,index_of_snow_mixing_ratio_in_tracer_concentration_array)]
+        !  snow_mixing_ratio_save
+
+        ! "graupel","graupel_mixing_ratio","kg kg-1"
+        ! ???
+
+        ! "o3mr","ozone_mixing_ratio","kg kg-1"
+        ! [save_q(:,:,index_of_ozone_mixing_ratio_in_tracer_concentration_array)]
+
+        ! "sgs_tke","turbulent_kinetic_energy","m2 s-2"
+        ! [save_q(:,:,index_of_turbulent_kinetic_energy_in_tracer_concentration_array)]
+
       elseif (Model%imp_physics == Model%imp_physics_thompson) then
         Interstitial%ntcwx = 2
         Interstitial%ntiwx = 3
@@ -1401,8 +1451,10 @@ contains
     end if
 !
     ! Reset fields that are conditional on physics choices
-    if (Model%imp_physics == Model%imp_physics_gfdl .or. Model%imp_physics == Model%imp_physics_thompson  &
+    if (Model%imp_physics == Model%imp_physics_gfdl &
+        .or. Model%imp_physics == Model%imp_physics_thompson  &
         .or. Model%imp_physics == Model%imp_physics_nssl &
+        .or. Model%imp_physics == Model%imp_physics_wsm6_mmm &
              ) then
        Interstitial%graupelmp = clear_val
        Interstitial%icemp     = clear_val

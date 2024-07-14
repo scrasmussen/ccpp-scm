@@ -302,6 +302,65 @@
   dimensions = (horizontal_loop_extent,adjusted_vertical_layer_dimension_for_radiation)
   type = real
   kind = kind_phys
+[clouds(:,:,10)]
+  standard_name = cloud_condensed_water_effective_radius
+  long_name = cloud condensed water effective radius
+  units = m
+  dimensions = (horizontal_begin:horizontal_end,adjusted_vertical_layer_dimension_for_radiation)
+  type = real
+  kind = kind_phys
+[clouds(:,:,11)]
+  standard_name = ice_water_effective_radius
+  long_name = ice water effective radius
+  units = m
+  dimensions = (horizontal_loop_extent,adjusted_vertical_layer_dimension_for_radiation)
+  # (horizontal_begin:horizontal_end,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+[clouds(:,:,12)]
+  standard_name = snow_effective_radius
+  long_name = snow effective radius
+  units = m
+  dimensions = (horizontal_loop_extent,adjusted_vertical_layer_dimension_for_radiation)
+  type = real
+  kind = kind_phys
+[re_qc_bg]
+  standard_name = background_cloud_condensed_water_effective_radius
+  long_name = background cloud condensed water effective radius
+  units = m
+  dimensions = ()
+  type = real | kind = kind_phys
+  intent = in
+[re_qi_bg]
+  standard_name = background_ice_water_effective_radius
+  long_name = background ice water effective radius
+  units = m
+  dimensions = ()
+  type = real | kind = kind_phys
+[re_qs_bg]
+  standard_name = background_snow_effective_radius
+  long_name = background snow effective radius
+  units = m
+  dimensions = ()
+  type = real | kind = kind_phys
+[re_qc_max]
+  standard_name = maximum_cloud_condensed_water_effective_radius
+  long_name = maximum cloud condensed water effective radius
+  units = m
+  dimensions = ()
+  type = real | kind = kind_phys
+[re_qi_max]
+  standard_name = maximum_ice_water_effective_radius
+  long_name = maximum ice water effective radius
+  units = m
+  dimensions = ()
+  type = real | kind = kind_phys
+[re_qs_max]
+  standard_name = maximum_snow_effective_radius
+  long_name = maximum snow effective radius
+  units = m
+  dimensions = ()
+  type = real | kind = kind_phys
 [clw]
   standard_name = convective_transportable_tracers
   long_name = array to contain cloud water and other convective trans. tracers

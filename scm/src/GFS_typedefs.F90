@@ -6100,7 +6100,28 @@ module GFS_typedefs
       !if (Model%me == Model%master) print *,' Using wsm6 microphysics'
 
     elseif (Model%imp_physics == Model%imp_physics_wsm6_mmm) then !WSM6 MMM microphysics
-      if (Model%me == Model%master) print *,' Using WSM6 MMM microphysics'
+      Model%npdf3d  = 0
+      Model%num_p3d = 3
+      Model%num_p2d = 1
+      Model%pdfcld  = .false.
+      Model%shcnvcw = .false.
+      Model%nleffr  = 1
+      Model%nieffr  = 2
+      Model%nseffr  = 3
+      if (Model%me == Model%master) &
+           print *,' Using WSM6 MMM microphysics', &
+                            ' ltaerosol = ',Model%ltaerosol, &
+                            ' mraerosol = ',Model%mraerosol, &
+                            ' ttendlim =',Model%ttendlim, &
+                            ' ext_diag_thompson =',Model%ext_diag_thompson, &
+                            ' dt_inner =',Model%dt_inner, &
+                            ' sedi_semi=',Model%sedi_semi, &
+                            ' decfl=',decfl, &
+                            ' effr_in =',Model%effr_in, &
+                            ' lradar =',Model%lradar, &
+                            ' nsfullradar_diag =',Model%nsfullradar_diag, &
+                            ' num_p3d =',Model%num_p3d, &
+                            ' num_p2d =',Model%num_p2d
 
     elseif (Model%imp_physics == Model%imp_physics_nssl) then !NSSL microphysics
       Model%npdf3d  = 0
@@ -6690,7 +6711,9 @@ module GFS_typedefs
         print *, ' wminco            : ', Model%wminco
         print *, ' '
       endif
-      if (Model%imp_physics == Model%imp_physics_wsm6 .or. Model%imp_physics == Model%imp_physics_thompson) then
+      if (Model%imp_physics == Model%imp_physics_wsm6 .or. &
+          Model%imp_physics == Model%imp_physics_thompson .or. &
+          Model%imp_physics == Model%imp_physics_wsm6_mmm) then
         print *, ' Thompson microphysical parameters'
         print *, ' ltaerosol         : ', Model%ltaerosol
         print *, ' mraerosol         : ', Model%mraerosol

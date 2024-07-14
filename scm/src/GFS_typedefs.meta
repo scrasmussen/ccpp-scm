@@ -2883,7 +2883,7 @@
   active = (flag_for_surface_flux_coupling .and. do_mediator_atmosphere_ocean_fluxes)
 [sncovr1_lnd]
   standard_name = surface_snow_area_fraction_over_land_from_land
-  long_name = surface snow area fraction over land for coupling 
+  long_name = surface snow area fraction over land for coupling
   units = frac
   dimensions = (horizontal_loop_extent)
   type = real
@@ -4268,6 +4268,12 @@
 [imp_physics_wsm6]
   standard_name = identifier_for_wsm6_microphysics_scheme
   long_name = choice of WSM6 microphysics scheme
+  units = flag
+  dimensions = ()
+  type = integer
+[imp_physics_wsm6_mmm]
+  standard_name = identifier_for_wsm6_mmm_microphysics_scheme
+  long_name = choice of WSM6 MMM microphysics scheme
   units = flag
   dimensions = ()
   type = integer
@@ -6699,7 +6705,7 @@
   dimensions = ()
   type = integer
 [num_p2d]
-  standard_name = number_of_microphysics_varaibles_in_xy_dimensioned_restart_array
+  standard_name = number_of_microphysics_variables_in_xy_dimensioned_restart_array
   long_name = number of 2D arrays needed for microphysics
   units = count
   dimensions = ()
