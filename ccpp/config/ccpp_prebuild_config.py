@@ -225,19 +225,18 @@ SCHEME_FILES = [
     'ccpp/physics/physics/smoke_dust/rrfs_smoke_wrapper.F90',
     'ccpp/physics/physics/smoke_dust/rrfs_smoke_postpbl.F90',
     'ccpp/physics/physics/tools/get_prs_fv3.F90',
-    'ccpp/physics/physics/tools/get_phi_fv3.F90'
+    'ccpp/physics/physics/tools/get_phi_fv3.F90',
 
     # CNU_NTIEDTKE
-
-    'ccpp/physics/physics/mmm_physics/cu_ntiedtke.F90'      ,
-    'ccpp/physics/physics/scm_cu_ntiedtke_pre.F90'          ,
-    'ccpp/physics/physics/scm_cu_ntiedtke_post.F90'         ,
+    'ccpp/physics/physics/mmm_physics/mmm_cu_ntiedtke.F90'  ,
+    'ccpp/physics/physics/CONV/nTiedtke/mmm_cu_ntiedtke_pre.F90' ,
+    'ccpp/physics/physics/CONV/nTiedtke/mmm_cu_ntiedtke_post.F90' ,
 
     # NCAR MMM
-    'ccpp/physics/physics/gfs_mmm_sfclayrev_pre.F90'        ,
-    'ccpp/physics/physics/gfs_mmm_sfclayrev_post.F90'       ,
-    'ccpp/physics/physics/gfs_mmm_ysu_pre.F90'              ,
-    'ccpp/physics/physics/gfs_mmm_ysu_post.F90'             ,
+    # 'ccpp/physics/physics/mmm_physics/sfclayrev_pre.F90'        ,
+    # 'ccpp/physics/physics/mmm_physics/sfclayrev_post.F90'       ,
+    # 'ccpp/physics/physics/gfs_mmm_ysu_pre.F90'              ,
+    # 'ccpp/physics/physics/gfs_mmm_ysu_post.F90'             ,
     'ccpp/physics/physics/mmm_physics/sf_sfclayrev.F90'     ,
     'ccpp/physics/physics/mmm_physics/bl_ysu.F90'
     ]

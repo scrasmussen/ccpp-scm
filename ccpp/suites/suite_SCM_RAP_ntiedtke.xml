@@ -19,7 +19,7 @@
       <scheme>rad_sw_pre</scheme>
       <scheme>rrtmg_sw</scheme>
       <scheme>rrtmg_sw_post</scheme>
-      <scheme>rrtmg_lw_pre</scheme>
+      <!-- <scheme>rrtmg_lw_pre</scheme> moved to NOTUSED during restructuring -->
       <scheme>rrtmg_lw</scheme>
       <scheme>sgscloud_radpost</scheme>
       <scheme>rrtmg_lw_post</scheme>
@@ -75,9 +75,9 @@
       <!-- <scheme>mp_thompson_pre</scheme> -->
       <!-- <scheme>mp_thompson</scheme> -->
       <!-- <scheme>mp_thompson_post</scheme> -->
-      <scheme>scm_cu_ntiedtke_pre</scheme>
-      <!-- <scheme>cu_ntiedtke_run</scheme> -->
-      <scheme>scm_cu_ntiedtke_post</scheme>
+      <scheme>mmm_cu_ntiedtke_pre</scheme>
+      <scheme>mmm_cu_ntiedtke</scheme>
+      <scheme>mmm_cu_ntiedtke_post</scheme>
       <scheme>GFS_MP_generic_post</scheme>
       <scheme>cu_gf_driver_post</scheme>
       <scheme>maximum_hourly_diagnostics</scheme>
