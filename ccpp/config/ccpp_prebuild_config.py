@@ -35,6 +35,7 @@ VARIABLE_DEFINITION_FILES = [
     'scm/src/scm_type_defs.F90',
     'scm/src/scm_physical_constants.F90',
     'scm/src/scm_utils.F90', #no definitions, but scm_type_defs.F90 uses a module from this file
+    'ccpp/physics/physics/MP/module_mp_radar.F90',
     ]
 
 TYPEDEFS_NEW_METADATA = {
