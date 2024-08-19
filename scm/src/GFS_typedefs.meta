@@ -4277,6 +4277,19 @@
   units = flag
   dimensions = ()
   type = integer
+[do_wsm6_mmm]
+  standard_name = flag_for_wsm6_mmm
+  long_name = flag to activate mmm wsm6 microphysics
+  units = flag
+  dimensions = ()
+  type = logical
+[hail_opt]
+  standard_name = flag_for_hail_instead_of_graupel_parameters
+  long_name = flag for hail instead of graupel parameters (graupel if false)
+  units = flag
+  dimensions = ()
+  type = integer
+  active = (flag_for_wsm6_mmm)
 [imp_physics_zhao_carr]
   standard_name = identifier_for_zhao_carr_microphysics_scheme
   long_name = choice of Zhao-Carr microphysics scheme
@@ -9445,6 +9458,13 @@
   standard_name = ice_water_path_from_cloud_fraction
   long_name = total ice water path from cloud fraction scheme
   units = kg m-2
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+[tot_rainmp]
+  standard_name = accumulated_lwe_thickness_of_explicit_rain_amount
+  long_name = accumulated explicit rain
+  units = m
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
