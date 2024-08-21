@@ -415,10 +415,6 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: oa4ss(:,:)         => null()  !<
     real (kind=kind_phys), pointer      :: clxss(:,:)         => null()  !<
 
-    !-- RRTMGP and MMM YSU PBL and MMM SFCLAYREV
-    real (kind=kind_phys), pointer      :: q_lay(:,:)         => null()  !<
-    real (kind=kind_phys), pointer      :: deltaZ(:,:)        => null()  !<  
-
     !-- NCAR MMM physics
     logical                             :: scm_force_flux                !< prescribe surface fluxes (not compute)  
     real (kind=kind_phys), pointer      :: xland(:)           => null()
