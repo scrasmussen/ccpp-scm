@@ -324,43 +324,27 @@
   dimensions = (horizontal_loop_extent,adjusted_vertical_layer_dimension_for_radiation)
   type = real
   kind = kind_phys
-[re_qc_bg]
-  standard_name = background_cloud_condensed_water_effective_radius
-  long_name = background cloud condensed water effective radius
-  units = m
-  dimensions = ()
-  type = real | kind = kind_phys
-  intent = in
-[re_qi_bg]
-  standard_name = background_ice_water_effective_radius
-  long_name = background ice water effective radius
-  units = m
-  dimensions = ()
-  type = real | kind = kind_phys
-[re_qs_bg]
-  standard_name = background_snow_effective_radius
-  long_name = background snow effective radius
-  units = m
-  dimensions = ()
-  type = real | kind = kind_phys
 [re_qc_max]
-  standard_name = maximum_cloud_condensed_water_effective_radius
-  long_name = maximum cloud condensed water effective radius
+  standard_name = maximum_cloud_liquid_water_effective_radius
+  long_name = maximum cloud liquid water effective radius
   units = m
   dimensions = ()
   type = real | kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [re_qi_max]
   standard_name = maximum_ice_water_effective_radius
   long_name = maximum ice water effective radius
   units = m
   dimensions = ()
   type = real | kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [re_qs_max]
   standard_name = maximum_snow_effective_radius
   long_name = maximum snow effective radius
   units = m
   dimensions = ()
   type = real | kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [clw]
   standard_name = convective_transportable_tracers
   long_name = array to contain cloud water and other convective trans. tracers
@@ -749,14 +733,6 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-[q_over_R_minus_one]
-  standard_name = ratio_of_water_vapor_to_dry_air_gas_constants_minus_one
-  long_name = (Rwv / Rdair) - 1.0
-  units = none
-  dimensions = ()
-  type = real
-  kind = kind_phys
-  intent = in
 [ep1d]
   standard_name = surface_upward_potential_latent_heat_flux
   long_name = surface upward potential latent heat flux
@@ -1187,6 +1163,20 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+[graupel_nonphy_mm]
+  standard_name = lwe_thickness_of_graupel_amount_on_dynamics_timestep_in_mm
+  long_name = graupel fall at this time step
+  units = mm
+  dimensions = (horizontal_loop_extent)
+  type = real | kind = kind_phys
+[graupelmp_mm]
+  standard_name = lwe_thickness_of_graupel_amount_in_mm
+  long_name = explicit graupel on physics timestep
+  units = mm
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [graupelmp]
   standard_name = lwe_thickness_of_graupel_amount
   long_name = explicit graupel fall on physics timestep
@@ -1194,7 +1184,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (control_for_microphysics_scheme == identifier_for_gfdl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_thompson_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_nssl_microphysics_scheme)
+  active = (control_for_microphysics_scheme == identifier_for_gfdl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_thompson_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_nssl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [gwdcu]
   standard_name = tendency_of_x_wind_due_to_convective_gravity_wave_drag
   long_name = zonal wind tendency due to convective gravity wave drag
@@ -1286,7 +1276,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (control_for_microphysics_scheme == identifier_for_gfdl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_thompson_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_nssl_microphysics_scheme)
+  active = (control_for_microphysics_scheme == identifier_for_gfdl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_thompson_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_nssl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [dry]
   standard_name = flag_nonzero_land_surface_fraction
   long_name = flag indicating presence of some land surface area fraction
@@ -1681,21 +1671,7 @@
   standard_name = air_density
   long_name = air density
   units = kg m-3
-  dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
-  type = real
-  kind = kind_phys
-[qi]
-  standard_name = ice_water_mixing_ratio
-  long_name = ice water mixing ratio
-  units = kg kg-1
-  dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
-  type = real
-  kind = kind_phys
-[qc]
-  standard_name = cloud_condensed_water_mixing_ratio
-  long_name = cloud condensed water mixing ratio
-  units = kg kg-1
-  dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
 [qgl]
@@ -1807,6 +1783,20 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+[rain_nonphy_mm]
+  standard_name = lwe_thickness_of_rain_amount_on_dynamics_timestep_in_mm
+  long_name = total rain at this time step
+  units = mm
+  dimensions = (horizontal_loop_extent)
+  type = real | kind = kind_phys
+[rainmp_mm]
+  standard_name = lwe_thickness_of_explicit_rain_amount_in_mm
+  long_name = explicit rain on physics timestep
+  units = mm
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [rainmp]
   standard_name = lwe_thickness_of_explicit_rain_amount
   long_name = explicit rain on physics timestep
@@ -1814,7 +1804,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (control_for_microphysics_scheme == identifier_for_gfdl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_thompson_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_nssl_microphysics_scheme)
+  active = (control_for_microphysics_scheme == identifier_for_gfdl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_thompson_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_nssl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [rainp]
   standard_name = tendency_of_rain_water_mixing_ratio_due_to_microphysics
   long_name = tendency of rain water mixing ratio due to microphysics
@@ -2063,6 +2053,20 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+[snow_nonphy_mm]
+  standard_name = lwe_thickness_of_snow_amount_on_dynamics_timestep_in_mm
+  long_name = snow fall at this time step
+  units = mm
+  dimensions = (horizontal_loop_extent)
+  type = real | kind = kind_phys
+[snowmp_mm]
+  standard_name = lwe_thickness_of_snow_amount_in_mm
+  long_name = explicit snow on physics timestep
+  units = mm
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [snowmp]
   standard_name = lwe_thickness_of_snow_amount
   long_name = explicit snow fall on physics timestep
@@ -2070,7 +2074,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (control_for_microphysics_scheme == identifier_for_gfdl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_thompson_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_nssl_microphysics_scheme)
+  active = (control_for_microphysics_scheme == identifier_for_gfdl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_thompson_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_nssl_microphysics_scheme .or. control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [snowmt]
   standard_name = surface_snow_melt
   long_name = snow melt during timestep
@@ -2494,7 +2498,7 @@
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
-  active = (flag_for_rrtmgp_radiation_scheme)
+  active = (flag_for_rrtmgp_radiation_scheme .or. flag_for_wsm6_mmm)
 [p_lay]
   standard_name = air_pressure_at_layer_for_RRTMGP
   long_name = air pressure layer
@@ -2550,7 +2554,7 @@
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
-  active = (flag_for_rrtmgp_radiation_scheme)
+  active = (flag_for_rrtmgp_radiation_scheme .or. control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [deltaZc]
   standard_name = layer_thickness_from_layer_center
   long_name = layer_thickness
@@ -2815,6 +2819,51 @@
   type = real
   kind = kind_phys
   active = (flag_for_rrtmgp_radiation_scheme)
+[re_qc_bg]
+  standard_name = background_cloud_liquid_water_effective_radius
+  long_name = background cloud liquid water effective radius
+  units = m
+  dimensions = ()
+  type = real
+  kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
+[re_qi_bg]
+  standard_name = background_ice_water_effective_radius
+  long_name = background ice water effective radius
+  units = m
+  dimensions = ()
+  type = real
+  kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
+[re_qs_bg]
+  standard_name = background_snow_effective_radius
+  long_name = background snow effective radius
+  units = m
+  dimensions = ()
+  type = real
+  kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
+[re_qc_m]
+  standard_name = effective_radius_of_stratiform_cloud_liquid_water_particle_in_meter
+  long_name = eff. radius of cloud liquid water particle in meter
+  units = m
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real | kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
+[re_qi_m]
+  standard_name = effective_radius_of_stratiform_cloud_ice_particle_in_meter
+  long_name = eff. radius of cloud ice water particle in meter
+  units = m
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real | kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
+[re_qs_m]
+  standard_name = effective_radius_of_stratiform_cloud_snow_particle_in_meter
+  long_name = effective radius of cloud snow particle in meter
+  units = m
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real | kind = kind_phys
+  active = (control_for_microphysics_scheme == identifier_for_wsm6_mmm_microphysics_scheme)
 [vmr_o2]
   standard_name = volume_mixing_ratio_for_o2
   long_name = molar mixing ratio of o2 in with respect to dry air
@@ -2941,34 +2990,28 @@
   type = real
   kind = kind_phys
   active = (flag_for_CCPP_suite_simulator)
-[hail_opt]
-  standard_name = flag_for_hail_instead_of_graupel_parameters
-  long_name = flag for hail instead of graupel parameters (graupel if false)
-  units = flag
-  dimensions = ()
-  type = integer
 [evapprod2d]
   standard_name = grid_scale_production_of_evaporation
   long_name = grid-scale production of evaporation
   units = kg kg-1 s-1
-  dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
 [rainprod2d]
   standard_name = grid_scale_production_of_rain
   long_name = grid-scale production of rain
   units = kg kg-1 s-1
-  dimensions = (horizontal_begin:horizontal_end,vertical_layer_dimension)
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
-[vertical_dimension_start]
-  standard_name = vertical_dimension_start
+[vertical_begin]
+  standard_name = vertical_begin
   long_name = vertical dimension start
-  units = none
+  units = count
   dimensions = ()
   type = integer
-[vertical_dimension_end]
-  standard_name = vertical_dimension_end
+[vertical_end]
+  standard_name = vertical_end
   long_name = vertical dimension end
   units = count
   dimensions = ()

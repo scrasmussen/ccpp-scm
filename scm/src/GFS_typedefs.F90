@@ -1223,6 +1223,7 @@ module GFS_typedefs
     real(kind=kind_phys) :: betadcu         !< Tuning parameter for prog. closure deep clouds 
 
     !--- wsm6 parameters
+    logical              :: do_wsm6_mmm
     integer              :: hail_opt
     real(kind=kind_phys) :: den0
     real(kind=kind_phys) :: denr
@@ -2040,6 +2041,8 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: iwp_ex (:)     => null()  !< ice water path from microphysics
     real (kind=kind_phys), pointer :: lwp_fc (:)     => null()  !< liquid water path from cloud fraction scheme
     real (kind=kind_phys), pointer :: iwp_fc (:)     => null()  !< ice water path from cloud fraction scheme
+!--- WSM6 MMM scheme
+    real (kind=kind_phys), pointer :: tot_rainmp (:) => null()  !< accumulated rain from microphysics
 
     !--- Extra PBL diagnostics
     real (kind=kind_phys), pointer :: dkt(:,:)       => null()  !< Eddy diffusitivity for heat
@@ -3885,6 +3888,7 @@ module GFS_typedefs
     logical              :: ca_trigger     = .false.
 
 !--- wsm6 parameters
+    logical              :: do_wsm6_mmm    = .false.
     integer              :: hail_opt       = 0 ! .false.        !< hail option flag
     real(kind=kind_phys) :: den0           = 1.28           !< density of dry air
     real(kind=kind_phys) :: denr           = 1000           !< density of liquid water
@@ -4151,7 +4155,7 @@ module GFS_typedefs
                           !--- GSL lightning threat indices
                                lightning_threat,                                            &
                           !--- wsm6 parameters
-                               hail_opt, den0, denr, dens, cl, cpv,                         &
+                               do_wsm6_mmm, hail_opt, den0, denr, dens, cl, cpv,            &
                           !--- CCPP suite simulator
                                do_ccpp_suite_sim
 
@@ -5189,6 +5193,7 @@ module GFS_typedefs
     if(Model%me==0) print *,' model init,iaufhrs=',Model%iaufhrs
 
 !--- wsm6 parameters
+    Model%do_wsm6_mmm     = do_wsm6_mmm
     Model%hail_opt        = hail_opt
     Model%den0            = den0
     Model%denr            = denr
@@ -6108,13 +6113,19 @@ module GFS_typedefs
       Model%nleffr  = 1
       Model%nieffr  = 2
       Model%nseffr  = 3
+      Model%lradar = .true.
+      if (.not. Model%effr_in) then
+        print *,' MMM WSM6 MP requires effr_in to be set to .true., changing value from false to true'
+        Model%effr_in = .true.
+        effr_in = .true.
+      endif
       if (Model%me == Model%master) &
            print *,' Using WSM6 MMM microphysics', &
-                            ' ltaerosol = ',Model%ltaerosol, &
-                            ' mraerosol = ',Model%mraerosol, &
+                            !' ltaerosol = ',Model%ltaerosol, &
+                            !#' mraerosol = ',Model%mraerosol, &
                             ' ttendlim =',Model%ttendlim, &
-                            ' ext_diag_thompson =',Model%ext_diag_thompson, &
-                            ' dt_inner =',Model%dt_inner, &
+                            !' ext_diag_thompson =',Model%ext_diag_thompson, &
+                            !' dt_inner =',Model%dt_inner, &
                             ' sedi_semi=',Model%sedi_semi, &
                             ' decfl=',decfl, &
                             ' effr_in =',Model%effr_in, &
@@ -7098,7 +7109,8 @@ module GFS_typedefs
       print *, ' '
       print *, 'lightning threat indexes'
       print *, ' lightning_threat  : ', Model%lightning_threat
-      print *, 'wsm6 parameters'
+      print *, ' wsm6 parameters'
+      print *, ' do_wsm6_mmm       : ', Model%do_wsm6_mmm
       print *, ' hail_opt          : ', Model%hail_opt
       print *, ' den0              : ', Model%den0
       print *, ' denr              : ', Model%denr
@@ -7858,6 +7870,11 @@ module GFS_typedefs
     allocate (Diag%lwp_fc (IM))
     allocate (Diag%iwp_fc (IM))
 
+    ! WSM6 MMM scheme
+    if (Model%imp_physics == Model%imp_physics_wsm6_mmm) then
+        allocate (Diag%tot_rainmp (IM))
+    end if
+
     !--- 3D diagnostics
     if (Model%ldiag3d) then
       allocate(Diag%dtend(IM,Model%levs,Model%ndtend))
@@ -8174,6 +8191,10 @@ module GFS_typedefs
     Diag%iwp_ex     = zero
     Diag%lwp_fc     = zero
     Diag%iwp_fc     = zero
+
+    if (Model%imp_physics == Model%imp_physics_wsm6_mmm) then
+       Diag%tot_rainmp = zero
+    end if
 
     Diag%totprcpb   = zero
     Diag%cnvprcpb   = zero

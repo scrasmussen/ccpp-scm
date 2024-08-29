@@ -62,8 +62,8 @@ public
   !> wsm6
   real(kind=dp),parameter:: con_qmin = 1.e-15                !< minimum value of water vapor mixing ratio
   real(kind=dp),parameter:: con_cv = 717                     !< specific heat of dry air at constant volume
-  real(kind=dp),parameter:: con_xls = 2.8440E06              !< latent heat of sublimation of water at 0C
+  real(kind=dp),parameter:: con_xls = 2.8440E06              !< latent heat of sublimation of snow/ice at 0C
   real(kind=dp),parameter:: con_rhodryair = 1.225            !< density of dry air
-  real(kind=dp),parameter:: con_rhosnow = 300.0              !< density of snow
+  real(kind=dp),parameter:: con_rhosnow = 100.0              !< density of snow
   real(kind=dp),parameter:: con_4rv = 4.0 * con_rv           !< four times the gas constant water vapor
 end module scm_physical_constants

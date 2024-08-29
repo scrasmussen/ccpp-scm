@@ -106,7 +106,7 @@
   kind = kind_phys
 [con_hvap]
   standard_name = latent_heat_of_vaporization_of_water_at_0C
-  long_name = latent heat of evaporation/sublimation
+  long_name = latent heat of evaporation
   units = J kg-1
   dimensions = ()
   type = real
@@ -301,11 +301,12 @@
   type = real
   kind = kind_phys
 [con_xls]
-  standard_name = latent_heat_of_sublimation_of_water_at_0C
-  long_name = latent heat of sublimation of water at 0C
+  standard_name = latent_heat_of_sublimation_of_ice_snow_at_0C
+  long_name = latent heat of sublimation of snow/ice at 0C
   units = J kg-1
   dimensions = ()
-  type = real | kind = kind_phys
+  type = real
+  kind = kind_phys
 [con_rhodryair]
   standard_name = density_of_dry_air
   long_name = density of dry air
