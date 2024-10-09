@@ -380,6 +380,14 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+[dqvdt_nonphy]
+  standard_name = tendendy_of_water_vapor_mixing_ratio_due_to_nonphysics
+  long_name = moisture tendency due to dynamics only
+  units = kg kg-1 s-1
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  kind = kind_phys
+  active = (control_for_deep_convection_scheme == identifier_for_mmm_new_tiedtke_deep_convection .or. control_for_shallow_convection_scheme == identifier_for_mmm_new_tiedtke_shallow_convection)
 [cnv_dqldt]
   standard_name = tendency_of_cloud_water_due_to_convective_microphysics
   long_name = tendency of cloud water due to convective microphysics
@@ -1726,6 +1734,20 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
+[raincd_mm]
+  standard_name = lwe_thickness_of_deep_convective_precipitation_amount_in_mm
+  long_name = deep convective rainfall amount on physics timestep in mm
+  units = mm
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
+[raincs_mm]
+  standard_name = lwe_thickness_of_shallow_convective_precipitation_amount_in_mm
+  long_name = shallow convective rainfall amount on physics timestep in mm
+  units = mm
+  dimensions = (horizontal_loop_extent)
+  type = real
+  kind = kind_phys
 [rainmcadj]
   standard_name = lwe_thickness_of_moist_convective_adj_precipitation_amount
   long_name = adjusted moist convective rainfall amount on physics timestep
@@ -2858,7 +2880,22 @@
   dimensions = (horizontal_loop_extent,vertical_layer_dimension)
   type = real
   kind = kind_phys
-  active = (flag_for_rrtmgp_radiation_scheme .or. flag_for_ysu_pbl_scheme)
+  active = (flag_for_rrtmgp_radiation_scheme .or. flag_for_ysu_pbl_scheme .or. control_for_deep_convection_scheme == identifier_for_mmm_new_tiedtke_deep_convection .or. control_for_shallow_convection_scheme == identifier_for_mmm_new_tiedtke_shallow_convection)
+[geoph]
+  standard_name = geopotential_height
+  long_name = geopotential height at model layer centers
+  units = m
+  dimensions = (horizontal_loop_extent,vertical_layer_dimension)
+  type = real
+  active = (control_for_deep_convection_scheme == identifier_for_mmm_new_tiedtke_deep_convection .or. control_for_shallow_convection_scheme == identifier_for_mmm_new_tiedtke_shallow_convection)
+[geophi]
+  standard_name = geopotential_height_at_interface
+  long_name = geopotential height at model layer interfaces
+  units = m
+  dimensions = (horizontal_loop_extent,vertical_interface_dimension)
+  type = real
+  kind = kind_phys
+  active = (control_for_deep_convection_scheme == identifier_for_mmm_new_tiedtke_deep_convection .or. control_for_shallow_convection_scheme == identifier_for_mmm_new_tiedtke_shallow_convection)
 [deltaZ]
   standard_name = layer_thickness
   long_name = layer_thickness
@@ -2897,7 +2934,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_ysu_pbl_scheme .or. flag_for_mmm_sfclayrev_scheme)
+  active = (flag_for_ysu_pbl_scheme .or. flag_for_mmm_sfclayrev_scheme .or. control_for_deep_convection_scheme == identifier_for_mmm_new_tiedtke_deep_convection .or. control_for_shallow_convection_scheme == identifier_for_mmm_new_tiedtke_shallow_convection)
 [znt]
   standard_name = surface_roughness_length_in_m
   long_name = surface roughness length in meter
@@ -2953,7 +2990,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_ysu_pbl_scheme .or. flag_for_mmm_sfclayrev_scheme)
+  active = (flag_for_ysu_pbl_scheme .or. flag_for_mmm_sfclayrev_scheme .or. control_for_deep_convection_scheme == identifier_for_mmm_new_tiedtke_deep_convection .or. control_for_shallow_convection_scheme == identifier_for_mmm_new_tiedtke_shallow_convection)
 [qfx]
   standard_name = kinematic_surface_upward_latent_heat_flux
   long_name = kinematic surface upward latent heat flux
@@ -2961,7 +2998,7 @@
   dimensions = (horizontal_loop_extent)
   type = real
   kind = kind_phys
-  active = (flag_for_ysu_pbl_scheme .or. flag_for_mmm_sfclayrev_scheme)
+  active = (flag_for_ysu_pbl_scheme .or. flag_for_mmm_sfclayrev_scheme .or. control_for_deep_convection_scheme == identifier_for_mmm_new_tiedtke_deep_convection .or. control_for_shallow_convection_scheme == identifier_for_mmm_new_tiedtke_shallow_convection)
 [qgh]
   standard_name = saturation_mixing_ratio_at_lowest_model_level
   long_name = saturation water vapor mixing ratio at lowest model level
