@@ -252,6 +252,8 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: rainmp(:)          => null()  !<
     real (kind=kind_phys), pointer      :: raincd(:)          => null()  !<
     real (kind=kind_phys), pointer      :: raincs(:)          => null()  !<
+    real (kind=kind_phys), pointer      :: raincd_mm(:)       => null()  !<
+    real (kind=kind_phys), pointer      :: raincs_mm(:)       => null()  !<
     real (kind=kind_phys), pointer      :: rainmcadj(:)       => null()  !<
     real (kind=kind_phys), pointer      :: rainp(:,:)         => null()  !<
     real (kind=kind_phys), pointer      :: rb(:)              => null()  !<
@@ -356,6 +358,7 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: tv_lay(:,:)               => null()  !<
     real (kind=kind_phys), pointer      :: qs_lay(:,:)               => null()  !<
     real (kind=kind_phys), pointer      :: q_lay(:,:)                => null()  !<
+    real (kind=kind_phys), pointer      :: dqvdt_nonphy(:,:)         => null()  !<
     real (kind=kind_phys), pointer      :: deltaZ(:,:)               => null()  !<
     real (kind=kind_phys), pointer      :: deltaZc(:,:)              => null()  !<
     real (kind=kind_phys), pointer      :: deltaP(:,:)               => null()  !<
@@ -420,6 +423,8 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: xland(:)           => null()
     real (kind=kind_phys), pointer      :: qcx(:,:)           => null()
     real (kind=kind_phys), pointer      :: qix(:,:)           => null()
+    real (kind=kind_phys), pointer      :: geoph(:,:)         => null()
+    real (kind=kind_phys), pointer      :: geophi(:,:)        => null()
     real (kind=kind_phys), pointer      :: hfx(:)             => null()
     real (kind=kind_phys), pointer      :: qfx(:)             => null()
     real (kind=kind_phys), pointer      :: qgh(:)             => null()
@@ -661,6 +666,8 @@ contains
     allocate (Interstitial%qss_water       (IM))
     allocate (Interstitial%raincd          (IM))
     allocate (Interstitial%raincs          (IM))
+    allocate (Interstitial%raincd_mm       (IM))
+    allocate (Interstitial%raincs_mm       (IM))
     allocate (Interstitial%rainmcadj       (IM))
     allocate (Interstitial%rainp           (IM,Model%levs))
     allocate (Interstitial%rb              (IM))
@@ -856,9 +863,13 @@ contains
     end if
 
     ! RRTMGP and NCAR MMM physics
-    if (Model%do_ysu .or. Model%do_RRTMGP .or. Model%do_mmm_sfclayrev) then
+    if (Model%do_ysu .or. Model%do_RRTMGP .or. Model%do_mmm_sfclayrev .or. Model%imfdeepcnv .eq. Model%imfdeepcnv_mmm_ntiedtke &
+        .or. Model%imfshalcnv .eq. Model%imfshalcnv_mmm_ntiedtke) then
        allocate (Interstitial%q_lay  (IM, Model%levs))
        allocate (Interstitial%deltaZ (IM, Model%levs))
+       allocate (Interstitial%dqvdt_nonphy (IM, Model%levs))
+       allocate (Interstitial%geoph  (IM, Model%levs))
+       allocate (Interstitial%geophi (IM, Model%levs))
     end if
 
     ! NCAR MMM physics
@@ -876,7 +887,8 @@ contains
 
         Interstitial%scm_force_flux = .false. ! If MMM surface scheme used, fluxes are not prescribed 
     endif
-    if (Model%do_ysu .or. Model%do_mmm_sfclayrev) then
+    if (Model%do_ysu .or. Model%do_mmm_sfclayrev .or. Model%imfdeepcnv .eq. Model%imfdeepcnv_mmm_ntiedtke &
+        .or. Model%imfshalcnv .eq. Model%imfshalcnv_mmm_ntiedtke) then
        allocate (Interstitial%xland     (IM))
        allocate (Interstitial%hfx       (IM))
        allocate (Interstitial%qfx       (IM))
@@ -1404,6 +1416,8 @@ contains
     Interstitial%qss_water       = Model%huge
     Interstitial%raincd          = clear_val
     Interstitial%raincs          = clear_val
+    Interstitial%raincd_mm       = clear_val
+    Interstitial%raincs_mm       = clear_val
     Interstitial%rainmcadj       = clear_val
     Interstitial%rainp           = clear_val
     Interstitial%rb              = clear_val
@@ -1491,9 +1505,13 @@ contains
     end if
     
     ! RRTMGP and NCAR MMM physics
-    if (Model%do_ysu .or. Model%do_RRTMGP .or. Model%do_mmm_sfclayrev) then
+    if (Model%do_ysu .or. Model%do_RRTMGP .or. Model%do_mmm_sfclayrev .or. Model%imfdeepcnv .eq. Model%imfdeepcnv_mmm_ntiedtke &
+        .or. Model%imfshalcnv .eq. Model%imfshalcnv_mmm_ntiedtke) then
        Interstitial%q_lay  = clear_val
        Interstitial%deltaZ = clear_val
+       Interstitial%dqvdt_nonphy = clear_val
+       Interstitial%geoph  = clear_val
+       Interstitial%geophi = clear_val
     endif
 
     ! NCAR MMM physics
@@ -1517,7 +1535,8 @@ contains
        Interstitial%its             = 0
        Interstitial%ite             = 0
     endif
-    if (Model%do_ysu .or. Model%do_mmm_sfclayrev) then
+    if (Model%do_ysu .or. Model%do_mmm_sfclayrev .or. Model%imfdeepcnv .eq. Model%imfdeepcnv_mmm_ntiedtke &
+        .or. Model%imfshalcnv .eq. Model%imfshalcnv_mmm_ntiedtke) then
        Interstitial%xland       = 0
        Interstitial%hfx         = clear_val
        Interstitial%qfx         = clear_val

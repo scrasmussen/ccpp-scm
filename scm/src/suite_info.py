@@ -61,6 +61,7 @@ suite_list.append(suite('SCM_RAP_YSU',           'tracers_RAP.txt',             
 suite_list.append(suite('SCM_RAP_mmm',           'tracers_RAP.txt',                      'input_RAP_mmm.nml',                 600.0, 600.0 , False))
 suite_list.append(suite('SCM_RAP_mmm_YSU',       'tracers_RAP.txt',                      'input_RAP_mmm_YSU.nml',             600.0, 600.0 , False))
 suite_list.append(suite('SCM_RAP_ntiedtke',      'tracers_RAP.txt',                      'input_RAP_ntiedtke.nml',            600.0, 600.0 , False))
+suite_list.append(suite('SCM_RAP_ufs_ntiedtke',  'tracers_RAP.txt',                      'input_RAP_ufs_ntiedtke.nml',        600.0, 600.0 , False))
 suite_list.append(suite('SCM_RAP_sfclayrev',     'tracers_RAP.txt',                      'input_RAP_sfclayrev.nml',           600.0, 600.0 , False))
 suite_list.append(suite('SCM_GFS_v17_p8_mmm',    'tracers_GFS_v17_p8.txt',               'input_GFS_v17_p8_mmm.nml',          600.0, 600.0,  False))
 suite_list.append(suite('SCM_GFS_v17_p8_YSU',    'tracers_GFS_v17_p8.txt',               'input_GFS_v17_p8_YSU.nml',          600.0, 600.0,  False))

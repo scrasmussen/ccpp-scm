@@ -148,9 +148,9 @@ SCHEME_FILES = [
     'ccpp/physics/physics/CONV/Chikira_Sugiyama/cs_conv.F90',
     'ccpp/physics/physics/CONV/Chikira_Sugiyama/cs_conv_post.F90',
     'ccpp/physics/physics/CONV/Chikira_Sugiyama/cs_conv_aw_adj.F90',
-    'ccpp/physics/physics/CONV/nTiedtke/cu_ntiedtke_pre.F90',
-    'ccpp/physics/physics/CONV/nTiedtke/cu_ntiedtke.F90',
-    'ccpp/physics/physics/CONV/nTiedtke/cu_ntiedtke_post.F90',
+    'ccpp/physics/physics/CONV/nTiedtke/ufs_cu_ntiedtke_pre.F90',
+    'ccpp/physics/physics/CONV/nTiedtke/ufs_cu_ntiedtke.F90',
+    'ccpp/physics/physics/CONV/nTiedtke/ufs_cu_ntiedtke_post.F90',
     'ccpp/physics/physics/CONV/SAMF/samfdeepcnv.f',
     'ccpp/physics/physics/CONV/SAMF/samfshalcnv.f',
     'ccpp/physics/physics/CONV/SAS/sascnvn.F',
@@ -229,9 +229,9 @@ SCHEME_FILES = [
     'ccpp/physics/physics/tools/get_phi_fv3.F90',
 
     # CNU_NTIEDTKE
-    'ccpp/physics/physics/mmm_physics/mmm_cu_ntiedtke.F90'  ,
-    'ccpp/physics/physics/CONV/nTiedtke/mmm_cu_ntiedtke_pre.F90' ,
-    'ccpp/physics/physics/CONV/nTiedtke/mmm_cu_ntiedtke_post.F90' ,
+    'ccpp/physics/physics/CONV/nTiedtke/gfs_mmm_cu_ntiedtke_pre.F90' ,
+    'ccpp/physics/physics/mmm_physics/cu_ntiedtke.F90'  ,
+    'ccpp/physics/physics/CONV/nTiedtke/gfs_mmm_cu_ntiedtke_post.F90' ,
 
     # NCAR MMM
     # 'ccpp/physics/physics/mmm_physics/sfclayrev_pre.F90'        ,

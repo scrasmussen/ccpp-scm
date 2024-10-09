@@ -24,7 +24,7 @@ public
   real(kind=dp),parameter:: con_cvap   =1.8460e+3
   real(kind=dp),parameter:: con_hvap   =2.5000e+6                    !< latent heat of vaporization of water at 0C
   real(kind=dp),parameter:: con_hfus   =3.3358e+5                    !< latent heat of fusion of water at 0C
-  real(kind=dp),parameter:: con_xls    =2.85e+6                      !< latent heat of sublimation of water at 0C
+  real(kind=dp),parameter:: con_xls    =2.8440E06                    !< latent heat of sublimation of snow/ice at 0C
   real(kind=dp),parameter:: con_psat   =6.1078e+2_dp                 !< pres at H2O 3pt (\f$Pa\f$)
   real(kind=dp),parameter:: con_t0c    =2.7315e+2
   real(kind=dp),parameter:: con_ttp    =2.7316e+2

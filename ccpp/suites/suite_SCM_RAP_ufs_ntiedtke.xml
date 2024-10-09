@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suite name="SCM_RAP_ntiedtke" version="1">
+<suite name="SCM_RAP_ufs_ntiedtke" version="1">
   <!-- <init></init> -->
   <group name="time_vary">
     <subcycle loop="1">
@@ -62,9 +62,9 @@
       <scheme>get_phi_fv3</scheme>
       <scheme>GFS_suite_interstitial_3</scheme>
       <scheme>GFS_DCNV_generic_pre</scheme>
-      <scheme>gfs_mmm_cu_ntiedtke_pre</scheme>
-      <scheme>cu_ntiedtke</scheme>
-      <scheme>gfs_mmm_cu_ntiedtke_post</scheme>
+      <scheme>ufs_cu_ntiedtke_pre</scheme>
+      <scheme>ufs_cu_ntiedtke</scheme>
+      <scheme>ufs_cu_ntiedtke_post</scheme>
       <scheme>GFS_DCNV_generic_post</scheme>
       <scheme>GFS_SCNV_generic_pre</scheme>
       <scheme>GFS_SCNV_generic_post</scheme>
