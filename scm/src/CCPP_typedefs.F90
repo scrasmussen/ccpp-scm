@@ -161,7 +161,9 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: gflx_ice(:)        => null()  !<
     real (kind=kind_phys), pointer      :: gflx_land(:)       => null()  !<
     real (kind=kind_phys), pointer      :: gflx_water(:)      => null()  !<
+    real (kind=kind_phys), pointer      :: graupel_nonphy_mm(:)=> null()  !<
     real (kind=kind_phys), pointer      :: graupelmp(:)       => null()  !<
+    real (kind=kind_phys), pointer      :: graupelmp_mm(:)    => null()  !<
     real (kind=kind_phys), pointer      :: gwdcu(:,:)         => null()  !<
     real (kind=kind_phys), pointer      :: gwdcv(:,:)         => null()  !<
     real (kind=kind_phys), pointer      :: zvfun(:)           => null()  !<
@@ -247,7 +249,9 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: qss_water(:)       => null()  !<
     logical                             :: fullradar_diag                !<
     real (kind=kind_phys)               :: raddt                         !<
+    real (kind=kind_phys), pointer      :: rain_nonphy_mm(:)=> null()  !<
     real (kind=kind_phys), pointer      :: rainmp(:)          => null()  !<
+    real (kind=kind_phys), pointer      :: rainmp_mm(:)       => null()  !<
     real (kind=kind_phys), pointer      :: raincd(:)          => null()  !<
     real (kind=kind_phys), pointer      :: raincs(:)          => null()  !<
     real (kind=kind_phys), pointer      :: rainmcadj(:)       => null()  !<
@@ -275,7 +279,9 @@ module CCPP_typedefs
     logical                             :: skip_macro                    !<
     real (kind=kind_phys), pointer      :: snowc(:)           => null()  !<
     real (kind=kind_phys), pointer      :: snohf(:)           => null()  !<
+    real (kind=kind_phys), pointer      :: snow_nonphy_mm(:)=> null()  !<
     real (kind=kind_phys), pointer      :: snowmp(:)          => null()  !<
+    real (kind=kind_phys), pointer      :: snowmp_mm(:)       => null()  !<
     real (kind=kind_phys), pointer      :: snowmt(:)          => null()  !<
     real (kind=kind_phys), pointer      :: stress(:)          => null()  !<
     real (kind=kind_phys), pointer      :: stress_ice(:)      => null()  !<
@@ -414,17 +420,18 @@ module CCPP_typedefs
     real (kind=kind_phys), pointer      :: clxss(:,:)         => null()  !<
 
     !-- WSM6
-    integer                             :: hail_opt                      !<
-    real (kind=kind_phys), pointer      :: qi(:,:)            => null()  !<
-    real (kind=kind_phys), pointer      :: qc(:,:)            => null()  !<
     real (kind=kind_phys), pointer      :: rho_air(:,:)       => null()  !<
     real (kind=kind_phys), pointer      :: evapprod2d(:,:)    => null()  !<
     real (kind=kind_phys), pointer      :: rainprod2d(:,:)    => null()  !<
-    real (kind=kind_phys)               :: q_over_R_minus_one            !<
-    integer                             :: vertical_dimension_start      !<
-    integer                             :: vertical_dimension_end        !<
+    real (kind=kind_phys), pointer      :: re_qc_m(:,:)       => null()  !<
+    real (kind=kind_phys), pointer      :: re_qi_m(:,:)       => null()  !<
+    real (kind=kind_phys), pointer      :: re_qs_m(:,:)       => null()  !<
+    integer                             :: vertical_begin                !<
+    integer                             :: vertical_end                  !<
     integer                             :: horizontal_begin              !<
     integer                             :: horizontal_end                !<
+    real (kind=kind_phys)               :: re_qc_bg,re_qi_bg,re_qs_bg    !<
+    real (kind=kind_phys)               :: re_qc_max,re_qi_max,re_qs_max    !<
 
     !-- 3D diagnostics
     integer :: rtg_ozone_index, rtg_tke_index
@@ -778,6 +785,12 @@ contains
         .or. Model%imp_physics == Model%imp_physics_nssl &
         .or. Model%imp_physics == Model%imp_physics_wsm6_mmm &
         ) then
+       allocate (Interstitial%graupel_nonphy_mm  (IM))
+       allocate (Interstitial%rain_nonphy_mm      (IM))
+       allocate (Interstitial%snow_nonphy_mm      (IM))
+       allocate (Interstitial%graupelmp_mm  (IM))
+       allocate (Interstitial%rainmp_mm     (IM))
+       allocate (Interstitial%snowmp_mm     (IM))
        allocate (Interstitial%graupelmp  (IM))
        allocate (Interstitial%icemp      (IM))
        allocate (Interstitial%rainmp     (IM))
@@ -816,13 +829,16 @@ contains
 
     ! Setup WSM6
     if (Model%imp_physics == Model%imp_physics_wsm6_mmm) then
-       Interstitial%vertical_dimension_start = 1
-       Interstitial%vertical_dimension_end = Model%levs
+       Interstitial%horizontal_begin = 1
+       Interstitial%horizontal_end = IM
+       Interstitial%vertical_begin = 1
+       Interstitial%vertical_end = Model%levs
        allocate (Interstitial%q_lay(IM,Model%levs))
-       allocate (Interstitial%qi(IM,Model%levs))
-       allocate (Interstitial%qc(IM,Model%levs))
        allocate (Interstitial%deltaZ(IM, Model%levs))
        allocate (Interstitial%rho_air(IM,Model%levs))
+       allocate (Interstitial%re_qc_m(IM,Model%levs))
+       allocate (Interstitial%re_qi_m(IM,Model%levs))
+       allocate (Interstitial%re_qs_m(IM,Model%levs))
        allocate (Interstitial%evapprod2d(IM,Model%levs))
        allocate (Interstitial%rainprod2d(IM,Model%levs))
     end if
@@ -1456,10 +1472,23 @@ contains
         .or. Model%imp_physics == Model%imp_physics_nssl &
         .or. Model%imp_physics == Model%imp_physics_wsm6_mmm &
              ) then
+       Interstitial%graupel_nonphy_mm = clear_val
+       Interstitial%rain_nonphy_mm    = clear_val
+       Interstitial%snow_nonphy_mm    = clear_val
+       Interstitial%graupelmp_mm = clear_val
+       Interstitial%rainmp_mm    = clear_val
+       Interstitial%snowmp_mm    = clear_val
        Interstitial%graupelmp = clear_val
        Interstitial%icemp     = clear_val
        Interstitial%rainmp    = clear_val
        Interstitial%snowmp    = clear_val
+       Interstitial%re_qc_bg  = clear_val
+       Interstitial%re_qi_bg  = clear_val
+       Interstitial%re_qs_bg  = clear_val
+       Interstitial%re_qc_max = clear_val
+       Interstitial%re_qi_max = clear_val
+       Interstitial%re_qs_max = clear_val
+
     else if (Model%imp_physics == Model%imp_physics_mg) then
        Interstitial%ncgl      = clear_val
        Interstitial%ncpr      = clear_val

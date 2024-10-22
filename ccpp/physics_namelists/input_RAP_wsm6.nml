@@ -8,7 +8,7 @@
   use_ufo      = .true.
   pre_rad      = .false.
   imp_physics  = 7
-  ltaerosol    = .true.
+  ltaerosol    = .false.
   lradar       = .true.
   sedi_semi    = .true.
   decfl        = 10
@@ -16,8 +16,8 @@
   nssl_alphah  = 0.0
   nssl_alphahl = 1.0
   nssl_hail_on = .false.
-  nssl_ccn_on  = .true.
-  nssl_invertccn = .true.
+  nssl_ccn_on  = .false.
+  nssl_invertccn = .false.
   dt_inner     = 60
   ttendlim     = -999
   pdfcld       = .false.
@@ -83,7 +83,7 @@
   lkm          = 0
   psautco      = 0.0008,0.0005
   prautco      = 0.00015,0.00015
-  lgfdlmprad   = .true.
+  lgfdlmprad   = .false.
   cplchm       = .false.
   cplwav       = .false.
   cplwav2atm   = .false.
@@ -113,6 +113,7 @@
   do_RRTMGP          = .false.
   doGP_cldoptics_LUT = .false.
   doGP_lwscat        = .false.
+  do_wsm6_mmm = .true.
   hail_opt = 0
   den0 = 1.28
   denr = 1000
