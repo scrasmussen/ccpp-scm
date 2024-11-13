@@ -13,7 +13,7 @@ jobs:
         fortran-compiler: [nvfortran]
         build-type:       [Release]#, Debug]
         enable-gpu-acc:   [False, True]
-        py-version:       [3.7.13, 3.9.12]
+        py-version:       [3.9.12]
 
     # Environmental variables
     env:
