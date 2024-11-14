@@ -82,7 +82,7 @@ jobs:
     - name: Add conda to system path
       run: |
         apt-get update
-        apt-get -y install python3-pip python3.11-venv python3-netcdf4
+        apt-get -y install python3-pip python3.11-venv python3-netcdf4 curl wget
 
 
     - name: Check for nvfortran
@@ -200,6 +200,10 @@ jobs:
         echo "CMAKE_C_COMPILER=$(which mpicc)" >> $GITHUB_ENV
         echo "CMAKE_Fortran_COMPILER=$(which mpif90)" >> $GITHUB_ENV
 
+    - name: Check space (post)
+      run: |
+        df -h
+
     - name: Cache NetCDF library
       id: cache-netcdf
       uses: actions/cache@v4
@@ -287,6 +291,10 @@ jobs:
     # Build and run SCM regression tests (ccpp-scm/test/rt_test_cases.py)
     #######################################################################################
 
+    - name: Check space (post)
+      run: |
+        df -h
+
     - name: Configure build with CMake
       run: |
         cd ${SCM_ROOT}/scm
@@ -298,6 +306,10 @@ jobs:
         cd ${SCM_ROOT}/scm/bin
         make -j
 
+    - name: Check space (post)
+      run: |
+        df -h
+
     - name: Download data for SCM
       if: contains(matrix.enable-gpu-acc, 'False')
       run: |
@@ -305,6 +317,10 @@ jobs:
         ./contrib/get_all_static_data.sh
         ./contrib/get_thompson_tables.sh
         ./contrib/get_aerosol_climo.sh
+
+    - name: Check space (post)
+      run: |
+        df -h
 
     - name: Run SCM RTs (w/o GPU)
       if: contains(matrix.enable-gpu-acc, 'False')
