@@ -65,6 +65,9 @@ jobs:
     - name: Checkout SCM code (into /home/runner/work/ccpp-scm/)
       uses: actions/checkout@v4
 
+    - name: Set Git Safe Directory
+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
     - name: Initialize submodules
       run: git submodule update --init --recursive
 
