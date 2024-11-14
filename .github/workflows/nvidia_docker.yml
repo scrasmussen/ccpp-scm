@@ -182,7 +182,7 @@ jobs:
       if: steps.cache-openmpi.outputs.cache-hit != 'true'
       run: |
         cd ${HOME}/openmpi-4.1.6
-        sudo make install -j
+        make install -j
 
     - name: Setup OpenMPI Paths
       run: |
