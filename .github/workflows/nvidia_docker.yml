@@ -25,6 +25,7 @@ jobs:
       w3emc_ROOT:  /home/runner/myw3emc
       SCM_ROOT:    /home/runner/work/ccpp-scm/ccpp-scm
       HDF5_ROOT:   /home/runner/hdf5
+      HDF5_VERSION: 1.14.5
       MPI_ROOT:    /home/runner/openmpi
       suites:      SCM_GFS_v15p2,SCM_GFS_v16,SCM_GFS_v17_p8,SCM_HRRR,SCM_RRFS_v1beta,SCM_RAP,SCM_WoFS_v0
       suites_ps:  SCM_GFS_v15p2_ps,SCM_GFS_v16_ps,SCM_GFS_v17_p8_ps,SCM_HRRR_ps,SCM_RRFS_v1beta_ps,SCM_RAP_ps,SCM_WoFS_v0_ps
@@ -79,12 +80,16 @@ jobs:
       with:
         python-version: ${{matrix.py-version}}
 
-    - name: Add conda to system path
+    - name: Add Python libraries
       run: |
         apt-get update
         apt-get -y install python3-pip python3.11-venv python3-netcdf4 curl wget libcurl4-openssl-dev
 
-
+    - name: Pip install and check
+      run: |
+        which pip
+        pip install f90nml
+        python3 -c "import f90nml"
 
     - name: Check for nvfortran
       run: |
@@ -145,9 +150,9 @@ jobs:
     - name: Install HDF5
       if: steps.cache-hdf5.outputs.cache-hit != 'true'
       run: |
-        wget -q https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5-1_14_1-2.tar.gz
-        tar zxf hdf5-1_14_1-2.tar.gz
-        cd hdf5-hdf5-1_14_1-2
+        wget -q https://github.com/HDFGroup/hdf5/releases/download/hdf5_${HDF5_VERSION}/hdf5-${HDF5_VERSION}.tar.gz
+        tar zxf hdf5-${HDF5_VERSION}.tar.gz
+        cd hdf5-${HDF5_VERSION}
         ./configure --prefix=${HDF5_ROOT}
         make -j
         make install
