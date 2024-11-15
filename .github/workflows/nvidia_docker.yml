@@ -93,7 +93,8 @@ jobs:
       run: |
         which pip
         pip install f90nml
-        python3 -c "import f90nml"
+    - name: Check f90nml
+      run: python3 -c "import f90nml"
 
     - name: Check for nvfortran
       run: |
