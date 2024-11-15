@@ -20,6 +20,8 @@ jobs:
     # Environmental variables
     env:
       NETCDF:      /home/runner/netcdf
+      NETCDF_VERSION: 4.9.2
+      NETCDFF_VERSION: 4.6.1
       bacio_ROOT:  /home/runner/bacio
       sp_ROOT:     /home/runner/NCEPLIBS-sp
       w3emc_ROOT:  /home/runner/myw3emc
@@ -27,8 +29,9 @@ jobs:
       HDF5_ROOT:   /home/runner/hdf5
       HDF5_VERSION: 1.14.5
       MPI_ROOT:    /home/runner/openmpi
+      MPI_VERSION: 4.1.7
       suites:      SCM_GFS_v15p2,SCM_GFS_v16,SCM_GFS_v17_p8,SCM_HRRR,SCM_RRFS_v1beta,SCM_RAP,SCM_WoFS_v0
-      suites_ps:  SCM_GFS_v15p2_ps,SCM_GFS_v16_ps,SCM_GFS_v17_p8_ps,SCM_HRRR_ps,SCM_RRFS_v1beta_ps,SCM_RAP_ps,SCM_WoFS_v0_ps
+      suites_ps:   SCM_GFS_v15p2_ps,SCM_GFS_v16_ps,SCM_GFS_v17_p8_ps,SCM_HRRR_ps,SCM_RRFS_v1beta_ps,SCM_RAP_ps,SCM_WoFS_v0_ps
 
     # Workflow steps
     steps:
@@ -83,7 +86,8 @@ jobs:
     - name: Add Python libraries
       run: |
         apt-get update
-        apt-get -y install python3-pip python3.11-venv python3-netcdf4 curl wget libcurl4-openssl-dev
+        apt-get -y install python3-pip python3.11-venv python3-netcdf4 curl wget libcurl4-openssl-dev libxml2
+        apt-get -y install python3-numpy
 
     - name: Pip install and check
       run: |
@@ -173,21 +177,16 @@ jobs:
       if: steps.cache-openmpi.outputs.cache-hit != 'true'
       run: |
         cd ${HOME}
-        wget -q https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.6.tar.gz
-        tar zxf openmpi-4.1.6.tar.gz
-        cd openmpi-4.1.6
+        wget -q https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-${MPI_VERSION}.tar.gz
+        tar zxf openmpi-${MPI_VERSION}.tar.gz
+        cd openmpi-${MPI_VERSION}
         CFLAGS=-fPIC CXXFLAGS=-fPIC FCFLAGS=-fPIC ./configure --prefix=${MPI_ROOT}
 
     - name: Build OpenMPI
       if: steps.cache-openmpi.outputs.cache-hit != 'true'
       run: |
-        cd ${HOME}/openmpi-4.1.6
+        cd ${HOME}/openmpi-${MPI_VERSION}
         make -j
-
-    - name: Install OpenMPI
-      if: steps.cache-openmpi.outputs.cache-hit != 'true'
-      run: |
-        cd ${HOME}/openmpi-4.1.6
         make install -j
 
     - name: Setup OpenMPI Paths
@@ -222,25 +221,26 @@ jobs:
         echo "LD_LIBRARY_PATH=$NETCDF/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
         echo "PATH=$NETCDF/bin:$PATH" >> $GITHUB_ENV
 
+    # requires libxml2
     - name: Install NetCDF C library
       if: steps.cache-netcdf.outputs.cache-hit != 'true'
       run: |
-        wget -q https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.7.4.tar.gz
-        tar zxf v4.7.4.tar.gz
-        cd netcdf-c-4.7.4
-        CPPFLAGS="-I/home/runner/hdf5/include" LDFLAGS="-L/home/runner/hdf5/lib" ./configure --prefix=${NETCDF}
-        make
-        make install
+        wget -q https://github.com/Unidata/netcdf-c/archive/refs/tags/v${NETCDF_VERSION}.tar.gz
+        tar zxf v${NETCDF_VERSION}.tar.gz
+        cd netcdf-c-${NETCDF_VERSION}
+        CPPFLAGS="-I${HDF5_ROOT}/include" LDFLAGS="-L${HDF5_ROOT}/lib" ./configure --prefix=${NETCDF}
+        make -j
+        make install -j
 
     - name: Install NetCDF Fortran library
       if: steps.cache-netcdf.outputs.cache-hit != 'true'
       run: |
-        wget -q https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.6.1.tar.gz
-        tar zxf v4.6.1.tar.gz
-        cd netcdf-fortran-4.6.1
-        FCFLAGS="-fPIC" FFLAGS="-fPIC" CPPFLAGS="-I/home/runner/hdf5/include -I/home/runner/netcdf/include" LDFLAGS="-L/home/runner/hdf5/lib -L/home/runner/netcdf/lib" ./configure --prefix=${NETCDF}
-        make
-        make install
+        wget -q https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v${NETCDFF_VERSION}.tar.gz
+        tar zxf v${NETCDFF_VERSION}.tar.gz
+        cd netcdf-fortran-${NETCDFF_VERSION}
+        FCFLAGS="-fPIC" FFLAGS="-fPIC" CPPFLAGS="-I${HDF5_ROOT}/include -I${NETCDF}/include" LDFLAGS="-L${HDF5_ROOT}/lib -L${NETCDF}/lib" ./configure --prefix=${NETCDF}
+        make -j
+        make install -j
 
     - name: Cache bacio library v2.4.1
       id: cache-bacio-fortran
