@@ -19,9 +19,9 @@ jobs:
 
     # Environmental variables
     env:
-      NETCDF:      /home/runner/netcdf
-      NETCDF_VERSION: 4.9.2
-      NETCDFF_VERSION: 4.6.1
+      NetCDF_ROOT: /home/runner/netcdf
+      NetCDF_VERSION: 4.9.2
+      NetCDFF_VERSION: 4.6.1
       bacio_ROOT:  /home/runner/bacio
       sp_ROOT:     /home/runner/NCEPLIBS-sp
       w3emc_ROOT:  /home/runner/myw3emc
@@ -161,6 +161,8 @@ jobs:
         ./configure --prefix=${HDF5_ROOT}
         make -j
         make install
+        rm hdf5-${HDF5_VERSION}.tar.gz
+        rm -rf hdf5-${HDF5_VERSION}
 
     - name: Setup HDF5 Paths
       run: |
@@ -189,6 +191,8 @@ jobs:
         cd ${HOME}/openmpi-${MPI_VERSION}
         make -j
         make install -j
+        rm openmpi-${MPI_VERSION}.tar.gz
+        rm -rf openmpi-${MPI_VERSION}
 
     - name: Setup OpenMPI Paths
       run: |
@@ -219,29 +223,33 @@ jobs:
 
     - name: Setup NetCDF Paths
       run: |
-        echo "LD_LIBRARY_PATH=$NETCDF/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-        echo "PATH=$NETCDF/bin:$PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=$NetCDF_ROOT/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "PATH=$NetCDF_ROOT/bin:$PATH" >> $GITHUB_ENV
 
     # requires libxml2
     - name: Install NetCDF C library
       if: steps.cache-netcdf.outputs.cache-hit != 'true'
       run: |
-        wget -q https://github.com/Unidata/netcdf-c/archive/refs/tags/v${NETCDF_VERSION}.tar.gz
-        tar zxf v${NETCDF_VERSION}.tar.gz
-        cd netcdf-c-${NETCDF_VERSION}
-        CPPFLAGS="-I${HDF5_ROOT}/include" LDFLAGS="-L${HDF5_ROOT}/lib" ./configure --prefix=${NETCDF}
+        wget -q https://github.com/Unidata/netcdf-c/archive/refs/tags/v${NetCDF_VERSION}.tar.gz
+        tar zxf v${NetCDF_VERSION}.tar.gz
+        cd netcdf-c-${NetCDF_VERSION}
+        CPPFLAGS="-I${HDF5_ROOT}/include" LDFLAGS="-L${HDF5_ROOT}/lib" ./configure --prefix=${NetCDF_ROOT}
         make -j
         make install -j
+        rm v${NetCDF_VERSION}.tar.gz
+        rm -rf netcdf-c-${NetCDF_VERSION}
 
     - name: Install NetCDF Fortran library
       if: steps.cache-netcdf.outputs.cache-hit != 'true'
       run: |
-        wget -q https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v${NETCDFF_VERSION}.tar.gz
-        tar zxf v${NETCDFF_VERSION}.tar.gz
-        cd netcdf-fortran-${NETCDFF_VERSION}
-        FCFLAGS="-fPIC" FFLAGS="-fPIC" CPPFLAGS="-I${HDF5_ROOT}/include -I${NETCDF}/include" LDFLAGS="-L${HDF5_ROOT}/lib -L${NETCDF}/lib" ./configure --prefix=${NETCDF}
+        wget -q https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v${NetCDFF_VERSION}.tar.gz
+        tar zxf v${NetCDFF_VERSION}.tar.gz
+        cd netcdf-fortran-${NetCDFF_VERSION}
+        FCFLAGS="-fPIC" FFLAGS="-fPIC" CPPFLAGS="-I${HDF5_ROOT}/include -I${NetCDF_ROOT}/include" LDFLAGS="-L${HDF5_ROOT}/lib -L${NetCDF_ROOT}/lib" ./configure --prefix=${NetCDF_ROOT}
         make -j
         make install -j
+        rm v${NetCDFF_VERSION}.tar.gz
+        rm -rf netcdf-fortran-${NetCDFF_VERSION}
 
     - name: Cache bacio library v2.4.1
       id: cache-bacio-fortran
@@ -259,6 +267,9 @@ jobs:
         make -j
         make install
         echo "bacio_DIR=/home/runner/bacio/lib/cmake/bacio" >> $GITHUB_ENV
+        cd $GITHUB_WORKSPACE
+        rm -rf bacio
+
 
     - name: Cache SP-library v2.3.3
       id: cache-sp-fortran
@@ -276,6 +287,9 @@ jobs:
         make -j
         make install
         echo "sp_DIR=/home/runner/NCEPLIBS-sp/lib/cmake/sp" >> $GITHUB_ENV
+        cd $GITHUB_WORKSPACE
+        rm -rf NCEPLIBS-sp
+
 
     - name: Cache w3emc library v2.9.2
       id: cache-w3emc-fortran
@@ -293,6 +307,8 @@ jobs:
         make -j
         make install
         echo "w3emc_DIR=/home/runner/myw3emc/lib/cmake/w3emc" >> $GITHUB_ENV
+        cd $GITHUB_WORKSPACE
+        rm -rf NCEPLIBS-w3emc
 
     #######################################################################################
     # Build and run SCM regression tests (ccpp-scm/test/rt_test_cases.py)
@@ -333,4 +349,4 @@ jobs:
       if: contains(matrix.enable-gpu-acc, 'False')
       run: |
         cd ${SCM_ROOT}/scm/bin
-        ./run_scm.py --file /home/runner/work/ccpp-scm/ccpp-scm/test/rt_test_cases.py --runtime_mult 0.1 -v
+        python3 ./run_scm.py --file /workspace/ccpp-scm/test/rt_test_cases.py --runtime_mult 0.1 -v
