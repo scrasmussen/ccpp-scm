@@ -8,7 +8,7 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-24.04
     container:
-      image: intel/oneapi:2025.0.0-0-devel-ubuntu24.04
+      image: intel/oneapi-hpckit:2025.0.0-0-devel-ubuntu24.04
     strategy:
       fail-fast: false
       matrix:
@@ -82,23 +82,24 @@ jobs:
       with:
         python-version: ${{matrix.py-version}}
 
+    # python3.11-venv
     - name: Add Python libraries
       run: |
         apt-get update
-        apt-get -y install python3-pip python3.11-venv python3-netcdf4 curl wget libcurl4-openssl-dev libxml2
+        apt-get -y install python3-pip python3-netcdf4 curl wget libcurl4-openssl-dev libxml2
         apt-get -y install python3-numpy
 
     - name: Pip install and check
       run: |
         which pip
-        pip install f90nml
+        pip install f90nml --break-system-packages
     - name: Check f90nml
       run: python3 -c "import f90nml"
 
-    - name: Check for nvfortran
+    - name: Check for ifx
       run: |
-        which nvfortran
-        nvfortran --version
+        which ifx
+        ifx --version
 
     - name: Cache HDF5
       id: cache-hdf5
