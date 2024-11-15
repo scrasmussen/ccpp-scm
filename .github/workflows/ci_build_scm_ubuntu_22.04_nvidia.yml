@@ -21,6 +21,7 @@ jobs:
       bacio_ROOT:  /home/runner/bacio
       sp_ROOT:     /home/runner/NCEPLIBS-sp
       w3emc_ROOT:  /home/runner/myw3emc
+
       SCM_ROOT:    /home/runner/work/ccpp-scm/ccpp-scm
       HDF5_ROOT:   /home/runner/hdf5
       MPI_ROOT:    /home/runner/openmpi
@@ -118,6 +119,11 @@ jobs:
     #######################################################################################
     # Install FORTRAN dependencies
     #######################################################################################
+
+    - name: Check space (pre)
+      run: |
+        df -h
+
 
     - name: Install Curl and zlib
       run: |
@@ -224,6 +230,10 @@ jobs:
         make
         make install
 
+    - name: Check space (pre)
+      run: |
+        df -h
+
     - name: Cache bacio library v2.4.1
       id: cache-bacio-fortran
       uses: actions/cache@v4
@@ -279,6 +289,12 @@ jobs:
     # Build and run SCM regression tests (ccpp-scm/test/rt_test_cases.py)
     #######################################################################################
 
+
+    - name: Check space (pre)
+      run: |
+        df -h
+
+
     - name: Configure build with CMake
       run: |
         cd ${SCM_ROOT}/scm
@@ -290,6 +306,10 @@ jobs:
         cd ${SCM_ROOT}/scm/bin
         make -j
 
+    - name: Check space (pre)
+      run: |
+        df -h
+
     - name: Download data for SCM
       if: contains(matrix.enable-gpu-acc, 'False')
       run: |
@@ -297,6 +317,9 @@ jobs:
         ./contrib/get_all_static_data.sh
         ./contrib/get_thompson_tables.sh
         ./contrib/get_aerosol_climo.sh
+    - name: Check space (pre)
+      run: |
+        df -h
 
     - name: Run SCM RTs (w/o GPU)
       if: contains(matrix.enable-gpu-acc, 'False')
