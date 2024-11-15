@@ -1,0 +1,305 @@
+name: Intel oneAPI Container
+
+on: [pull_request,workflow_dispatch]
+
+jobs:
+
+  build_scm:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-24.04
+    container:
+      image: intel/oneapi:2025.0.0-0-devel-ubuntu24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        fortran-compiler: [ifx]
+        build-type:       [Release]#, Debug]
+        py-version:       [3.9.12]
+
+    # Environmental variables
+    env:
+      NetCDF_ROOT: /home/runner/netcdf
+      NetCDF_VERSION: 4.9.2
+      NetCDFF_VERSION: 4.6.1
+      bacio_ROOT:  /home/runner/bacio
+      sp_ROOT:     /home/runner/NCEPLIBS-sp
+      w3emc_ROOT:  /home/runner/myw3emc
+      SCM_ROOT:    /home/runner/work/ccpp-scm/ccpp-scm
+      HDF5_ROOT:   /home/runner/hdf5
+      HDF5_VERSION: 1.14.5
+      MPI_ROOT:    /home/runner/openmpi
+      MPI_VERSION: 4.1.7
+      suites:      SCM_GFS_v15p2,SCM_GFS_v16,SCM_GFS_v17_p8,SCM_HRRR,SCM_RRFS_v1beta,SCM_RAP,SCM_WoFS_v0
+      suites_ps:   SCM_GFS_v15p2_ps,SCM_GFS_v16_ps,SCM_GFS_v17_p8_ps,SCM_HRRR_ps,SCM_RRFS_v1beta_ps,SCM_RAP_ps,SCM_WoFS_v0_ps
+
+    # Workflow steps
+    steps:
+
+    #######################################################################################
+    # Cleanup space
+    #######################################################################################
+    - name: Check space (pre)
+      run: |
+        df -h
+
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        # this might remove tools that are actually needed,
+        # if set to "true" but frees about 6 GB
+        tool-cache: false
+
+        # all of these default to true, but feel free to set to
+        # "false" if necessary for your workflow
+        android: false
+        dotnet: false
+        haskell: true
+        large-packages: true
+        docker-images: false
+        swap-storage: false
+
+    - name: Check space (post)
+      run: |
+        df -h
+
+    #######################################################################################
+    # Initial
+    #######################################################################################
+    - name: Checkout SCM code (into /home/runner/work/ccpp-scm/)
+      uses: actions/checkout@v4
+
+    - name: Set Git Safe Directory
+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+    - name: Initialize submodules
+      run: git submodule update --init --recursive
+
+    #######################################################################################
+    # Python setup
+    #######################################################################################
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{matrix.py-version}}
+
+    - name: Add Python libraries
+      run: |
+        apt-get update
+        apt-get -y install python3-pip python3.11-venv python3-netcdf4 curl wget libcurl4-openssl-dev libxml2
+        apt-get -y install python3-numpy
+
+    - name: Pip install and check
+      run: |
+        which pip
+        pip install f90nml
+    - name: Check f90nml
+      run: python3 -c "import f90nml"
+
+    - name: Check for nvfortran
+      run: |
+        which nvfortran
+        nvfortran --version
+
+    - name: Cache HDF5
+      id: cache-hdf5
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/hdf5
+        KEY: cache-hdf5-${{matrix.fortran-compiler}}-key
+
+    - name: Install HDF5
+      if: steps.cache-hdf5.outputs.cache-hit != 'true'
+      run: |
+        wget -q https://github.com/HDFGroup/hdf5/releases/download/hdf5_${HDF5_VERSION}/hdf5-${HDF5_VERSION}.tar.gz
+        tar zxf hdf5-${HDF5_VERSION}.tar.gz
+        cd hdf5-${HDF5_VERSION}
+        ./configure --prefix=${HDF5_ROOT}
+        make -j
+        make install
+        rm hdf5-${HDF5_VERSION}.tar.gz
+        rm -rf hdf5-${HDF5_VERSION}
+
+    - name: Setup HDF5 Paths
+      run: |
+        echo "LD_LIBRARY_PATH=$HDF5_ROOT/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "PATH=$HDF5_ROOT/bin:$PATH" >> $GITHUB_ENV
+
+    - name: Cache OpenMPI
+      id: cache-openmpi
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/openmpi
+        KEY: cache-openmpi-${{matrix.fortran-compiler}}-key
+
+    - name: Configure OpenMPI
+      if: steps.cache-openmpi.outputs.cache-hit != 'true'
+      run: |
+        cd ${HOME}
+        wget -q https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-${MPI_VERSION}.tar.gz
+        tar zxf openmpi-${MPI_VERSION}.tar.gz
+        cd openmpi-${MPI_VERSION}
+        CFLAGS=-fPIC CXXFLAGS=-fPIC FCFLAGS=-fPIC ./configure --prefix=${MPI_ROOT}
+
+    - name: Build OpenMPI
+      if: steps.cache-openmpi.outputs.cache-hit != 'true'
+      run: |
+        cd ${HOME}/openmpi-${MPI_VERSION}
+        make -j
+        make install -j
+        rm openmpi-${MPI_VERSION}.tar.gz
+        rm -rf openmpi-${MPI_VERSION}
+
+    - name: Setup OpenMPI Paths
+      run: |
+        echo "PATH=${MPI_ROOT}/bin:$PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=${MPI_ROOT}/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+
+    - name: Check MPI Version
+      run: |
+        mpif90 --version
+
+    - name: Set environment for Intel compiler with MPI
+      run: |
+        echo "CC=$(which mpicc)" >> $GITHUB_ENV
+        echo "FC=$(which mpif90)" >> $GITHUB_ENV
+        echo "CMAKE_C_COMPILER=$(which mpicc)" >> $GITHUB_ENV
+        echo "CMAKE_Fortran_COMPILER=$(which mpif90)" >> $GITHUB_ENV
+
+    - name: Check space (post)
+      run: |
+        df -h
+
+    - name: Cache NetCDF library
+      id: cache-netcdf
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/netcdf
+        key: cache-netcdf-${{matrix.fortran-compiler}}-key
+
+    - name: Setup NetCDF Paths
+      run: |
+        echo "LD_LIBRARY_PATH=$NetCDF_ROOT/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "PATH=$NetCDF_ROOT/bin:$PATH" >> $GITHUB_ENV
+
+    # requires libxml2
+    - name: Install NetCDF C library
+      if: steps.cache-netcdf.outputs.cache-hit != 'true'
+      run: |
+        wget -q https://github.com/Unidata/netcdf-c/archive/refs/tags/v${NetCDF_VERSION}.tar.gz
+        tar zxf v${NetCDF_VERSION}.tar.gz
+        cd netcdf-c-${NetCDF_VERSION}
+        CPPFLAGS="-I${HDF5_ROOT}/include" LDFLAGS="-L${HDF5_ROOT}/lib" ./configure --prefix=${NetCDF_ROOT}
+        make -j
+        make install -j
+        rm v${NetCDF_VERSION}.tar.gz
+        rm -rf netcdf-c-${NetCDF_VERSION}
+
+    - name: Install NetCDF Fortran library
+      if: steps.cache-netcdf.outputs.cache-hit != 'true'
+      run: |
+        wget -q https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v${NetCDFF_VERSION}.tar.gz
+        tar zxf v${NetCDFF_VERSION}.tar.gz
+        cd netcdf-fortran-${NetCDFF_VERSION}
+        FCFLAGS="-fPIC" FFLAGS="-fPIC" CPPFLAGS="-I${HDF5_ROOT}/include -I${NetCDF_ROOT}/include" LDFLAGS="-L${HDF5_ROOT}/lib -L${NetCDF_ROOT}/lib" ./configure --prefix=${NetCDF_ROOT}
+        make -j
+        make install -j
+        rm v${NetCDFF_VERSION}.tar.gz
+        rm -rf netcdf-fortran-${NetCDFF_VERSION}
+
+    - name: Cache bacio library v2.4.1
+      id: cache-bacio-fortran
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/bacio
+        key: cache-bacio-fortran-${{matrix.fortran-compiler}}-key
+
+    - name: Install bacio library v2.4.1
+      if: steps.cache-bacio-fortran.outputs.cache-hit != 'true'
+      run: |
+        git clone --branch v2.4.1 https://github.com/NOAA-EMC/NCEPLIBS-bacio.git bacio
+        cd bacio && mkdir build && cd build
+        cmake -DCMAKE_INSTALL_PREFIX=${bacio_ROOT} ../
+        make -j
+        make install
+        echo "bacio_DIR=/home/runner/bacio/lib/cmake/bacio" >> $GITHUB_ENV
+        cd $GITHUB_WORKSPACE
+        rm -rf bacio
+
+
+    - name: Cache SP-library v2.3.3
+      id: cache-sp-fortran
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/NCEPLIBS-sp
+        key: cache-sp-fortran-${{matrix.fortran-compiler}}-key
+
+    - name: Install SP-library v2.3.3
+      if: steps.cache-sp-fortran.outputs.cache-hit != 'true'
+      run: |
+        git clone --branch v2.3.3 https://github.com/NOAA-EMC/NCEPLIBS-sp.git NCEPLIBS-sp
+        cd NCEPLIBS-sp && mkdir build && cd build
+        cmake -DCMAKE_INSTALL_PREFIX=${sp_ROOT} ../
+        make -j
+        make install
+        echo "sp_DIR=/home/runner/NCEPLIBS-sp/lib/cmake/sp" >> $GITHUB_ENV
+        cd $GITHUB_WORKSPACE
+        rm -rf NCEPLIBS-sp
+
+
+    - name: Cache w3emc library v2.9.2
+      id: cache-w3emc-fortran
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/myw3emc
+        key: cache-w3emc-fortran-${{matrix.fortran-compiler}}-key
+
+    - name: Install w3emc library v2.9.2
+      if: steps.cache-w3emc-fortran.outputs.cache-hit != 'true'
+      run: |
+        git clone --branch v2.9.2 https://github.com/NOAA-EMC/NCEPLIBS-w3emc.git NCEPLIBS-w3emc
+        cd NCEPLIBS-w3emc && mkdir build && cd build
+        cmake -DCMAKE_INSTALL_PREFIX=${w3emc_ROOT} ../
+        make -j
+        make install
+        echo "w3emc_DIR=/home/runner/myw3emc/lib/cmake/w3emc" >> $GITHUB_ENV
+        cd $GITHUB_WORKSPACE
+        rm -rf NCEPLIBS-w3emc
+
+    #######################################################################################
+    # Build and run SCM regression tests (ccpp-scm/test/rt_test_cases.py)
+    #######################################################################################
+
+    - name: Check space (post)
+      run: |
+        df -h
+
+    - name: Configure build with CMake
+      run: |
+        cd ${SCM_ROOT}/scm
+        mkdir bin && cd bin
+        cmake -DCCPP_SUITES=${suites},${suites_ps} -DCMAKE_BUILD_TYPE=${{matrix.build-type}} ../src
+
+    - name: Build SCM.
+      run: |
+        cd ${SCM_ROOT}/scm/bin
+        make -j
+
+    - name: Check space (post)
+      run: |
+        df -h
+
+    - name: Download data for SCM
+      run: |
+        cd ${SCM_ROOT}
+        ./contrib/get_all_static_data.sh
+        ./contrib/get_thompson_tables.sh
+        ./contrib/get_aerosol_climo.sh
+
+    - name: Check space (post)
+      run: |
+        df -h
+
+    - name: Run SCM RTs
+      run: |
+        cd ${SCM_ROOT}/scm/bin
+        python3 ./run_scm.py --file /workspace/ccpp-scm/test/rt_test_cases.py --runtime_mult 0.1 -v
