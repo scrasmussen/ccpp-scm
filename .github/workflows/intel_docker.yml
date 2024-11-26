@@ -140,7 +140,7 @@ jobs:
         wget -q https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-${MPI_VERSION}.tar.gz
         tar zxf openmpi-${MPI_VERSION}.tar.gz
         cd openmpi-${MPI_VERSION}
-        CFLAGS=-fPIC CXXFLAGS=-fPIC FCFLAGS=-fPIC ./configure --prefix=${MPI_ROOT}
+        CC=icpc CXX=icpc FC=ifx CFLAGS=-fPIC CXXFLAGS=-fPIC FCFLAGS=-fPIC ./configure --prefix=${MPI_ROOT}
 
     - name: Build OpenMPI
       if: steps.cache-openmpi.outputs.cache-hit != 'true'
