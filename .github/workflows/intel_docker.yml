@@ -148,7 +148,7 @@ jobs:
         cd ${HOME}/openmpi-${MPI_VERSION}
         make -j
         make install -j
-        cd $GITHUB_WORKSPACE
+        cd $HOME
         rm openmpi-${MPI_VERSION}.tar.gz
         rm -rf openmpi-${MPI_VERSION}
 
