@@ -83,10 +83,10 @@ jobs:
         python-version: ${{matrix.py-version}}
 
     # python3.11-venv
-    - name: Add Python libraries
+    - name: Add Python libraries and POSIX
       run: |
         apt-get update
-        apt-get -y install build-essential python3-pip python3-netcdf4 curl wget libcurl4-openssl-dev libxml2
+        apt-get -y install build-essential libpthread-stubs0-dev python3-pip python3-netcdf4 curl wget libcurl4-openssl-dev libxml2
         apt-get -y install python3-numpy
 
     - name: Pip install and check
