@@ -1,4 +1,4 @@
-name: CI test to build the CCPP-SCM on ubuntu v22.04
+name: Intel oneAPI Container
 
 on: [pull_request,workflow_dispatch]
 
@@ -6,26 +6,31 @@ jobs:
 
   build_scm:
     # The type of runner that the job will run on
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    container:
+      image: intel/oneapi-hpckit:2025.0.0-0-devel-ubuntu24.04
     strategy:
       fail-fast: false
       matrix:
-        fortran-compiler: [nvfortran]
+        fortran-compiler: [ifx]
         build-type:       [Release]#, Debug]
-        enable-gpu-acc:   [False, True]
-        py-version:       [3.7.13, 3.9.12]
+        py-version:       [3.9.12]
 
     # Environmental variables
     env:
-      NETCDF:      /home/runner/netcdf
+      NetCDF_ROOT: /home/runner/netcdf
+      NetCDF_VERSION: 4.9.2
+      NetCDFF_VERSION: 4.6.1
       bacio_ROOT:  /home/runner/bacio
       sp_ROOT:     /home/runner/NCEPLIBS-sp
       w3emc_ROOT:  /home/runner/myw3emc
       SCM_ROOT:    /home/runner/work/ccpp-scm/ccpp-scm
       HDF5_ROOT:   /home/runner/hdf5
+      HDF5_VERSION: 1.14.5
       MPI_ROOT:    /home/runner/openmpi
+      MPI_VERSION: 4.1.7
       suites:      SCM_GFS_v15p2,SCM_GFS_v16,SCM_GFS_v17_p8,SCM_HRRR,SCM_RRFS_v1beta,SCM_RAP,SCM_WoFS_v0
-      suites_ps:  SCM_GFS_v15p2_ps,SCM_GFS_v16_ps,SCM_GFS_v17_p8_ps,SCM_HRRR_ps,SCM_RRFS_v1beta_ps,SCM_RAP_ps,SCM_WoFS_v0_ps
+      suites_ps:   SCM_GFS_v15p2_ps,SCM_GFS_v16_ps,SCM_GFS_v17_p8_ps,SCM_HRRR_ps,SCM_RRFS_v1beta_ps,SCM_RAP_ps,SCM_WoFS_v0_ps
 
     # Workflow steps
     steps:
@@ -63,6 +68,9 @@ jobs:
     - name: Checkout SCM code (into /home/runner/work/ccpp-scm/)
       uses: actions/checkout@v4
 
+    - name: Set Git Safe Directory
+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
     - name: Initialize submodules
       run: git submodule update --init --recursive
 
@@ -74,57 +82,24 @@ jobs:
       with:
         python-version: ${{matrix.py-version}}
 
-    - name: Add conda to system path
+    # python3.11-venv
+    - name: Add Python libraries and POSIX
       run: |
-        echo $CONDA/bin >> $GITHUB_PATH
+        apt-get update
+        apt-get -y install build-essential libpthread-stubs0-dev python3-pip python3-netcdf4 curl wget libcurl4-openssl-dev libxml2
+        apt-get -y install python3-numpy
 
-    - name: Install NetCDF Python libraries
+    - name: Pip install and check
       run: |
-        conda install --yes -c conda-forge h5py>=3.4 netCDF4 f90nml
+        which pip
+        pip install f90nml --break-system-packages
+    - name: Check f90nml
+      run: python3 -c "import f90nml"
 
-    #######################################################################################
-    # Install Nvidia.
-    #######################################################################################
-
-    - name: Nvidia setup compilers.
-      env:
-        NVCOMPILERS: /home/runner/hpc_sdk
-        NVARCH: Linux_x86_64
-        NVHPC_SILENT: true
-        NVHPC_INSTALL_DIR: /home/runner/hpc_sdk
-        NVHPC_INSTALL_TYPE: network
-        NVHPC_INSTALL_LOCAL_DIR: /home/runner/hpc_sdk
+    - name: Check for ifx
       run: |
-        mkdir /home/runner/hpc_sdk && cd /home/runner/hpc_sdk
-        wget -q https://developer.download.nvidia.com/hpc-sdk/24.1/nvhpc_2024_241_Linux_x86_64_cuda_12.3.tar.gz
-        tar xpzf nvhpc_2024_241_Linux_x86_64_cuda_12.3.tar.gz
-        nvhpc_2024_241_Linux_x86_64_cuda_12.3/install
-        export PATH=${PATH}:${NVCOMPILERS}/${NVARCH}/24.1/compilers/bin
-        export MANPATH=${MANPATH}:${NVCOMPILERS}/${NVARCH}/24.1/compilers/man
-        echo "The nvfortran installed is:"
-        nvfortran --version
-        echo "The path to nvfortran is:"
-        command -v nvfortran
-        echo "Removing tarball"
-        rm nvhpc_2024_241_Linux_x86_64_cuda_12.3.tar.gz
-
-    - name: Set environment for Nvidia compiler.
-      run: |
-        echo "CC=/home/runner/hpc_sdk/Linux_x86_64/24.1/compilers/bin/nvc" >> $GITHUB_ENV
-        echo "FC=/home/runner/hpc_sdk/Linux_x86_64/24.1/compilers/bin/nvfortran" >> $GITHUB_ENV
-        echo "CMAKE_C_COMPILER=/home/runner/hpc_sdk/Linux_x86_64/24.1/compilers/bin/nvc" >> $GITHUB_ENV
-        echo "CMAKE_Fortran_COMPILER=/home/runner/hpc_sdk/Linux_x86_64/24.1/compilers/bin/nvfortran" >> $GITHUB_ENV
-
-    #######################################################################################
-    # Install FORTRAN dependencies
-    #######################################################################################
-
-    - name: Install Curl and zlib
-      run: |
-        sudo apt-get update
-        sudo apt-get install curl
-        sudo apt-get install libssl-dev libcurl4-openssl-dev
-        sudo apt-get install zlib1g-dev
+        which ifx
+        ifx --version
 
     - name: Cache HDF5
       id: cache-hdf5
@@ -136,12 +111,15 @@ jobs:
     - name: Install HDF5
       if: steps.cache-hdf5.outputs.cache-hit != 'true'
       run: |
-        wget -q https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5-1_14_1-2.tar.gz
-        tar zxf hdf5-1_14_1-2.tar.gz
-        cd hdf5-hdf5-1_14_1-2
+        wget -q https://github.com/HDFGroup/hdf5/releases/download/hdf5_${HDF5_VERSION}/hdf5-${HDF5_VERSION}.tar.gz
+        tar zxf hdf5-${HDF5_VERSION}.tar.gz
+        cd hdf5-${HDF5_VERSION}
         ./configure --prefix=${HDF5_ROOT}
         make -j
         make install
+        cd $GITHUB_WORKSPACE
+        rm hdf5-${HDF5_VERSION}.tar.gz
+        rm -rf hdf5-${HDF5_VERSION}
 
     - name: Setup HDF5 Paths
       run: |
@@ -159,22 +137,20 @@ jobs:
       if: steps.cache-openmpi.outputs.cache-hit != 'true'
       run: |
         cd ${HOME}
-        wget -q https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.6.tar.gz
-        tar zxf openmpi-4.1.6.tar.gz
-        cd openmpi-4.1.6
-        CFLAGS=-fPIC CXXFLAGS=-fPIC FCFLAGS=-fPIC ./configure --prefix=${MPI_ROOT}
+        wget -q https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-${MPI_VERSION}.tar.gz
+        tar zxf openmpi-${MPI_VERSION}.tar.gz
+        cd openmpi-${MPI_VERSION}
+        CC=icx CXX=icx FC=ifx CFLAGS=-fPIC CXXFLAGS=-fPIC FCFLAGS=-fPIC ./configure --prefix=${MPI_ROOT}
 
     - name: Build OpenMPI
       if: steps.cache-openmpi.outputs.cache-hit != 'true'
       run: |
-        cd ${HOME}/openmpi-4.1.6
+        cd ${HOME}/openmpi-${MPI_VERSION}
         make -j
-
-    - name: Install OpenMPI
-      if: steps.cache-openmpi.outputs.cache-hit != 'true'
-      run: |
-        cd ${HOME}/openmpi-4.1.6
-        sudo make install -j
+        make install -j
+        cd $HOME
+        rm openmpi-${MPI_VERSION}.tar.gz
+        rm -rf openmpi-${MPI_VERSION}
 
     - name: Setup OpenMPI Paths
       run: |
@@ -185,12 +161,16 @@ jobs:
       run: |
         mpif90 --version
 
-    - name: Set environment for Nvidia compiler with MPI
+    - name: Set environment for Intel compiler with MPI
       run: |
         echo "CC=$(which mpicc)" >> $GITHUB_ENV
         echo "FC=$(which mpif90)" >> $GITHUB_ENV
         echo "CMAKE_C_COMPILER=$(which mpicc)" >> $GITHUB_ENV
         echo "CMAKE_Fortran_COMPILER=$(which mpif90)" >> $GITHUB_ENV
+
+    - name: Check space (post)
+      run: |
+        df -h
 
     - name: Cache NetCDF library
       id: cache-netcdf
@@ -201,28 +181,35 @@ jobs:
 
     - name: Setup NetCDF Paths
       run: |
-        echo "LD_LIBRARY_PATH=$NETCDF/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-        echo "PATH=$NETCDF/bin:$PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=$NetCDF_ROOT/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "PATH=$NetCDF_ROOT/bin:$PATH" >> $GITHUB_ENV
 
+    # requires libxml2
     - name: Install NetCDF C library
       if: steps.cache-netcdf.outputs.cache-hit != 'true'
       run: |
-        wget -q https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.7.4.tar.gz
-        tar zxf v4.7.4.tar.gz
-        cd netcdf-c-4.7.4
-        CPPFLAGS="-I/home/runner/hdf5/include" LDFLAGS="-L/home/runner/hdf5/lib" ./configure --prefix=${NETCDF}
-        make
-        make install
+        wget -q https://github.com/Unidata/netcdf-c/archive/refs/tags/v${NetCDF_VERSION}.tar.gz
+        tar zxf v${NetCDF_VERSION}.tar.gz
+        cd netcdf-c-${NetCDF_VERSION}
+        CPPFLAGS="-I${HDF5_ROOT}/include" LDFLAGS="-L${HDF5_ROOT}/lib" ./configure --prefix=${NetCDF_ROOT}
+        make -j
+        make install -j
+        cd $GITHUB_WORKSPACE
+        rm v${NetCDF_VERSION}.tar.gz
+        rm -rf netcdf-c-${NetCDF_VERSION}
 
     - name: Install NetCDF Fortran library
       if: steps.cache-netcdf.outputs.cache-hit != 'true'
       run: |
-        wget -q https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.6.1.tar.gz
-        tar zxf v4.6.1.tar.gz
-        cd netcdf-fortran-4.6.1
-        FCFLAGS="-fPIC" FFLAGS="-fPIC" CPPFLAGS="-I/home/runner/hdf5/include -I/home/runner/netcdf/include" LDFLAGS="-L/home/runner/hdf5/lib -L/home/runner/netcdf/lib" ./configure --prefix=${NETCDF}
-        make
-        make install
+        wget -q https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v${NetCDFF_VERSION}.tar.gz
+        tar zxf v${NetCDFF_VERSION}.tar.gz
+        cd netcdf-fortran-${NetCDFF_VERSION}
+        FCFLAGS="-fPIC" FFLAGS="-fPIC" CPPFLAGS="-I${HDF5_ROOT}/include -I${NetCDF_ROOT}/include" LDFLAGS="-L${HDF5_ROOT}/lib -L${NetCDF_ROOT}/lib" ./configure --prefix=${NetCDF_ROOT}
+        make -j
+        make install -j
+        cd $GITHUB_WORKSPACE
+        rm v${NetCDFF_VERSION}.tar.gz
+        rm -rf netcdf-fortran-${NetCDFF_VERSION}
 
     - name: Cache bacio library v2.4.1
       id: cache-bacio-fortran
@@ -240,6 +227,9 @@ jobs:
         make -j
         make install
         echo "bacio_DIR=/home/runner/bacio/lib/cmake/bacio" >> $GITHUB_ENV
+        cd $GITHUB_WORKSPACE
+        rm -rf bacio
+
 
     - name: Cache SP-library v2.3.3
       id: cache-sp-fortran
@@ -257,6 +247,9 @@ jobs:
         make -j
         make install
         echo "sp_DIR=/home/runner/NCEPLIBS-sp/lib/cmake/sp" >> $GITHUB_ENV
+        cd $GITHUB_WORKSPACE
+        rm -rf NCEPLIBS-sp
+
 
     - name: Cache w3emc library v2.9.2
       id: cache-w3emc-fortran
@@ -274,32 +267,44 @@ jobs:
         make -j
         make install
         echo "w3emc_DIR=/home/runner/myw3emc/lib/cmake/w3emc" >> $GITHUB_ENV
+        cd $GITHUB_WORKSPACE
+        rm -rf NCEPLIBS-w3emc
 
     #######################################################################################
     # Build and run SCM regression tests (ccpp-scm/test/rt_test_cases.py)
     #######################################################################################
 
+    - name: Check space (post)
+      run: |
+        df -h
+
     - name: Configure build with CMake
       run: |
         cd ${SCM_ROOT}/scm
         mkdir bin && cd bin
-        cmake -DCCPP_SUITES=${suites},${suites_ps} -DCMAKE_BUILD_TYPE=${{matrix.build-type}} -DENABLE_NVIDIA_OPENACC=${{matrix.enable-gpu-acc}} ../src
+        cmake -DCCPP_SUITES=${suites},${suites_ps} -DCMAKE_BUILD_TYPE=${{matrix.build-type}} ../src
 
     - name: Build SCM.
       run: |
         cd ${SCM_ROOT}/scm/bin
         make -j
 
+    - name: Check space (post)
+      run: |
+        df -h
+
     - name: Download data for SCM
-      if: contains(matrix.enable-gpu-acc, 'False')
       run: |
         cd ${SCM_ROOT}
         ./contrib/get_all_static_data.sh
         ./contrib/get_thompson_tables.sh
         ./contrib/get_aerosol_climo.sh
 
-    - name: Run SCM RTs (w/o GPU)
-      if: contains(matrix.enable-gpu-acc, 'False')
+    - name: Check space (post)
+      run: |
+        df -h
+
+    - name: Run SCM RTs
       run: |
         cd ${SCM_ROOT}/scm/bin
-        ./run_scm.py --file /home/runner/work/ccpp-scm/ccpp-scm/test/rt_test_cases.py --runtime_mult 0.1 -v
+        python3 ./run_scm.py --file /workspace/ccpp-scm/test/rt_test_cases.py --runtime_mult 0.1 -v
