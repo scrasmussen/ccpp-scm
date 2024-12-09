@@ -161,7 +161,7 @@ if (${CMAKE_Fortran_COMPILER_ID} MATCHES "GNU")
   endif()
 
   if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-    set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -O0 -fno-unsafe-math-optimizations -frounding-math -fsignaling-nans -ffpe-trap=invalid,zero,overflow -fbounds-check")
+    set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -O0 -fno-unsafe-math-optimizations -frounding-math -fsignaling-nans -ffpe-trap=invalid,zero,overflow -fbounds-check -Wall")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
   else()
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -O2")
