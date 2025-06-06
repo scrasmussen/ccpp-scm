@@ -32,6 +32,7 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     libcurl4-openssl-dev \
     libssl-dev \
     m4 \
+    pipx \
     python3 \
     python3-pip \
     python3.11-venv \
@@ -49,7 +50,8 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Set up python needed packages, preferred Docker method is apt-get but
 # f90nml can't be installed for debian that way
-RUN pip install f90nml #--break-system-packages
+RUN pipx install f90nml \
+    && pipx ensurepath
 
 WORKDIR /home/src
 # Install HDF5
