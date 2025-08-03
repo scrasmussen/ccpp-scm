@@ -39,9 +39,11 @@ Cubed-Sphere (FV3) dynamical core.
 | ``│   └── get_aerosol_climo.sh`` - Script for downloading/extracting the GOCART climatological aerosol data
 | ``├── docker``
 | ``│   └── Dockerfile`` - Contains Docker instructions for building the CCPP SCM image
-| ``├── environment-suite-sim.yml`` - Python environment dependency file for the CCPP Suite Simulator
-| ``├── environment-ufscasegen.yml`` - Python environment dependency file for the UFS Case Generator capability
-| ``├── environment.yml`` - Python environment dependency file for the SCM
+| ``├── environment``
+| ``│   ├── environment-scm_analysis.yml`` - Python environment dependency file for analyzing SCM results
+| ``│   ├── environment-suite-sim.yml`` - Python environment dependency file for the CCPP Suite Simulator
+| ``│   ├── environment-ufscasegen.yml`` - Python environment dependency file for the UFS Case Generator capability
+| ``│   └── environment.yml`` - Python environment dependency file for the SCM
 | ``├── scm``
 | ``│   ├── LICENSE.txt`` - Contains licensing information
 | ``│   ├── data`` - Directory where data is staged by scripts in the ``ccpp/contrib/`` directory
