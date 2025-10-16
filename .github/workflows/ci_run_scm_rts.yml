@@ -186,10 +186,12 @@ jobs:
       run: mkdir ${dir_bl}
 
     - name: Download SCM RT baselines
-      run: |
-        cd ${dir_bl}
-        wget https://dtcenter.ucar.edu/ccpp/rt/rt-baselines-${{matrix.build-type}}.zip
-        unzip rt-baselines-${{matrix.build-type}}.zip
+        uses: actions/download-artifact@v5
+        with:
+          pattern: rt-baselines-${{matrix.build-type}}-main
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${dir_bl}
 
     - name: Compare SCM RT output to baselines
       run: |
