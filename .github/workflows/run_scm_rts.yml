@@ -41,7 +41,7 @@ jobs:
     # Initial
     #######################################################################################
     - name: Checkout SCM code (/__w/ccpp-scm/ccpp-scm)
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Install Required Tools
       run: |
