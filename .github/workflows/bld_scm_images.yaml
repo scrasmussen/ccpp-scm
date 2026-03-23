@@ -76,4 +76,4 @@ jobs:
           build-args: TOOLCHAIN=${{ matrix.toolchain }}
           push: True
           tags: |
-            dtcenter/ccpp-scm-ci:${{ matrix.toolchain }}
+            dtcenter/ccpp-scm:${{ matrix.toolchain }}
