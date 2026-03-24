@@ -145,7 +145,7 @@ jobs:
         echo "artifact_id=${ARTIFACT_ID}" >> "$GITHUB_ENV"
 
     - name: Download SCM RT baselines
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v8
       with:
         name: rt-baselines-${{matrix.build-type}}-${{matrix.fortran-compiler}}-${{matrix.run_lists}}-main
         path: ${{ env.dir_bl }}
