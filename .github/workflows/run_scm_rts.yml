@@ -2,6 +2,9 @@ name: Build/run the CCPP-SCM, compare to existing baselines (GitHub artifact)
 
 on:
   push:
+    branches:
+      # Only build and run when pushing to main
+      - main
   pull_request:
   workflow_dispatch:
 
