@@ -11,6 +11,7 @@ on:
 jobs:
   run_scm_rts:
     runs-on: ubuntu-24.04
+    if: github.repository == 'NCAR/ccpp-scm'
     strategy:
       fail-fast: false
       matrix:
