@@ -5,8 +5,6 @@ import sys, os, argparse
 #DEFAULT_SUITE_BEHAVIOR = 'supported'
 DEFAULT_SUITE_BEHAVIOR = 'regression_test'
 
-DEFAULT_FORTRAN_COMPILER = 'gnu'
-
 DEFAULT_RUN_LIST = 'all'
 
 class suite(object):
@@ -93,16 +91,14 @@ def main():
     
     fc = args.fc
     rl = args.rl
-    
-    if not fc:
-        fc = DEFAULT_FORTRAN_COMPILER
         
-    if not rl:
+    if not rl or rl.lower() not in ['all','supported','legacy','dev', 'sp']:
+        #printing a warning will mess up the cmake process because it passes in everything printed out by this script to the '--suites' argument of ccpp_prebuild.py
         rl = DEFAULT_RUN_LIST
     
     #print supported suites separated by commas
     suite_string = ''
-
+    
     if DEFAULT_SUITE_BEHAVIOR == 'regression_test':
         dir_path = os.path.dirname(os.path.realpath(__file__))
         sys.path.insert(1, dir_path + '/../../test/')
@@ -119,7 +115,8 @@ def main():
         elif 'nvhpc' in fc.lower():
             rttc = rt_test_cases.nvhpc_test_cases
         else:
-            print("Warning: suite_info.py was unable to match CMAKE_Fortran_COMPILER string, using default gnu rt test cases")
+            #printing a warning will mess up the cmake process because it passes in everything printed out by this script to the '--suites' argument of ccpp_prebuild.py
+            #print("Warning: suite_info.py was unable to match CMAKE_Fortran_COMPILER string, using default gnu rt test cases")
             rttc = rt_test_cases.gnu_test_cases
 
         if 'supported' in rl.lower() or 'all' in rl.lower():
