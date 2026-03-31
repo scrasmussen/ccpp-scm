@@ -5,8 +5,8 @@
 [submodule "ccpp-physics"]
 	path = ccpp/physics
 	# url = https://github.com/NCAR/ccpp-physics
-	url = https://github.com/scrasmussen/ccpp-physics
-	branch = scm/dev
+	url = https://github.com/grantfirl/ccpp-physics
+	branch = scm/dev-ip_update
 [submodule "CMakeModules"]
 	path = CMakeModules
 	url = https://github.com/noaa-emc/CMakeModules
