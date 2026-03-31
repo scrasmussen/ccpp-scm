@@ -17,14 +17,23 @@ if(DEFINED CCPP_SUITES)
   endif()
   unset(CCPP_SUITES CACHE)
 else()
-  execute_process(
-    COMMAND scm/src/suite_info.py --fc "${CMAKE_Fortran_COMPILER_ID}"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../..
-    OUTPUT_VARIABLE suite_string
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    set(_ccpp_suites_arg "--suites=${suite_string}")
-    message("Calling CCPP code generator (ccpp_prebuild.py) for suites listed in scm/src/suite_info.py: ${_ccpp_suites_arg}.")
+  if(DEFINED RL)
+    execute_process(
+      COMMAND scm/src/suite_info.py --fc "${CMAKE_Fortran_COMPILER_ID}" --rl ${RL}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../..
+      OUTPUT_VARIABLE suite_string
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+  else()
+    execute_process(
+      COMMAND scm/src/suite_info.py --fc "${CMAKE_Fortran_COMPILER_ID}"
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../..
+      OUTPUT_VARIABLE suite_string
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+  endif()
+  set(_ccpp_suites_arg "--suites=${suite_string}")
+  message("Calling CCPP code generator (ccpp_prebuild.py) for suites listed in scm/src/suite_info.py: ${_ccpp_suites_arg}.")
 endif()
 # Run CCPP prebuild.py
 message (STATUS "Running ccpp_prebuild.py for CCPP")
