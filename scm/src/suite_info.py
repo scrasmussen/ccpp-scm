@@ -5,6 +5,10 @@ import sys, os, argparse
 #DEFAULT_SUITE_BEHAVIOR = 'supported'
 DEFAULT_SUITE_BEHAVIOR = 'regression_test'
 
+DEFAULT_FORTRAN_COMPILER = 'gnu'
+
+DEFAULT_RUN_LIST = 'all'
+
 class suite(object):
 
     DEFAULT_MAX_TIMESTEP = 1800.0
@@ -83,9 +87,19 @@ suite_list.append(suite('SCM_GFS_v16_gfdlmpv3',  'tracers_GFS_v16.txt',         
 def main():
     # find which compiler is being used
     parser = argparse.ArgumentParser()
-    parser.add_argument("--fc")
+    parser.add_argument("--fc", help='Fortran compiler being used (e.g. gnu, intel, intelllvm, nvhpc)', required=False)
+    parser.add_argument("--rl", help='run list type in rt_test_cases.py (e.g. supported, dev, legacy, sp)', required=False)
     args = parser.parse_args()
-
+    
+    fc = args.fc
+    rl = args.rl
+    
+    if not fc:
+        fc = DEFAULT_FORTRAN_COMPILER
+        
+    if not rl:
+        rl = DEFAULT_RUN_LIST
+    
     #print supported suites separated by commas
     suite_string = ''
 
@@ -98,27 +112,31 @@ def main():
         import rt_test_cases
 
         # choose correct compiler
-        if 'gnu' in args.fc.lower():
+        if 'gnu' in fc.lower():
             rttc = rt_test_cases.gnu_test_cases
-        elif 'intel' in args.fc.lower():
+        elif 'intel' in fc.lower():
             rttc = rt_test_cases.intel_test_cases
-        elif 'nvhpc' in args.fc.lower():
+        elif 'nvhpc' in fc.lower():
             rttc = rt_test_cases.nvhpc_test_cases
         else:
             print("Warning: suite_info.py was unable to match CMAKE_Fortran_COMPILER string, using default gnu rt test cases")
             rttc = rt_test_cases.gnu_test_cases
 
-        for item in rttc.run_list_supported:
-            rt_suite_list.append(item.get("suite"))
+        if 'supported' in rl.lower() or 'all' in rl.lower():
+            for item in rttc.run_list_supported:
+                rt_suite_list.append(item.get("suite"))
 
-        for item in rttc.run_list_legacy:
-            rt_suite_list.append(item.get("suite"))
+        if 'legacy' in rl.lower() or 'all' in rl.lower():
+            for item in rttc.run_list_legacy:
+                rt_suite_list.append(item.get("suite"))
 
-        for item in rttc.run_list_dev:
-            rt_suite_list.append(item.get("suite"))
+        if 'dev' in rl.lower() or 'all' in rl.lower():
+            for item in rttc.run_list_dev:
+                rt_suite_list.append(item.get("suite"))
 
-        for item in rttc.run_list_sp:
-            rt_suite_list.append(item.get("suite"))
+        if 'sp' in rl.lower() or 'all' in rl.lower():
+            for item in rttc.run_list_sp:
+                rt_suite_list.append(item.get("suite"))
 
         unique_suite_list = list(set(rt_suite_list))
 
