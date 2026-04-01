@@ -22,6 +22,10 @@ load("w3emc/2.13.0")
 load("py-f90nml/1.4.3")
 load("py-netcdf4/1.7.2")
 
+local bashStr = '/glade/u/apps/derecho/25.10/opt/view/bin/emacs -nw "$@"'
+local cshStr  = '/glade/u/apps/derecho/25.10/opt/view/bin/emacs -nw $*'
+set_shell_function("emacs", bashStr, cshStr)
+
 setenv("CMAKE_C_COMPILER","mpicc")
 setenv("CMAKE_CXX_COMPILER","mpicxx")
 setenv("CMAKE_Fortran_COMPILER","mpif90")
