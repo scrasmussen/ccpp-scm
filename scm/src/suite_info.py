@@ -2,8 +2,8 @@
 
 import sys, os, argparse
 
-#DEFAULT_SUITE_BEHAVIOR = 'supported'
-DEFAULT_SUITE_BEHAVIOR = 'regression_test'
+DEFAULT_SUITE_BEHAVIOR = 'supported'
+# DEFAULT_SUITE_BEHAVIOR = 'regression_test'
 
 DEFAULT_RUN_LIST = 'all'
 
@@ -88,17 +88,17 @@ def main():
     parser.add_argument("--fc", help='Fortran compiler being used (e.g. gnu, intel, intelllvm, nvhpc)', required=False)
     parser.add_argument("--rl", help='run list type in rt_test_cases.py (e.g. supported, dev, legacy, sp)', required=False)
     args = parser.parse_args()
-    
+
     fc = args.fc
     rl = args.rl
-        
+
     if not rl or rl.lower() not in ['all','supported','legacy','dev', 'sp']:
         #printing a warning will mess up the cmake process because it passes in everything printed out by this script to the '--suites' argument of ccpp_prebuild.py
         rl = DEFAULT_RUN_LIST
-    
+
     #print supported suites separated by commas
     suite_string = ''
-    
+
     if DEFAULT_SUITE_BEHAVIOR == 'regression_test':
         dir_path = os.path.dirname(os.path.realpath(__file__))
         sys.path.insert(1, dir_path + '/../../test/')
