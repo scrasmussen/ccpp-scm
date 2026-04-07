@@ -1,1 +1,1 @@
-module_version("derecho_gnu/spack_stack_2.1.0", "default")
+module_version("derecho_gnu/2.1.0", "default")
