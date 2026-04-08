@@ -195,9 +195,6 @@ For specific versions of the spack-stack, use the module version.
 
    list available module versions
    $ module spider derecho_gnu
-
-   load specific module version
-   $ module load derecho_gnu/2.1.0
    ------------------------------------------
      derecho_gnu:
    ------------------------------------------
@@ -205,6 +202,10 @@ For specific versions of the spack-stack, use the module version.
            derecho_gnu/1.6.0
            derecho_gnu/1.9.3
            derecho_gnu/2.1.0
+
+
+   load specific module version
+   $ module load derecho_gnu/2.1.0
 
 
 
@@ -344,7 +345,22 @@ components.
          $ cmake ../src
 
       By default, this option uses all supported suites. The list of
-      supported suites is controlled by ``scm/src/suite_info.py``.
+      supported suites is controlled by ``scm/src/suite_info.py`` and
+      can be viewed with the following command.
+
+      .. code:: bash
+
+         $ ./suite_info.py --fc gnu --rl supported
+         SCM_GFS_v16,SCM_GFS_v16_ps,SCM_GFS_v17_p8_ugwpv1,SCM_GFS_v17_p8_ugwpv1_ps,SCM_RAP,SCM_RAP_ps,SCM_HRRR_gf,SCM_HRRR_gf_ps,SCM_WoFS_v0,SCM_WoFS_v0_ps,SCM_GFS_v16_RRTMGP,SCM_GFS_v16_RRTMGP_ps
+
+         $ ./suite_info.py --help
+         usage: suite_info.py [-h] [--fc FC] [--rl RL]
+
+         options:
+           -h, --help  show this help message and exit
+           --fc FC     Fortran compiler being used (e.g. gnu, intel, intelllvm, nvhpc)
+           --rl RL     run list type in rt_test_cases.py (e.g. supported, dev, legacy, sp)
+
 
    -  All suites mode
 
