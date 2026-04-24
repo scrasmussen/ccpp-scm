@@ -38,7 +38,7 @@ jobs:
         key: conda-pkgs
 
     - name: Setup python.
-      uses: conda-incubator/setup-miniconda@v3
+      uses: conda-incubator/setup-miniconda@v4
       with:
         activate-environment: env_ufscasegen
         environment-file: environment-ufscasegen.yml
