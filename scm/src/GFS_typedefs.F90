@@ -1080,6 +1080,7 @@ module GFS_typedefs
     real(kind=kind_phys) :: dt_inner        !< time step for the inner loop in s
     logical              :: sedi_semi       !< flag for semi Lagrangian sedi of rain
     integer              :: decfl           !< deformed CFL factor
+    logical              :: do_sat_adj      !< flag for saturation adjustment for microphysics in dynamics
     type(ty_tempo_cfgs)  :: tempo_cfgs      !< Tempo MP configuration information.
     logical              :: thompson_mp_is_init=.false. !< Local scheme initialization flag
     logical              :: tempo_mp_is_init=.false. !< Local scheme initialization flag
@@ -3768,6 +3769,7 @@ module GFS_typedefs
     real(kind=kind_phys) :: dt_inner       = -999.0             !< time step for the inner loop
     logical              :: sedi_semi      = .false.            !< flag for semi Lagrangian sedi of rain
     integer              :: decfl          = 8                  !< deformed CFL factor
+    logical              :: do_sat_adj     = .false.            !< flag for saturation adjustment for microphysics in dynamics
     real(kind=kind_phys) :: nt_c_l         = 150.e6             !< prescribed cloud liquid water number concentration over land
     real(kind=kind_phys) :: nt_c_o         = 50.e6              !< prescribed cloud liquid water number concentration over ocean
     real(kind=kind_phys) :: av_i           = -999.0             !< transition value of coefficient matching at crossover from cloud ice to snow
@@ -4315,7 +4317,7 @@ module GFS_typedefs
                                ttendlim, ext_diag_thompson, nt_c_l, nt_c_o, av_i, xnc_max,  &
                                ssati_min, Nt_i_max, rr_min, fs_fac_rain, fs_fac_snow,       &
                                dt_inner, lgfdlmprad,                                        &
-                               sedi_semi, decfl,                                            &
+                               sedi_semi, decfl, do_sat_adj,                                &
                                nssl_cccn, nssl_alphah, nssl_alphahl,                        &
                                nssl_alphar, nssl_ehw0, nssl_ehlw0,                          &
                                nssl_invertccn, nssl_hail_on, nssl_ccn_on, nssl_3moment,     &
@@ -5113,6 +5115,7 @@ module GFS_typedefs
     endif
     Model%sedi_semi        = sedi_semi
     Model%decfl            = decfl
+    Model%do_sat_adj       = do_sat_adj
     Model%nt_c_l           = nt_c_l
     Model%nt_c_o           = nt_c_o
     Model%av_i             = av_i
@@ -6577,6 +6580,7 @@ module GFS_typedefs
                                           ' dt_inner =',Model%dt_inner, &
                                           ' sedi_semi=',Model%sedi_semi, &
                                           ' decfl=',decfl, &
+                                          ' do_sat_adj=',Model%do_sat_adj, &
                                           ' nt_c_l=',nt_c_l, &
                                           ' nt_c_o=',nt_c_o, &
                                           ' av_i=',av_i, &
@@ -7172,6 +7176,7 @@ module GFS_typedefs
         print *, ' dt_inner          : ', Model%dt_inner
         print *, ' sedi_semi         : ', Model%sedi_semi
         print *, ' decfl             : ', Model%decfl
+        print *, ' do_sat_adj        : ', Model%do_sat_adj
         print *, ' nt_c_l            : ', Model%nt_c_l
         print *, ' nt_c_o            : ', Model%nt_c_o
         print *, ' av_i              : ', Model%av_i
