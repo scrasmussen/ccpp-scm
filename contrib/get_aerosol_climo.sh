@@ -30,7 +30,7 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-#set -ex
+set -ex
 
 # Directory where this script is located
 if [[ $(uname -s) == Darwin ]]; then
@@ -47,6 +47,7 @@ BASEDIR=$MYDIR/..
 # Change to directory containing the physics input data, download and extract archive
 data_files=("FV3_aeroclim1" "FV3_aeroclim2" "FV3_aeroclim3" "FV3_aeroclim_optics")
 
+mkdir -p $BASEDIR/scm/data/physics_input_data/
 cd $BASEDIR/scm/data/physics_input_data/
 for file in "${data_files[@]}"; do
     echo "Retrieving $file.tar.gz"
