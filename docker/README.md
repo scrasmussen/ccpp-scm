@@ -1,4 +1,5 @@
 # Docker
+
 ## Build
 To build the Docker image
 ```bash
@@ -28,4 +29,21 @@ $ make clean
 Check images
 ```bash
 $ docker images
+```
+
+## Image Dependency Graph
+
+```mermaid
+flowchart TD
+    gnu["Dockerfile-gnu-minimal"]
+    nvhpc["Dockerfile-nvphc-minimal"]
+    oneapi["Dockerfile-oneapi-minimal"]
+    gnu --> netcdf["Dockerfile-add-netcdf"]
+    nvhpc --> netcdf
+    oneapi --> netcdf
+    netcdf --> pnetcdf["Dockerfile-add-pnetcdf"]
+    netcdf --> nceplibs["Dockerfile-add-nceplibs"]
+    nceplibs --> python["Dockerfile-add-python"]
+    python --> finalize["Dockerfile-finalize"]
+    python --> dev["Dockerfile-dev"]
 ```
