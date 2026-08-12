@@ -10,7 +10,7 @@ print_help() {
     echo "    --help           Show this help message and exit."
 }
 
-verbose="-q"
+verbose="-v"
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
